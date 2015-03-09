@@ -11,7 +11,7 @@ import edu.ufl.cise.config.PeerInfo;
 public class PeerConfigReader {
 	
 
-	public static HashMap<String, PeerInfo> configReader( File fileName, String filePath){
+	public static HashMap<String, PeerInfo> configReader( String fileName, String filePath){
 		BufferedReader br = null;
 		HashMap<String, PeerInfo> peerMap = new HashMap<String, PeerInfo>();
 		try {

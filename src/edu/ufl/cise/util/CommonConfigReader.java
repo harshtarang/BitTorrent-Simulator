@@ -16,7 +16,7 @@ public class CommonConfigReader {
 	public static final String FileSize = "FileSize";
 	public static final String PieceSize = "PieceSize";
 	
-	public static MetaInfo configReader( File fileName, String filePath){
+	public static MetaInfo configReader( String fileName, String filePath){
 		BufferedReader br = null;
 		MetaInfo metaInfo = new MetaInfo();
 		try {

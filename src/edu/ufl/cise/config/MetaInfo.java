@@ -7,7 +7,7 @@ public class MetaInfo {
 	int optimisticUnchokingInterval;
 	String fileName;
 	int fileSize;
-	int pieceSize;
+    int pieceSize;
 
 	public MetaInfo(){}
 
