@@ -1,5 +1,9 @@
 package edu.ufl.cise.protocol;
 
-public class NotInterested extends Message{
-
+public class NotInterested extends Message
+{
+	public NotInterested()
+	{
+		
+	}
 }

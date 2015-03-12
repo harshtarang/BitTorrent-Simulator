@@ -1,5 +1,7 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.client.TimerWorker;
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
@@ -33,19 +35,20 @@ public class peerProcess {
 		metainfo = CommonConfigReader.configReader(COMMON_CONFIG, base_path);
 		
 		// Reads the peerConfig file
-		HashMap<String, PeerInfo> peerMap; 
-		peerMap = PeerConfigReader.configReader(PEER_CONFIG, base_path);
+		ArrayList<PeerInfo> peerList; 
+		peerList = PeerConfigReader.configReader(PEER_CONFIG, base_path);
 		
 		// Initializes peer directories.
 		
 		// Initializes PeerClient
+		Peer peer = new Peer(Integer.parseInt(peerId), peerList);
 		
 		// Starts PeerServer
 		
 		// Starts PeerClient
 		
 		// Start Timer task thread
-		TimerWorker.initTimerTast(metainfo.getOptimisticUnchokingInterval()*1000);
+		TimerWorker.initTimerTast(MetaInfo.getOptimisticUnchokingInterval()*1000);
 		
 	}
 	

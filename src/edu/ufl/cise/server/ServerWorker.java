@@ -14,33 +14,44 @@ import java.net.Socket;
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.protocol.BitTorrentProtocol;
 
-public class ServerWorker extends Thread {
+public class ServerWorker extends Thread 
+{
 	private MetaInfo metaInfo;
 	private Socket clientSocket = null;
 	private OutputStream out;
 	private InputStream in;
 
-	public ServerWorker(Socket socket) {
+	public ServerWorker(Socket socket) 
+	{
 		this.clientSocket = socket;
 	}
 
-	public void run() {
-		try {
+	public void run() 
+	{
+		try 
+		{
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
-			String respose = BitTorrentProtocol.receiveStream(in);
+			String response = BitTorrentProtocol.receiveStream(in);
 			System.out.println("Request from server to handle " + clientSocket);
 			clientSocket.close();
-		} catch (IOException e) {
+		}
+		catch (IOException e) 
+		{
 			// Add a log statement
 			e.printStackTrace();
-		} finally {
-			try {
+		}
+		finally 
+		{
+			try 
+			{
 				if (out != null)
 					out.close();
 				if (in != null)
 					in.close();
-			} catch (IOException ex) {
+			}
+			catch (IOException ex) 
+			{
 				ex.printStackTrace();
 			}
 

@@ -1,5 +1,9 @@
 package edu.ufl.cise.protocol;
 
-public class Piece extends Message{
-
+public class Piece extends Message
+{
+	public Piece()
+	{
+		
+	}
 }

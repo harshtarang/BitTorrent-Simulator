@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.ufl.cise.config.PeerInfo;
@@ -11,9 +12,9 @@ import edu.ufl.cise.config.PeerInfo;
 public class PeerConfigReader {
 	
 
-	public static HashMap<String, PeerInfo> configReader( String fileName, String filePath){
+	public static ArrayList<PeerInfo> configReader( String fileName, String filePath){
 		BufferedReader br = null;
-		HashMap<String, PeerInfo> peerMap = new HashMap<String, PeerInfo>();
+		ArrayList<PeerInfo> peerMap = new ArrayList<PeerInfo>();
 		try {
 			String line;
 			br = new BufferedReader(new FileReader(filePath + fileName));
@@ -25,7 +26,7 @@ public class PeerConfigReader {
 				int port = Integer.parseInt(arr[2]);
 				boolean isCompleteFile = Boolean.parseBoolean(arr[3]);
 				peerInfo = new PeerInfo(peerID, hostName, port, isCompleteFile);
-				peerMap.put(peerID, peerInfo);
+				peerMap.add(peerInfo);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

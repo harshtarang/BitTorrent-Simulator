@@ -1,5 +1,19 @@
 package edu.ufl.cise.protocol;
 
-public class BitField extends Message{
+import edu.ufl.cise.config.MetaInfo;
 
+public class BitField extends Message
+{
+	boolean[] bitField;
+	
+	public BitField(boolean[] bits)
+	{
+		int fileSize=MetaInfo.getFileSize();
+		int pieceSize=MetaInfo.getPieceSize();
+		
+		int numberOfPieces = fileSize/pieceSize;
+		
+		for(int i=0;i<numberOfPieces;i++)
+			bitField[i]=bits[i];
+	}
 }

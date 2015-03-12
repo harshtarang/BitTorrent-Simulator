@@ -2,12 +2,12 @@ package edu.ufl.cise.config;
 
 public class MetaInfo {
 
-	int numPreferredNeighbours;
-	int unchokingInterval;
-	int optimisticUnchokingInterval;
-	String fileName;
-	int fileSize;
-    int pieceSize;
+	private static int numPreferredNeighbours;
+	private static int unchokingInterval;
+	private static int optimisticUnchokingInterval;
+	private static String fileName;
+	private static int fileSize;
+    private static int pieceSize;
 
 	public MetaInfo(){}
 
@@ -16,50 +16,51 @@ public class MetaInfo {
 			int optimisticUnchokingInterval, 
 			String fileName,
 			int fileSize,
-			int pieceSize){
-		this.numPreferredNeighbours = numPreferredNeighbours;
-		this.unchokingInterval = unchokingInterval;
-		this.optimisticUnchokingInterval = optimisticUnchokingInterval;
-		this.fileName = fileName;
-		this.fileSize = fileSize;
-		this.pieceSize = pieceSize;
+			int pieceSize)
+	{
+		numPreferredNeighbours = numPreferredNeighbours;
+		unchokingInterval = unchokingInterval;
+		optimisticUnchokingInterval = optimisticUnchokingInterval;
+		fileName = fileName;
+		fileSize = fileSize;
+		pieceSize = pieceSize;
 	}
 	
-	public int getNumPreferredNeighbours() {
+	public static int getNumPreferredNeighbours() {
 		return numPreferredNeighbours;
 	}
-	public void setNumPreferredNeighbours(int numPreferredNeighbours) {
-		this.numPreferredNeighbours = numPreferredNeighbours;
+	public static void setNumPreferredNeighbours(int num) {
+		numPreferredNeighbours = num;
 	}
-	public int getUnchokingInterval() {
+	public static int getUnchokingInterval() {
 		return unchokingInterval;
 	}
-	public void setUnchokingInterval(int unchokingInterval) {
-		this.unchokingInterval = unchokingInterval;
+	public static void setUnchokingInterval(int interval) {
+		unchokingInterval = interval;
 	}
-	public int getOptimisticUnchokingInterval() {
+	public static int getOptimisticUnchokingInterval() {
 		return optimisticUnchokingInterval;
 	}
-	public void setOptimisticUnchokingInterval(int optimisticUnchokingInterval) {
-		this.optimisticUnchokingInterval = optimisticUnchokingInterval;
+	public static void setOptimisticUnchokingInterval(int interval) {
+		optimisticUnchokingInterval = interval;
 	}
-	public String getFileName() {
+	public static String getFileName() {
 		return fileName;
 	}
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public static void setFileName(String name) {
+		fileName = name;
 	}
-	public int getFileSize() {
+	public static int getFileSize() {
 		return fileSize;
 	}
-	public void setFileSize(int fileSize) {
-		this.fileSize = fileSize;
+	public static void setFileSize(int size) {
+		fileSize = size;
 	}
-	public int getPieceSize() {
+	public static int getPieceSize() {
 		return pieceSize;
 	}
-	public void setPieceSize(int pieceSize) {
-		this.pieceSize = pieceSize;
+	public static void setPieceSize(int size) {
+		pieceSize = size;
 	}
 	
 }
