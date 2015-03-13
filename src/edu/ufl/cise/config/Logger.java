@@ -19,7 +19,7 @@ public class Logger {
 		return instance;
 	}
 
-	public static void log(String peerId, String message) {
+	public void log(String peerId, String message) {
 		String fileName = "log_peer_" + peerId;
 		BufferedWriter bw = null;
 		try {

@@ -38,17 +38,24 @@ public class peerProcess {
 		ArrayList<PeerInfo> peerList; 
 		peerList = PeerConfigReader.configReader(PEER_CONFIG, base_path);
 		
-		// Initializes peer directories.
+		// Initializes peer directory.
+		createDirectory();
 		
 		// Initializes PeerClient
 		Peer peer = new Peer(Integer.parseInt(peerId), peerList);
 		
 		// Starts PeerServer
+		peer.Serverinit();
 		
 		// Starts PeerClient
+		peer.clientInit();
 		
 		// Start Timer task thread
 		TimerWorker.initTimerTast(MetaInfo.getOptimisticUnchokingInterval()*1000);
+		
+	}
+
+	private static void createDirectory() {
 		
 	}
 	

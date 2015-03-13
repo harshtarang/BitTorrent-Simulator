@@ -37,6 +37,13 @@ public class HandshakeMessage extends Message{
 		setPeerId(new BigInteger(pId).intValue());
 	}
 		
+	public HandshakeMessage() {
+	}
+
+	public HandshakeMessage(int peerId) {
+		this.peerId = peerId;
+	}
+
 	public boolean isValid(String header)
 	{
 		return header == HEADER;
