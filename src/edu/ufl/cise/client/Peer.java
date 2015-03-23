@@ -2,6 +2,7 @@ package edu.ufl.cise.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import edu.ufl.cise.config.PeerInfo;
 import edu.ufl.cise.protocol.HandshakeMessage;
@@ -10,11 +11,11 @@ import edu.ufl.cise.server.Server;
 public class Peer {
 
 	int peerId;
-	ArrayList<PeerInfo> list ;
+	LinkedHashMap<String, PeerInfo> map ;
 	
-	public Peer( int peerId, ArrayList<PeerInfo> list ){
+	public Peer( int peerId, LinkedHashMap<String, PeerInfo> map ){
 		this.peerId = peerId;
-		this.list = list;
+		this.map = map;
 	}
 
 	public int getPeerId() {
@@ -25,8 +26,8 @@ public class Peer {
 		this.peerId = peerId;
 	}
 
-	public ArrayList<PeerInfo> getList() {
-		return list;
+	public LinkedHashMap<String, PeerInfo> getMap() {
+		return map;
 	}
 
 	public void setList(ArrayList<PeerInfo> list) {

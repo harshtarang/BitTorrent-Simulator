@@ -10,21 +10,6 @@ public class MetaInfo {
     private static int pieceSize;
 
 	public MetaInfo(){}
-
-	public MetaInfo(int numPreferredNeighbours,
-			int unchokingInterval,
-			int optimisticUnchokingInterval, 
-			String fileName,
-			int fileSize,
-			int pieceSize)
-	{
-		numPreferredNeighbours = numPreferredNeighbours;
-		unchokingInterval = unchokingInterval;
-		optimisticUnchokingInterval = optimisticUnchokingInterval;
-		fileName = fileName;
-		fileSize = fileSize;
-		pieceSize = pieceSize;
-	}
 	
 	public static int getNumPreferredNeighbours() {
 		return numPreferredNeighbours;

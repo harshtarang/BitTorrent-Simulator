@@ -16,9 +16,8 @@ public class CommonConfigReader {
 	public static final String FileSize = "FileSize";
 	public static final String PieceSize = "PieceSize";
 	
-	public static MetaInfo configReader( String fileName, String filePath){
+	public static void configReader( String fileName, String filePath){
 		BufferedReader br = null;
-		MetaInfo metaInfo = new MetaInfo();
 		try {
 			String line;
 			br = new BufferedReader(new FileReader(filePath + fileName));
@@ -28,21 +27,21 @@ public class CommonConfigReader {
 				String value = arr[1];
 				if( property.equalsIgnoreCase(NumberOfPreferredNeighbors)){
 					int numNeighbours = Integer.parseInt(value);
-					metaInfo.setNumPreferredNeighbours(numNeighbours);
+					MetaInfo.setNumPreferredNeighbours(numNeighbours);
 				}else if( property.equalsIgnoreCase(OptimisticUnchokingInterval)){
 					int optimistUnchokingInterval = Integer.parseInt(value);
-					metaInfo.setOptimisticUnchokingInterval(optimistUnchokingInterval);
+					MetaInfo.setOptimisticUnchokingInterval(optimistUnchokingInterval);
 				}else if( property.equalsIgnoreCase(UnchokingInterval)){
 					int unchokingInterval = Integer.parseInt(value);
-					metaInfo.setUnchokingInterval(unchokingInterval);
+					MetaInfo.setUnchokingInterval(unchokingInterval);
 				}else if( property.equalsIgnoreCase(FileName)){
-					metaInfo.setFileName(value);
+					MetaInfo.setFileName(value);
 				}else if( property.equalsIgnoreCase(FileSize)){
 					int fileSize = Integer.parseInt(value);
-					metaInfo.setFileSize(fileSize);
+					MetaInfo.setFileSize(fileSize);
 				}else if( property.equalsIgnoreCase(PieceSize)){
 					int pieceSize = Integer.parseInt(value);
-					metaInfo.setPieceSize(pieceSize);
+					MetaInfo.setPieceSize(pieceSize);
 				}
 			}
 		} catch (IOException e) {
@@ -54,6 +53,5 @@ public class CommonConfigReader {
 				ex.printStackTrace();
 			}
 		}
-		return metaInfo;
 	}
 }
