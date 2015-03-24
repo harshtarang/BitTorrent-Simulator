@@ -9,13 +9,78 @@ public class PeerInfo {
 	String hostname;
 	int port;
 	boolean isCompleteFile;
-	boolean isChoke;
-	boolean isChokedBy;
-	boolean isOptimisticUnchoked;
-	boolean interested;
+	boolean isChoke = false;
+	boolean isChokedBy = false;
+	boolean isOptimisticUnchoked = false;
+	boolean interested = false;
+	boolean isHandShakeSent = false;
+	boolean isHandShakeReceived = false;
+	boolean isBitFieldSent = false;
+	boolean isBitFieldReceived = false;
+	boolean isRequestSent = false;
 	float downloadSpeed;
 	Socket socket;
 	BitSet pieceInfo;
+	
+	public PeerInfo(){}
+	
+	public PeerInfo( String peerId,
+			String hostname,
+			int port,
+			boolean isCompleteFile){
+		this.peerId = peerId;
+		this.hostname = hostname;
+		this.port = port;
+		this.isCompleteFile = isCompleteFile;
+	}
+	
+	public boolean isHandShakeSent() {
+		return isHandShakeSent;
+	}
+
+	public void setHandShakeSent(boolean isHandShakeSent) {
+		this.isHandShakeSent = isHandShakeSent;
+	}
+
+	public boolean isHandShakeReceived() {
+		return isHandShakeReceived;
+	}
+
+	public void setHandShakeReceived(boolean isHandShakeReceived) {
+		this.isHandShakeReceived = isHandShakeReceived;
+	}
+
+	public boolean isBitFieldSent() {
+		return isBitFieldSent;
+	}
+
+	public void setBitFieldSent(boolean isBitFieldSent) {
+		this.isBitFieldSent = isBitFieldSent;
+	}
+
+	public boolean isBitFieldReceived() {
+		return isBitFieldReceived;
+	}
+
+	public void setBitFieldReceived(boolean isBitFieldReceived) {
+		this.isBitFieldReceived = isBitFieldReceived;
+	}
+
+	public boolean isRequestSent() {
+		return isRequestSent;
+	}
+
+	public void setRequestSent(boolean isRequestSent) {
+		this.isRequestSent = isRequestSent;
+	}
+
+	public BitSet getPieceInfo() {
+		return pieceInfo;
+	}
+
+	public void setPieceInfo(BitSet pieceInfo) {
+		this.pieceInfo = pieceInfo;
+	}
 	
 	public boolean isChoke() {
 		return isChoke;
@@ -63,18 +128,6 @@ public class PeerInfo {
 
 	public void setSocket(Socket socket) {
 		this.socket = socket;
-	}
-
-	public PeerInfo(){}
-	
-	public PeerInfo( String peerId,
-			String hostname,
-			int port,
-			boolean isCompleteFile){
-		this.peerId = peerId;
-		this.hostname = hostname;
-		this.port = port;
-		this.isCompleteFile = isCompleteFile;
 	}
 
 	public String getPeerId() {

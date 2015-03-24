@@ -36,19 +36,20 @@ public class ClientWorker implements Runnable {
 
 		// Send the first message
 		out.println("HELLO");
-		
-		String inputLine;
-		String outputLine;
+
+		String userInput;
+		BufferedReader stdIn = new BufferedReader(new InputStreamReader(
+				System.in));
+		System.out.println("Type Message (\"Bye.\" to quit)");
 		try {
-			while ((inputLine = in.readLine()) != null) {
-				System.out.println("ClientWorker: Received input " + inputLine);
-				//outputLine = inputLine;
-				if (inputLine.equals("ServerBye")) {
-					out.println("ClientBye");
+			while ((userInput = stdIn.readLine()) != null) {
+				out.println(userInput);
+				// end loop
+				if (userInput.equals("Bye."))
 					break;
-				}
+				// System.out.println("echo: " + in.readLine());
 			}
-			out.println("ClientBye");
+			out.println(System.in);
 			clientSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();

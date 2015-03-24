@@ -3,6 +3,8 @@ package edu.ufl.cise.client;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.ufl.cise.config.MetaInfo;
+
  
 public class ScheduleNeighborTimerTask extends TimerTask {
  
@@ -19,7 +21,8 @@ public class ScheduleNeighborTimerTask extends TimerTask {
         }
     }
      
-    public static void initTimerTast(int time){
+    public static void initTimerTast(){
+    	int time = MetaInfo.getUnchokingInterval();
         TimerTask timerTask = new ScheduleNeighborTimerTask();
         Timer timer = new Timer(true);
         timer.scheduleAtFixedRate( timerTask, 0, time);

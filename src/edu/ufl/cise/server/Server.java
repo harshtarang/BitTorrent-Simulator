@@ -9,21 +9,20 @@ public class Server {
 
 	public static void main(String[] args) throws IOException {
 		Server server = new Server();
-		server.listen();
+		server.listen(9090);
 	}
 
-	public int listen() throws IOException {
+	public int listen(int portNumber) throws IOException {
 		ServerSocket serverSocket = null;
-		int iPortNumber = 9090;
 		try {
-			serverSocket = new ServerSocket(iPortNumber);
+			serverSocket = new ServerSocket(portNumber);
 		} catch (IOException e) {
 			// Enter a log statement
 			System.out.println("Something went wrong");
 		}
 		while (LISTENING) {
 			ServerWorker serverWorker;
-			System.out.println("*** Listen for a Client; at:" + iPortNumber
+			System.out.println("*** Listen for a Client; at:" + portNumber
 					+ " ***");
 			serverWorker = new ServerWorker(serverSocket.accept());
 			serverWorker.start(); 

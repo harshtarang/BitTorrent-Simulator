@@ -10,8 +10,8 @@ import edu.ufl.cise.protocol.Message;
 public class Client {
 
 	public static void init() {
-		//ClientWorker worker = new ClientWorker(9090, "marvin");
-		//worker.run();
+		ClientWorker worker = new ClientWorker(9090, "localhost");
+		worker.run();
 	}
 
 	public static void sendMessage(Message message, String hostName, int port) {
@@ -31,6 +31,10 @@ public class Client {
 			if (out != null)
 				out.close();
 		}
+	}
+	
+	public static void main(String args[]){
+		Client.init();
 	}
 
 }

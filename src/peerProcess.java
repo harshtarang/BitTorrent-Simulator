@@ -1,10 +1,9 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 
+import edu.ufl.cise.client.OptimisticUnchokeTask;
 import edu.ufl.cise.client.Peer;
-import edu.ufl.cise.client.TimerWorker;
-import edu.ufl.cise.config.MetaInfo;
+import edu.ufl.cise.client.ScheduleNeighborTimerTask;
 import edu.ufl.cise.config.PeerInfo;
 import edu.ufl.cise.util.CommonConfigReader;
 import edu.ufl.cise.util.PeerConfigReader;
@@ -23,12 +22,12 @@ public class peerProcess {
 		return base_path;
 	}
 	
-	public static void main(String args[]){
+	public static void main(String args[]) throws IOException{
 		String peerId = args[0];
 		init(peerId);
 	}
 	
-	public static void init(String peerId){
+	public static void init(String peerId) throws IOException{
 		// Get the base project path
 		
 		// Reads the Common Config file
@@ -49,15 +48,12 @@ public class peerProcess {
 		
 		// Starts PeerClient
 		peer.clientInit();
-		
-		// Start Timer task thread
-		TimerWorker.initTimerTast(MetaInfo.getOptimisticUnchokingInterval()*1000);
-		
+
 		// Start neighbor scheduler task thread
-		
+		ScheduleNeighborTimerTask.initTimerTast();
+
 		// Start optimistically unchoke scheduler task thread
-		
-		
+		OptimisticUnchokeTask.initTimerTast();
 	}
 
 	private static void createDirectory() {
