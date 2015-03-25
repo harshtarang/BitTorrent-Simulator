@@ -6,4 +6,7 @@ public class Piece extends Message
 	{
 		
 	}
+
+	public Piece(int index, byte[] piece) {
+	}
 }

@@ -4,9 +4,9 @@ import edu.ufl.cise.config.MetaInfo;
 
 public class BitField extends Message
 {
-	boolean[] bitField;
+	byte[] bitField;
 	
-	public BitField(boolean[] bits)
+	public BitField(byte[] bitArray)
 	{
 		int fileSize=MetaInfo.getFileSize();
 		int pieceSize=MetaInfo.getPieceSize();
@@ -14,6 +14,6 @@ public class BitField extends Message
 		int numberOfPieces = fileSize/pieceSize;
 		
 		for(int i=0;i<numberOfPieces;i++)
-			bitField[i]=bits[i];
+			bitField[i]=bitArray[i];
 	}
 }

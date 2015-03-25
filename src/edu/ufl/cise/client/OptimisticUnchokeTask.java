@@ -8,6 +8,8 @@ import edu.ufl.cise.config.MetaInfo;
  
 public class OptimisticUnchokeTask extends TimerTask {
  
+	private static int time;
+	
     @Override
     public void run() {
     	optimisticallyUnchokeNeighbor();
@@ -22,7 +24,7 @@ public class OptimisticUnchokeTask extends TimerTask {
     }
      
     public static void initTimerTast(){
-    	int time = MetaInfo.getOptimisticUnchokingInterval();
+    	time = MetaInfo.getOptimisticUnchokingInterval();
         TimerTask timerTask = new OptimisticUnchokeTask();
         Timer timer = new Timer(true);
         timer.scheduleAtFixedRate( timerTask, 0, time);

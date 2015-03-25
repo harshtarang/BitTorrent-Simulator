@@ -1,11 +1,10 @@
 package edu.ufl.cise.client;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import edu.ufl.cise.config.Logger;
 import edu.ufl.cise.protocol.Message;
+import edu.ufl.cise.util.Logger;
 
 public class Client {
 

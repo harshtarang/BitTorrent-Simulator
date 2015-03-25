@@ -9,10 +9,10 @@ public class Server {
 
 	public static void main(String[] args) throws IOException {
 		Server server = new Server();
-		server.listen(9090);
+		server.init(9090);
 	}
 
-	public int listen(int portNumber) throws IOException {
+	public int init(int portNumber) throws IOException {
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(portNumber);

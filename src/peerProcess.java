@@ -48,7 +48,7 @@ public class peerProcess {
 		
 		// Starts PeerClient
 		peer.clientInit();
-
+		
 		// Start neighbor scheduler task thread
 		ScheduleNeighborTimerTask.initTimerTast();
 

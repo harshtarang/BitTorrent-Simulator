@@ -6,4 +6,8 @@ public class Request extends Message
 	{
 		
 	}
+
+	public Request(byte[] pieceIndex) {
+		// TODO Auto-generated constructor stub
+	}
 }

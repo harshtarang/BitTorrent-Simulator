@@ -8,6 +8,8 @@ import edu.ufl.cise.config.MetaInfo;
  
 public class ScheduleNeighborTimerTask extends TimerTask {
  
+	private static int time;
+	
     @Override
     public void run() {
     	determineNeigbor();
@@ -22,7 +24,7 @@ public class ScheduleNeighborTimerTask extends TimerTask {
     }
      
     public static void initTimerTast(){
-    	int time = MetaInfo.getUnchokingInterval();
+    	time = MetaInfo.getUnchokingInterval();
         TimerTask timerTask = new ScheduleNeighborTimerTask();
         Timer timer = new Timer(true);
         timer.scheduleAtFixedRate( timerTask, 0, time);

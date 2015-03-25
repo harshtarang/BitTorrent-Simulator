@@ -1,18 +1,29 @@
 package edu.ufl.cise.protocol;
 
 public abstract class Message {
-
-	public static final String CHOKE          = "choke";
-	public static final String UNCHOKE        = "unchoke";
-	public static final String INTERESTED     = "interested";
-	public static final String NOT_INTERESTED = "not interested";
-	public static final String HAVE           = "have";
-	public static final String BITFIELD       = "bitfield";
-	public static final String REQUEST        = "request";
-	public static final String PIECE          = "piece";
 	
-	enum MessageType {CHOKE, UNCHOKE, INTERESTED, NOT_INTERESTED, HAVE,
-		BITFIELD, REQUEST, PIECE};
+	public enum MessageType {
+		CHOKE(0),
+		UNCHOKE(1),
+		INTERESTED(2), 
+		NOT_INTERESTED(3),
+		HAVE(4),
+		BITFIELD(5),
+		REQUEST(6),
+		PIECE(7);
+		
+		private int val;
+		
+		private MessageType(int val){
+			this.val = val;
+		}
+		
+		public int getValue(){
+			return this.val;
+		}
+	}
+	
+	
 	
 		
 }

@@ -37,7 +37,7 @@ public class Peer {
 
 	public void Serverinit() throws IOException {
 		Server server = new Server();
-		server.listen(portNumber);
+		server.init(portNumber);
 	}
 
 	/**
