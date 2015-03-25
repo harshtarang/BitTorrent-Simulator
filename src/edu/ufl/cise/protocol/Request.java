@@ -1,13 +1,47 @@
 package edu.ufl.cise.protocol;
 
-public class Request extends Message
-{ 
-	public Request()
-	{
-		
+import java.math.BigInteger;
+
+public class Request extends Message {
+
+	int pieceIndex;
+
+	public Request() {
 	}
 
-	public Request(byte[] pieceIndex) {
-		// TODO Auto-generated constructor stub
+	public Request(int pieceIndex) {
+		this.pieceIndex = pieceIndex;
 	}
+
+	public Request(byte[] in) {
+		int index = new BigInteger(in).intValue();
+		this.pieceIndex = index;
+	}
+	
+	public int getPieceIndex() {
+		return pieceIndex;
+	}
+
+	public void setPieceIndex(int pieceIndex) {
+		this.pieceIndex = pieceIndex;
+	}
+
+	public byte[] getBytes() {
+		byte[] out = new byte[9];
+		byte[] len = new byte[4];
+		byte[] type = new byte[5];
+		byte[] pieceIndexBytes = new byte[4];
+		len = intToByteArray(1);
+		type = intToByteArray(Message.MessageType.REQUEST.getValue());
+		for (int i = 0; i < 4; i++) {
+			out[i] = len[i];
+		}
+		out[4] = type[0];
+		pieceIndexBytes = intToByteArray(pieceIndex);
+		for (int i = 0; i < 4; i++) {
+			out[5 + i] = pieceIndexBytes[i];
+		}
+		return out;
+	}
+
 }
