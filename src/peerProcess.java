@@ -41,13 +41,14 @@ public class peerProcess {
 		createDirectory();
 		
 		// Initializes PeerClient
-		Peer peer = new Peer(Integer.parseInt(peerId), peerMap);
+		int peerIdInt = Integer.parseInt(peerId);
+		Peer.getInstance().init(peerIdInt, peerMap);
 		
 		// Starts PeerServer
-		peer.Serverinit();
+		Peer.getInstance().Serverinit();
 		
 		// Starts PeerClient
-		peer.clientInit();
+		Peer.getInstance().clientInit();
 		
 		// Start neighbor scheduler task thread
 		ScheduleNeighborTimerTask.initTimerTast();

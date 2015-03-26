@@ -11,6 +11,10 @@ public class BitTorrentProtocol implements Runnable {
 	public BitTorrentProtocol(byte[] input){
 		this.input = input;
 	}
+
+	private void updateState(Message message){
+		
+	}
 	
 	public void processInput(byte[] input){
 		// Determine the message type and construct it
@@ -25,10 +29,6 @@ public class BitTorrentProtocol implements Runnable {
 		updateState(response);
 		// Determine the events to be triggered
 		// Execute the events
-		
-	}
-	
-	private void updateState(Message message){
 		
 	}
 	
