@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 
 public class Main1 {
 
-	public static void main(String args[]) throws IOException{
+	public static void main(String args[]) throws IOException {
 		System.out.println("Starting peer1");
 		// Initialize the map with peer info
 		State state1 = new State(8080);
@@ -18,16 +18,15 @@ public class Main1 {
 		PeerInfo.getInstance().setMap(map);
 		PeerInfo.getInstance().setPeerId(1);
 		PeerInfo.getInstance().setPortNumber(8080);
-		
+
 		// Start executor service
 		ExecutorPool.getInstance().init(1);
 
 		// Start a server
 		PeerInfo.getInstance().Serverinit();
-		
+
 		// Start a client on host2 and host3.
 		PeerInfo.getInstance().clientInit();
-
 	}
-	
+
 }

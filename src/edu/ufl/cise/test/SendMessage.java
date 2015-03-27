@@ -20,7 +20,7 @@ public class SendMessage implements Runnable{
 		try {
 			System.out.println("Sending message: " + message);
 			 out = new PrintWriter(socket.getOutputStream(), true);
-			 out.write(message + "\n" );
+			 out.println(message );
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

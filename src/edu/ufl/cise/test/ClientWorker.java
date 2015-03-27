@@ -21,6 +21,7 @@ public class ClientWorker implements Runnable {
 		this.currPeerId = PeerInfo.getInstance().getPeerId();
 		System.out.println("Peer: " + currPeerId +" connecting on port: " + port);
 		socket = new Socket("localhost", port);
+		System.out.println(socket.isConnected());
 
 		PeerInfo.getInstance().updateSocket(peerId, socket);
 		System.out.println("Sending message : " + currPeerId + " to: " + peerId);
