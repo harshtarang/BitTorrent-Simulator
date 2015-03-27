@@ -77,9 +77,9 @@ public class Peer {
 			} else {
 				String hostName = peerInfo.getHostname();
 				int port = peerInfo.getPort();
-				// Sends handshake message to peer
-				HandshakeMessage message = new HandshakeMessage(peerId1);
-				Client.sendMessage(message, hostName, port);
+				//Client.init(peerId1, hostName, port);
+				ClientWorker worker = new ClientWorker(peerId1, port, hostName);
+				worker.run();
 			}
 		}
 	}

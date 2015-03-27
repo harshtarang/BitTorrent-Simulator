@@ -8,22 +8,21 @@ import java.net.UnknownHostException;
 
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.protocol.BitTorrentProtocol;
+import edu.ufl.cise.protocol.HandshakeMessage;
 
 public class ClientWorker implements Runnable {
 
 	Socket clientSocket;
 	OutputStream out;
 	InputStream in;
+	int peerID;
 	int port;
 	String hostName;
 
-	public ClientWorker(int port, String hostName) {
+	public ClientWorker(int peerId, int port, String hostName) {
+		this.peerID = peerId;
 		this.port = port;
 		this.hostName = hostName;
-		// Create a handshake message
-		// Create a job for sending it.
-		// Add to the executor pool.
-		// 
 	}
 
 	public void run() {
@@ -31,19 +30,13 @@ public class ClientWorker implements Runnable {
 			clientSocket = new Socket(hostName, port);
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
-			int pieceLength = MetaInfo.getPieceSize();
-			byte[] piece = new byte[pieceLength];
-			int offset = 0;
-			while (true) {
-				int flag = in.read(piece, offset, pieceLength);
-				if (flag == -1) {
-					// Create a job and send to executor service
-					//BitTorrentProtocol.processInput(piece);
-					piece = new byte[pieceLength];
-				} else {
-					// clientSocket.close();
-				}
-			}
+			// Create a handshake message. 
+			HandshakeMessage message = new HandshakeMessage(peerID);
+			
+			// Add to the executor pool.
+
+		
+		
 		} catch (UnknownHostException e) {
 			System.out.println("Unknown host: hostName");
 			System.exit(1);

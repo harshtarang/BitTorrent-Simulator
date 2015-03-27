@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
 import sun.security.util.BigInt;
-import edu.ufl.cise.config.MetaInfo;
+import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.protocol.BitField;
 import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.HandshakeMessage;
@@ -33,18 +33,16 @@ public class ServerWorker extends Thread {
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
 			// byte[] buffer = new byte[1024];
-			int pieceLength = MetaInfo.getPieceSize();
 			byte[] firstFour = new byte[4];
 			while (true) {
 				// Determine message type and create a message
 				Message response = null;
 				in.read(firstFour, 0, 4);
-				
 				// Check the type of message
 				if (isHandShakeMessage(firstFour)) {
 					byte[] temp = new byte[14];
 					byte[] header;
-					in.read(temp, 4, 14);
+					in.read(temp, 4, 14);  // read next 14
 					header = getHeader(firstFour, temp);
 					String headerString = new String(header);
 					if (headerString.equalsIgnoreCase(Message.HEADER)) {
@@ -56,6 +54,7 @@ public class ServerWorker extends Thread {
 						response = new HandshakeMessage(peerId);
 						// process handshake message.
 						// Need to store socket information in the map
+						Peer.getInstance().updateClientSocket(peerId, clientSocket);
 					}
 				} else {// Determine the message type and construct it
 					int len = new BigInt(firstFour).toInt();  // get the length of message
