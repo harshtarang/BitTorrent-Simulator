@@ -19,7 +19,7 @@ import edu.ufl.cise.protocol.Piece;
 import edu.ufl.cise.protocol.Request;
 import edu.ufl.cise.protocol.Unchoke;
 
-public class ServerWorker extends Thread {
+public class ServerWorker implements Runnable {
 	private Socket clientSocket = null;
 	private OutputStream out;
 	private InputStream in;

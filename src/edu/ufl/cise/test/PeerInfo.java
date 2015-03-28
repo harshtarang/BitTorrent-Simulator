@@ -45,23 +45,27 @@ public class PeerInfo {
 	}
 	
 	public void updateFirstMessageSent(int peerId){
+		//System.out.println("Updating first message sent");
 		State state = map.get(peerId);
 		state.setFirstMessageSent(true);
 	}
 
 	public void updateFirstMessageReceived(int peerId){
+		//System.out.println("Updating first message received");
 		State state = map.get(peerId);
 		state.setFirstMessageReceived(true);
 	}
 
 	public void updateSecondMessageReceived(int peerId){
+		//System.out.println("Updating second message received");
 		State state = map.get(peerId);
 		state.setSecondMessageReceived(true);
 	}
 
 	public void updateSecondMessageSent(int peerId){
+		//System.out.println("Updating second message sent");
 		State state = map.get(peerId);
-		state.setFirstMessageSent(true);
+		state.setSecondMessageSent(true);
 	}
 	
 	

@@ -20,25 +20,39 @@ public class Protocol implements Runnable {
 		if (isNumeric(message)) {
 			if (!PeerInfo.getInstance().getMap().get(peerId)
 					.isFirstMessageSent()) {
+				System.out.println("Condition1");
 				// means start. Send first message
 				PeerInfo.getInstance().updateFirstMessageReceived(peerId);
+				PeerInfo.getInstance().updateFirstMessageSent(peerId);
+				
 				SendMessage message = new SendMessage(peerId, "" + currPeerId);
 				System.out.println("Sending message : " + currPeerId + " to: "
 						+ peerId);
 				ExecutorPool.getInstance().getPool().execute(message);
-				PeerInfo.getInstance().updateFirstMessageSent(peerId);
 			} else {
+				System.out.println("Condition2");
 				// Send second message
 				System.out.println("Sending message : firstMessage from: " + currPeerId + " to: "
 						+ peerId);
 
+				PeerInfo.getInstance().updateSecondMessageSent(peerId);
 				SendMessage message = new SendMessage(peerId, "firstMessage");
 				ExecutorPool.getInstance().getPool().execute(message);
-				PeerInfo.getInstance().updateSecondMessageSent(peerId);
 			}
-		}else{
+		}else if(!PeerInfo.getInstance().getMap().get(peerId).isSecondMessageSent()){
+			// Send second message
+			System.out.println("Condition3");
+			System.out.println("Sending message : firstMessage from: " + currPeerId + " to: "
+					+ peerId);
+
+			PeerInfo.getInstance().updateSecondMessageSent(peerId);
+			SendMessage message = new SendMessage(peerId, "firstMessage");
+			ExecutorPool.getInstance().getPool().execute(message);
+		}else {
+			System.out.println("Condition4");
 			PeerInfo.getInstance().updateSecondMessageReceived(peerId);
 			System.out.println("Nothing to do: " + currPeerId);
+
 		}
 	}
 

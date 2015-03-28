@@ -3,16 +3,21 @@ package edu.ufl.cise.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-public class Server {
+public class Server implements Runnable{
 
 	public static boolean LISTENING = true;
-
+	int portNumber;
+	
 	public static void main(String[] args) throws IOException {
-		Server server = new Server();
-		server.init(9090);
+		Server server = new Server(9090);
+		server.init();
+	}
+	
+	public Server(int portNumber){
+		this.portNumber = portNumber;
 	}
 
-	public int init(int portNumber) throws IOException {
+	public int init() throws IOException {
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(portNumber);
@@ -25,10 +30,18 @@ public class Server {
 			System.out.println("*** Listen for a Client; at:" + portNumber
 					+ " ***");
 			serverWorker = new ServerWorker(serverSocket.accept());
-			serverWorker.start(); 
+			new Thread(serverWorker).start(); 
 		}
 		serverSocket.close();
 		return 0;
+	}
+
+	public void run() {
+		try {
+			init();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }  

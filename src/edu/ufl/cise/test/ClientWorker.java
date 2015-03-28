@@ -19,15 +19,18 @@ public class ClientWorker implements Runnable {
 			IOException {
 		this.peerId = peerId;
 		this.currPeerId = PeerInfo.getInstance().getPeerId();
+		this.port = port;
+		
 		System.out.println("Peer: " + currPeerId +" connecting on port: " + port);
 		socket = new Socket("localhost", port);
 		System.out.println(socket.isConnected());
 
 		PeerInfo.getInstance().updateSocket(peerId, socket);
 		System.out.println("Sending message : " + currPeerId + " to: " + peerId);
+		PeerInfo.getInstance().updateFirstMessageSent(peerId);
+
 		SendMessage message = new SendMessage(peerId, ""+currPeerId);
 		ExecutorPool.getInstance().getPool().execute(message);
-		PeerInfo.getInstance().updateFirstMessageSent(peerId);
 	}
 
 	public void run() {
@@ -36,8 +39,7 @@ public class ClientWorker implements Runnable {
 			in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
 			String input;
-			while (true) {
-				input = in.readLine();
+			while ((input = in.readLine()) != null) {
 				processInput(input);
 			}
 
@@ -58,14 +60,14 @@ public class ClientWorker implements Runnable {
 	}
 
 	private void processInput(String input) {
-		System.out.println("processinput");
+		//System.out.println("processinput");
 		System.out.println("Received message on " + currPeerId + ":" + input);
 		if (isNumeric(input)) {
 			int peerIdReceived = Integer.parseInt(input);
-			if (peerIdReceived == peerId) {
+			/*if (peerIdReceived == peerId) {
 				System.out.println("Received back response for: " + currPeerId
 						+ " from: " + peerId);
-			}
+			}*/
 		}
 		Protocol protocol = new Protocol(currPeerId, peerId, input);
 		ExecutorPool.getInstance().getPool().execute(protocol);

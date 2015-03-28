@@ -6,15 +6,22 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import edu.ufl.cise.config.PeerInfo;
-import edu.ufl.cise.protocol.HandshakeMessage;
 import edu.ufl.cise.server.Server;
 
 public class Peer {
 
-	public static volatile Peer instance;
-	int peerId;
-	int portNumber;
-	LinkedHashMap<String, PeerInfo> map;
+	private static volatile Peer instance;
+	private int peerId;
+	private int portNumber;
+	private LinkedHashMap<String, PeerInfo> map;
+
+	public int getPortNumber() {
+		return portNumber;
+	}
+
+	public void setPortNumber(int portNumber) {
+		this.portNumber = portNumber;
+	}
 
 	public static Peer getInstance() {
 		if (instance == null) {
@@ -57,8 +64,8 @@ public class Peer {
 	}
 
 	public void Serverinit() throws IOException {
-		Server server = new Server();
-		server.init(portNumber);
+		Server server = new Server(portNumber);
+		new Thread(server).start();;
 	}
 
 	/**
@@ -79,7 +86,7 @@ public class Peer {
 				int port = peerInfo.getPort();
 				//Client.init(peerId1, hostName, port);
 				ClientWorker worker = new ClientWorker(peerId1, port, hostName);
-				worker.run();
+				new Thread(worker).start();
 			}
 		}
 	}

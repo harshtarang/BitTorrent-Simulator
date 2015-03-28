@@ -25,10 +25,8 @@ public class ServerWorker implements Runnable {
 			// out = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(
 					clientSocket.getInputStream()));
-			String input = new String();
-			while (true) {
-				System.out.println("Waiting for some input");
-				input = in.readLine();
+			String input;
+			while ((input = in.readLine()) != null) {
 				// Pass the input to be processed by the protocol.
 				processInput(input);
 			}

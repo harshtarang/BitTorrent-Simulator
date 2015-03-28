@@ -1,8 +1,10 @@
-package edu.ufl.cise.test;
+package edu.ufl.cise.protocol;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import edu.ufl.cise.client.Peer;
 
 public class SendMessage implements Runnable{
 
@@ -16,12 +18,11 @@ public class SendMessage implements Runnable{
 	
 	public void run() {
 		PrintWriter out;
-		Socket socket = PeerInfo.getInstance().getMap().get(peerId).getSocket();
+		Socket socket = Peer.getInstance().getMap().get(peerId).getSocket();
 		try {
-			//System.out.println("Sending message: " + message);
+			System.out.println("Sending message: " + message);
 			 out = new PrintWriter(socket.getOutputStream(), true);
 			 out.println(message );
-			 out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
