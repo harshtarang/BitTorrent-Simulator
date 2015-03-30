@@ -8,6 +8,15 @@ public class MetaInfo {
 	private static String fileName;
 	private static int fileSize;
     private static int pieceSize;
+    private static int nPieces;
+    
+	public static int getnPieces() {
+		return nPieces;
+	}
+
+	public static void setnPieces(int nPieces) {
+		MetaInfo.nPieces = nPieces;
+	}
 
 	public MetaInfo(){}
 	

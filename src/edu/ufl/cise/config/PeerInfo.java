@@ -21,6 +21,7 @@ public class PeerInfo {
 	float downloadSpeed;
 	Socket socket;
 	BitSet pieceInfo;
+	BitSet piecesInterested;
 	
 	public PeerInfo(){}
 	
@@ -32,6 +33,14 @@ public class PeerInfo {
 		this.hostname = hostname;
 		this.port = port;
 		this.isCompleteFile = isCompleteFile;
+		int nPieces = MetaInfo.getnPieces();
+		pieceInfo = new BitSet(nPieces);
+		piecesInterested = new BitSet(nPieces);
+		
+		// if complete file set all the bits to true
+		if(isCompleteFile){
+			pieceInfo.set(0, pieceInfo.length());
+		}
 	}
 	
 	public boolean isHandShakeSent() {

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import sun.security.util.BigInt;
 import edu.ufl.cise.protocol.BitField;
@@ -36,28 +36,56 @@ public class ClientWorker implements Runnable {
 
 	public void run() {
 		try {
-			clientSocket = new Socket(hostName, port);
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
-			// Create a handshake message. 
-			HandshakeMessage message = new HandshakeMessage(peerID);
-			
-			// Add to the executor pool.
-
-		
-		
-		} catch (UnknownHostException e) {
-			System.out.println("Unknown host: hostName");
-			System.exit(1);
+			// byte[] buffer = new byte[1024];
+			byte[] firstFour = new byte[4];
+			while (true) {
+				// Determine message type and create a message
+				Message response = null;
+				in.read(firstFour, 0, 4);
+				// Check the type of message
+				if (isHandShakeMessage(firstFour)) {
+					byte[] temp = new byte[14];
+					byte[] header;
+					in.read(temp, 4, 14);  // read next 14
+					header = getHeader(firstFour, temp);
+					String headerString = new String(header);
+					if (headerString.equalsIgnoreCase(Message.HEADER)) {
+						temp = new byte[10];
+						in.read(temp, 18, 10);  // read the next 10 bytes which should be zero so ignore them
+						byte[] peer = new byte[4];
+						in.read(peer, 28, 4);   // read the next 4 which is peerId
+						int peerId = new BigInteger(peer).intValue();
+						response = new HandshakeMessage(peerId);
+						// process handshake message.
+						// Need to store socket information in the map
+						Peer.getInstance().updateClientSocket(peerId, clientSocket);
+					}
+				} else {// Determine the message type and construct it
+					int len = new BigInteger(firstFour).intValue();  // get the length of message
+					byte[] temp = new byte[len];
+					in.read(temp, 4, len);
+					response = returnMessageType(len, temp);
+				}
+				// Create a BitTorrent protocol job and pass it to executor service.
+			}
 		} catch (IOException e) {
-			System.out.println("No I/O");
-			System.exit(1);
+			// Add a log statement
+			e.printStackTrace();
+		} finally {
+			try {
+				if (out != null)
+					out.close();
+				if (in != null)
+					in.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+
 		}
-
-		System.out.println("Type Message (\"Bye.\" to quit)");
-
 	}
-	
+
 	private byte[] getHeader(byte[] firstFour, byte[] temp) {
 		byte[] header = new byte[18];
 		for(int i=0; i<4; i++){
@@ -150,6 +178,7 @@ public class ClientWorker implements Runnable {
 		return true;
 	}
 
+	
 	
 	
 }
