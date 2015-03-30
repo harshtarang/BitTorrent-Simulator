@@ -2,6 +2,7 @@ package edu.ufl.cise.client;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -14,6 +15,7 @@ public class Peer {
 	private int peerId;
 	private int portNumber;
 	private LinkedHashMap<String, PeerInfo> map;
+	private HashMap<Integer, Integer> piecesCurrentlyDownloading;  // Maps pieces to the peer Id
 
 	public int getPortNumber() {
 		return portNumber;

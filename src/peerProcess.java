@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import edu.ufl.cise.client.OptimisticUnchokeTask;
 import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.client.ScheduleNeighborTimerTask;
+import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
 import edu.ufl.cise.util.CommonConfigReader;
 import edu.ufl.cise.util.PeerConfigReader;
@@ -32,6 +33,11 @@ public class peerProcess {
 		
 		// Reads the Common Config file
 		CommonConfigReader.configReader(COMMON_CONFIG, base_path);
+		// Sets the number of pieces
+		int fileSize = MetaInfo.getFileSize();
+		int pieceSize = MetaInfo.getPieceSize();
+		int nPieces = fileSize/pieceSize + 1;
+		MetaInfo.setnPieces(nPieces);
 		
 		// Reads the peerConfig file
 		LinkedHashMap<String, PeerInfo> peerMap; 

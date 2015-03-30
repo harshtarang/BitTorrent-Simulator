@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.Socket;
 
 import sun.security.util.BigInt;
@@ -50,14 +51,14 @@ public class ServerWorker implements Runnable {
 						in.read(temp, 18, 10);  // read the next 10 bytes which should be zero so ignore them
 						byte[] peer = new byte[4];
 						in.read(peer, 28, 4);   // read the next 4 which is peerId
-						int peerId = new BigInt(peer).toInt();
+						int peerId = new BigInteger(peer).intValue();
 						response = new HandshakeMessage(peerId);
 						// process handshake message.
 						// Need to store socket information in the map
 						Peer.getInstance().updateClientSocket(peerId, clientSocket);
 					}
 				} else {// Determine the message type and construct it
-					int len = new BigInt(firstFour).toInt();  // get the length of message
+					int len = new BigInteger(firstFour).intValue();  // get the length of message
 					byte[] temp = new byte[len];
 					in.read(temp, 4, len);
 					response = returnMessageType(len, temp);
@@ -139,7 +140,7 @@ public class ServerWorker implements Runnable {
 		} else if (messageType == Message.MessageType.PIECE.getValue()) {
 			byte[] pieceIndex = new byte[4];
 			pieceIndex = getPieceIndex(pos, input);
-			int index = new BigInt(pieceIndex).toInt();
+			int index = new BigInteger(pieceIndex).intValue();
 			len--;
 			pos += 4;
 			byte[] piece = getBitArray(input, pos, len);
