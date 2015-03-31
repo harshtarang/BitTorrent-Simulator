@@ -15,7 +15,14 @@ public class Peer {
 	private int peerId;
 	private int portNumber;
 	private LinkedHashMap<String, PeerInfo> map;
+	int currentOptimisticUnchoked;
+	int numPeers;
+	int numPeersCompleted;
 	private HashMap<Integer, Integer> piecesCurrentlyDownloading;  // Maps pieces to the peer Id
+	private HashMap<Integer, Boolean> currentlyInterested;   // Peers currently interested in me. true if interested
+	private HashMap<Integer, Boolean> unchokedMap;  // Peers who has currently unchoked me. true if unchoked
+	private HashMap<Integer, Boolean> interestedSent; // Peers to whom interested is sent. true if interested sent
+	private HashMap<Integer, Boolean> preferredNeighbors; // Current preferred neighbors
 
 	public int getPortNumber() {
 		return portNumber;
@@ -91,6 +98,71 @@ public class Peer {
 				new Thread(worker).start();
 			}
 		}
+	}
+
+	public int getCurrentOptimisticUnchoked() {
+		return currentOptimisticUnchoked;
+	}
+
+	public void setCurrentOptimisticUnchoked(int currentOptimisticUnchoked) {
+		this.currentOptimisticUnchoked = currentOptimisticUnchoked;
+	}
+
+	public int getNumPeers() {
+		return numPeers;
+	}
+
+	public void setNumPeers(int numPeers) {
+		this.numPeers = numPeers;
+	}
+
+	public int getNumPeersCompleted() {
+		return numPeersCompleted;
+	}
+
+	public void setNumPeersCompleted(int numPeersCompleted) {
+		this.numPeersCompleted = numPeersCompleted;
+	}
+
+	public HashMap<Integer, Integer> getPiecesCurrentlyDownloading() {
+		return piecesCurrentlyDownloading;
+	}
+
+	public void setPiecesCurrentlyDownloading(
+			HashMap<Integer, Integer> piecesCurrentlyDownloading) {
+		this.piecesCurrentlyDownloading = piecesCurrentlyDownloading;
+	}
+
+	public HashMap<Integer, Boolean> getCurrentlyInterested() {
+		return currentlyInterested;
+	}
+
+	public void setCurrentlyInterested(HashMap<Integer, Boolean> currentlyInterested) {
+		this.currentlyInterested = currentlyInterested;
+	}
+
+	public HashMap<Integer, Boolean> getUnchokedMap() {
+		return unchokedMap;
+	}
+
+	public void setUnchokedMap(HashMap<Integer, Boolean> unchokedMap) {
+		this.unchokedMap = unchokedMap;
+	}
+
+	public HashMap<Integer, Boolean> getInterestedSent() {
+		return interestedSent;
+	}
+
+	public void setInterestedSent(HashMap<Integer, Boolean> interestedSent) {
+		this.interestedSent = interestedSent;
+	}
+
+	public HashMap<Integer, Boolean> getPreferredNeighbors() {
+		return preferredNeighbors;
+	}
+
+	public void setPreferredNeighbors(HashMap<Integer, Boolean> preferredNeighbors) {
+		this.preferredNeighbors = preferredNeighbors;
 	}
 
 }

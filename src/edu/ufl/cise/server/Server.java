@@ -2,6 +2,7 @@ package edu.ufl.cise.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server implements Runnable{
 
@@ -29,7 +30,8 @@ public class Server implements Runnable{
 			ServerWorker serverWorker;
 			System.out.println("*** Listen for a Client; at:" + portNumber
 					+ " ***");
-			serverWorker = new ServerWorker(serverSocket.accept());
+			Socket socket = serverSocket.accept();
+			serverWorker = new ServerWorker(socket);
 			new Thread(serverWorker).start(); 
 		}
 		serverSocket.close();
