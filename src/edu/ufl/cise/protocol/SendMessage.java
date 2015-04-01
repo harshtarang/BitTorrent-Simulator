@@ -9,9 +9,9 @@ import edu.ufl.cise.client.Peer;
 public class SendMessage implements Runnable{
 
 	int peerId;
-	String message;
+	byte[] message;
 	
-	public SendMessage(int peerId, String message){
+	public SendMessage(int peerId, byte[] message){
 		this.peerId = peerId;
 		this.message = message;
 	}

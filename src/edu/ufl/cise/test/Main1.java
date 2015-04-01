@@ -27,6 +27,8 @@ public class Main1 {
 
 		// Start a client on host2 and host3.
 		PeerInfo.getInstance().clientInit();
+		
+		ScheduleNeighborTimerTask.initTimerTast();
 	}
 
 }

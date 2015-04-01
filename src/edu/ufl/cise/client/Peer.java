@@ -14,15 +14,17 @@ public class Peer {
 	private static volatile Peer instance;
 	private int peerId;
 	private int portNumber;
-	private LinkedHashMap<String, PeerInfo> map;
 	int currentOptimisticUnchoked;
 	int numPeers;
 	int numPeersCompleted;
+	private LinkedHashMap<Integer, PeerInfo> map;
 	private HashMap<Integer, Integer> piecesCurrentlyDownloading;  // Maps pieces to the peer Id
 	private HashMap<Integer, Boolean> currentlyInterested;   // Peers currently interested in me. true if interested
 	private HashMap<Integer, Boolean> unchokedMap;  // Peers who has currently unchoked me. true if unchoked
 	private HashMap<Integer, Boolean> interestedSent; // Peers to whom interested is sent. true if interested sent
 	private HashMap<Integer, Boolean> preferredNeighbors; // Current preferred neighbors
+	private HashMap<String, Integer> hostNameToIdMap;  // For checking which peerId this connection request belongs to when
+													   //  a connection request comes.
 
 	public int getPortNumber() {
 		return portNumber;
@@ -45,7 +47,7 @@ public class Peer {
 	private Peer() {
 	}
 
-	public void init(int peerId, LinkedHashMap<String, PeerInfo> peerMap) {
+	public void init(int peerId, LinkedHashMap<Integer, PeerInfo> peerMap) {
 		this.peerId = peerId;
 		this.map = peerMap;
 	}
@@ -58,11 +60,11 @@ public class Peer {
 		this.peerId = peerId;
 	}
 
-	public LinkedHashMap<String, PeerInfo> getMap() {
+	public LinkedHashMap<Integer, PeerInfo> getMap() {
 		return map;
 	}
 
-	public void setMap(LinkedHashMap<String, PeerInfo> map) {
+	public void setMap(LinkedHashMap<Integer, PeerInfo> map) {
 		this.map = map;
 	}
 	
@@ -81,11 +83,10 @@ public class Peer {
 	 * Sends Handshake messages to each peer before it.
 	 */
 	public void clientInit() {
-		Iterator<String> itr = map.keySet().iterator();
+		Iterator<Integer> itr = map.keySet().iterator();
 		while (itr.hasNext()) {
-			String peer = itr.next();
-			PeerInfo peerInfo = map.get(peer);
-			int peerId1 = Integer.parseInt(peer);
+			int peerId1 = itr.next();
+			PeerInfo peerInfo = map.get(peerId1);
 			if (peerId1 > peerId)
 				continue;
 			else if (peerId1 == peerId) {
@@ -163,6 +164,14 @@ public class Peer {
 
 	public void setPreferredNeighbors(HashMap<Integer, Boolean> preferredNeighbors) {
 		this.preferredNeighbors = preferredNeighbors;
+	}
+
+	public HashMap<String, Integer> getHostNameToIdMap() {
+		return hostNameToIdMap;
+	}
+
+	public void setHostNameToIdMap(HashMap<String, Integer> hostNameToIdMap) {
+		this.hostNameToIdMap = hostNameToIdMap;
 	}
 
 }

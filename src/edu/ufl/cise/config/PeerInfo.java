@@ -5,7 +5,7 @@ import java.util.BitSet;
 
 public class PeerInfo {
 
-	String peerId;
+	Integer peerId;
 	String hostname;
 	int port;
 	boolean isCompleteFile;
@@ -25,7 +25,7 @@ public class PeerInfo {
 	
 	public PeerInfo(){}
 	
-	public PeerInfo( String peerId,
+	public PeerInfo( Integer peerId,
 			String hostname,
 			int port,
 			boolean isCompleteFile){
@@ -139,11 +139,11 @@ public class PeerInfo {
 		this.socket = socket;
 	}
 
-	public String getPeerId() {
+	public Integer getPeerId() {
 		return peerId;
 	}
 
-	public void setPeerId(String peerId) {
+	public void setPeerId(Integer peerId) {
 		this.peerId = peerId;
 	}
 	

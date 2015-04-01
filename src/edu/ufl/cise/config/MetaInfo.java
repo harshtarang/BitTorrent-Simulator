@@ -1,5 +1,7 @@
 package edu.ufl.cise.config;
 
+import java.util.ArrayList;
+
 public class MetaInfo {
 
 	private static int numPreferredNeighbours;
@@ -9,6 +11,9 @@ public class MetaInfo {
 	private static int fileSize;
     private static int pieceSize;
     private static int nPieces;
+    private static boolean isCompletefile;
+    private static int numPeers;
+    private static ArrayList<Integer> peerList;
     
 	public static int getnPieces() {
 		return nPieces;
@@ -55,6 +60,30 @@ public class MetaInfo {
 	}
 	public static void setPieceSize(int size) {
 		pieceSize = size;
+	}
+
+	public static boolean isCompletefile() {
+		return isCompletefile;
+	}
+
+	public static void setCompletefile(boolean isCompletefile) {
+		MetaInfo.isCompletefile = isCompletefile;
+	}
+
+	public static int getNumPeers() {
+		return numPeers;
+	}
+
+	public static void setNumPeers(int numPeers) {
+		MetaInfo.numPeers = numPeers;
+	}
+
+	public static ArrayList<Integer> getPeerList() {
+		return peerList;
+	}
+
+	public static void setPeerList(ArrayList<Integer> peerList) {
+		MetaInfo.peerList = peerList;
 	}
 	
 }

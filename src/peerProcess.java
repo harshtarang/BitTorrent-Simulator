@@ -31,6 +31,9 @@ public class peerProcess {
 	public static void init(String peerId) throws IOException{
 		// Get the base project path
 		
+		// Initializes peer directory.
+		createDirectory();
+		
 		// Reads the Common Config file
 		CommonConfigReader.configReader(COMMON_CONFIG, base_path);
 		// Sets the number of pieces
@@ -40,15 +43,16 @@ public class peerProcess {
 		MetaInfo.setnPieces(nPieces);
 		
 		// Reads the peerConfig file
-		LinkedHashMap<String, PeerInfo> peerMap; 
+		LinkedHashMap<Integer, PeerInfo> peerMap; 
 		peerMap = PeerConfigReader.configReader(PEER_CONFIG, base_path);
-		
-		// Initializes peer directory.
-		createDirectory();
 		
 		// Initializes PeerClient
 		int peerIdInt = Integer.parseInt(peerId);
 		Peer.getInstance().init(peerIdInt, peerMap);
+		
+		// Set isCompleteFlag
+		boolean isCompleteFile = Peer.getInstance().getMap().get(peerId).isCompleteFile();
+		MetaInfo.setCompletefile(isCompleteFile);
 		
 		// Starts PeerServer
 		Peer.getInstance().Serverinit();

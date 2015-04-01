@@ -26,4 +26,12 @@ public class ExecutorPool {
             e.printStackTrace();
         }
     }
+
+	public ExecutorService getPool() {
+		return pool;
+	}
+
+	public void setPool(ExecutorService pool) {
+		this.pool = pool;
+	}
 }
