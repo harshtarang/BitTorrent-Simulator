@@ -4,7 +4,8 @@ import java.math.BigInteger;
 
 public class Have extends Message {
 	private int pieceIndex;
-
+	private int mType = Message.MessageType.HAVE.getValue();
+	
 	public int getPieceIndex() {
 		return pieceIndex;
 	}
@@ -28,7 +29,7 @@ public class Have extends Message {
 		byte[] type = new byte[5];
 		byte[] pieceIndexBytes = new byte[4];
 		len  = intToByteArray(1);
-		type = intToByteArray(Message.MessageType.HAVE.getValue());
+		type = intToByteArray(mType);
 		for(int i=0; i<4; i++){
 			out[i] = len[i];
 		}

@@ -4,6 +4,7 @@ public class Piece extends Message {
 	
 	int index;
 	byte[] piece;
+	int mType = Message.MessageType.PIECE.getValue();
 	
 	public Piece() {}
 
@@ -35,7 +36,7 @@ public class Piece extends Message {
 		byte[] lengthBytes  = intToByteArray(bitFieldlen + 5);
 		byte[] indexBytes  = intToByteArray(index);
 		
-		type = intToByteArray(Message.MessageType.PIECE.getValue());
+		type = intToByteArray(mType);
 
 		for(int i=0; i<4; i++){
 			out[i] = lengthBytes[i];
