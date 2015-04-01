@@ -3,7 +3,8 @@ package edu.ufl.cise.protocol;
 public class BitField extends Message {
 
 	byte[] bitField;
-	int mType = Message.MessageType.BITFIELD.getValue();
+	MessageType mType = Message.MessageType.BITFIELD;
+//	private final int  mType = 5;
 	
 	public BitField(byte[] bitArray) {
 		bitField = bitArray;
@@ -13,7 +14,7 @@ public class BitField extends Message {
 		int bitFieldlen = bitField.length;
 		byte[] out = new byte[bitFieldlen +5];
 		byte[] type = new byte[1];
-		type = intToByteArray(mType);
+		type = intToByteArray(mType.value);
 
 		byte[] lengthBytes  = intToByteArray(bitFieldlen + 5);
 		for(int i=0; i<4; i++){

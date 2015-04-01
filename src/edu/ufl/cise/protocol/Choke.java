@@ -2,7 +2,8 @@ package edu.ufl.cise.protocol;
 
 public class Choke extends Message {
 
-	int mType = Message.MessageType.CHOKE.getValue();
+	MessageType type = Message.MessageType.CHOKE;
+	private final int  mType = 0;
 	
 	public Choke() {}
 

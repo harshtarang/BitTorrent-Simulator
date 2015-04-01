@@ -12,8 +12,6 @@ import edu.ufl.cise.config.MetaInfo;
 
 public class FileHandlingUtils {
 
-	private static FileHandlingUtils instance;
-
 	public void writePiece(int pieceId, byte[] piece) {
 		String fileName = MetaInfo.getBasePath() + "piece_" + pieceId;
 		OutputStream out = null;

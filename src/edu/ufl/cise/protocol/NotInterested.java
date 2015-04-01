@@ -2,7 +2,8 @@ package edu.ufl.cise.protocol;
 
 public class NotInterested extends Message {
 
-	int mType = Message.MessageType.NOT_INTERESTED.getValue();
+	MessageType mType = Message.MessageType.NOT_INTERESTED;
+//	private final int  mType = 3;
 	
 	public NotInterested() {
 	}
@@ -12,7 +13,7 @@ public class NotInterested extends Message {
 		byte[] len = new byte[4];
 		byte[] type = new byte[1];
 		len = intToByteArray(1);
-		type = intToByteArray(mType);
+		type = intToByteArray(mType.value);
 		for (int i = 0; i < 4; i++) {
 			out[i] = len[i];
 		}

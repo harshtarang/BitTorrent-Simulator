@@ -51,7 +51,7 @@ public class ClientWorker implements Runnable {
 					in.read(temp, 4, 14);  // read next 14
 					header = getHeader(firstFour, temp);
 					String headerString = new String(header);
-					if (headerString.equalsIgnoreCase(Message.HEADER)) {
+					if (headerString.equalsIgnoreCase(HandshakeMessage.HEADER)) {
 						temp = new byte[10];
 						in.read(temp, 18, 10);  // read the next 10 bytes which should be zero so ignore them
 						byte[] peer = new byte[4];
@@ -122,27 +122,27 @@ public class ClientWorker implements Runnable {
 		int pos = 1;
 
 		Message response = null;
-		if (messageType == Message.MessageType.CHOKE.getValue()) {
+		if (messageType == Message.MessageType.CHOKE.value) {
 			response = new Choke();
-		} else if (messageType == Message.MessageType.UNCHOKE.getValue()) {
+		} else if (messageType == Message.MessageType.UNCHOKE.value) {
 			response = new Unchoke();
-		} else if (messageType == Message.MessageType.INTERESTED.getValue()) {
+		} else if (messageType == Message.MessageType.INTERESTED.value) {
 			response = new Interested();
-		} else if (messageType == Message.MessageType.NOT_INTERESTED.getValue()) {
+		} else if (messageType == Message.MessageType.NOT_INTERESTED.value) {
 			response = new NotInterested();
-		} else if (messageType == Message.MessageType.HAVE.getValue()) {
+		} else if (messageType == Message.MessageType.HAVE.value) {
 			byte[] pieceIndex = new byte[4];
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Have(pieceIndex);
-		} else if (messageType == Message.MessageType.BITFIELD.getValue()) {
+		} else if (messageType == Message.MessageType.BITFIELD.value) {
 			byte[] bitArray = new byte[len-1];
 			bitArray = getBitArray(input, pos, len-1);
 			response = new BitField(bitArray);
-		} else if (messageType == Message.MessageType.REQUEST.getValue()) {
+		} else if (messageType == Message.MessageType.REQUEST.value) {
 			byte[] pieceIndex = new byte[4];
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Request(pieceIndex);
-		} else if (messageType == Message.MessageType.PIECE.getValue()) {
+		} else if (messageType == Message.MessageType.PIECE.value) {
 			byte[] pieceIndex = new byte[4];
 			pieceIndex = getPieceIndex(pos, input);
 			int index = new BigInt(pieceIndex).toInt();

@@ -2,7 +2,8 @@ package edu.ufl.cise.protocol;
 
 public class Unchoke extends Message {
 
-	int mType = Message.MessageType.UNCHOKE.getValue();
+	MessageType mType = Message.MessageType.UNCHOKE;
+//	private final int  mType = 1;
 	
 	public Unchoke(){}
 	
@@ -11,7 +12,7 @@ public class Unchoke extends Message {
 		byte[] len = new byte[4];
 		byte[] type = new byte[1];
 		len  = intToByteArray(1);
-		type = intToByteArray(mType);
+		type = intToByteArray(mType.value);
 		for(int i=0; i<4; i++){
 			out[i] = len[i];
 		}

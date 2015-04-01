@@ -3,8 +3,9 @@ package edu.ufl.cise.protocol;
 import java.math.BigInteger;
 
 public class Have extends Message {
+	MessageType mType = Message.MessageType.HAVE;
 	private int pieceIndex;
-	private int mType = Message.MessageType.HAVE.getValue();
+//	private final int  mType = 4;
 	
 	public int getPieceIndex() {
 		return pieceIndex;
@@ -29,7 +30,7 @@ public class Have extends Message {
 		byte[] type = new byte[5];
 		byte[] pieceIndexBytes = new byte[4];
 		len  = intToByteArray(1);
-		type = intToByteArray(mType);
+		type = intToByteArray(mType.value);
 		for(int i=0; i<4; i++){
 			out[i] = len[i];
 		}

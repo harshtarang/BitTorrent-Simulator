@@ -5,7 +5,8 @@ import java.math.BigInteger;
 public class Request extends Message {
 
 	int pieceIndex;
-	int mType = Message.MessageType.REQUEST.getValue();
+	MessageType mType = Message.MessageType.REQUEST;
+//	private final int  mType = 6;
 
 	public Request() {
 	}
@@ -33,7 +34,7 @@ public class Request extends Message {
 		byte[] type = new byte[5];
 		byte[] pieceIndexBytes = new byte[4];
 		len = intToByteArray(1);
-		type = intToByteArray(mType);
+		type = intToByteArray(mType.value);
 		for (int i = 0; i < 4; i++) {
 			out[i] = len[i];
 		}

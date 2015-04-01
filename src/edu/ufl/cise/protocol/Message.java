@@ -1,27 +1,28 @@
 package edu.ufl.cise.protocol;
 
 public abstract class Message {
-	
-	public static final String HEADER = "P2PFILESHARINGPROJ";
-	
+
+//	Type type;
+	MessageType mType;
+
+//	public enum Type {
+//		CHOKE, UNCHOKE, INTERESTED, NOT_INTERESTED, HAVE, BITFIELD, REQUEST, PIECE
+//	}
+
 	public enum MessageType {
 		CHOKE(0),
 		UNCHOKE(1),
-		INTERESTED(2), 
+		INTERESTED(2),
 		NOT_INTERESTED(3),
 		HAVE(4),
 		BITFIELD(5),
 		REQUEST(6),
 		PIECE(7);
 		
-		private int val;
+		public int value;
 		
-		private MessageType(int val){
-			this.val = val;
-		}
-		
-		public int getValue(){
-			return this.val;
+		MessageType(int val){
+			this.value = val;
 		}
 	}
 	
@@ -43,7 +44,4 @@ public abstract class Message {
 		return ret;
 	}
 
-	
-	
-		
 }
