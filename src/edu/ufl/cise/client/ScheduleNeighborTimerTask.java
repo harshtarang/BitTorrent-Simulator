@@ -55,13 +55,12 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 			if(currentlyInterested.get(peerId)) peerList.add(peerId);
 		}
 		int currentInterestedSize = currentlyInterested.size();
-		int n = MetaInfo.getNumPeers();
 		Random random = new Random();
 		int count = 0;
 		HashMap<Integer, Boolean> newlySelectedNeighbor = new HashMap<Integer, Boolean>();
 		if (currentInterestedSize > k) {
 			while (count < k) {
-				Integer randNum = random.nextInt(n);
+				Integer randNum = random.nextInt(k);
 				int peerId = peerList.get(randNum);
 				if (!newlySelectedNeighbor.containsKey(peerId)) {
 					newlySelectedNeighbor.put(peerId, true);
