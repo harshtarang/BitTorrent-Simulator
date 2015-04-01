@@ -14,6 +14,8 @@ public class MetaInfo {
     private static boolean isCompletefile;
     private static int numPeers;
     private static ArrayList<Integer> peerList;
+    private static String basePath;
+    private static int lastPieceSize;
     
 	public static int getnPieces() {
 		return nPieces;
@@ -84,6 +86,22 @@ public class MetaInfo {
 
 	public static void setPeerList(ArrayList<Integer> peerList) {
 		MetaInfo.peerList = peerList;
+	}
+
+	public static String getBasePath() {
+		return basePath;
+	}
+
+	public static void setBasePath(String basePath) {
+		MetaInfo.basePath = basePath;
+	}
+
+	public static int getLastPieceSize() {
+		return lastPieceSize;
+	}
+
+	public static void setLastPieceSize(int lastPieceSize) {
+		MetaInfo.lastPieceSize = lastPieceSize;
 	}
 	
 }
