@@ -26,6 +26,17 @@ public class Peer {
 	private HashMap<String, Integer> hostNameToIdMap;  // For checking which peerId this connection request belongs to when
 													   //  a connection request comes.
 
+	/**
+	 * Check both unchoked map and OUN field to return if a peer is unchoked
+	 * @param peerId
+	 * @return
+	 */
+	public boolean isUnchoked(int peerId){
+		if(unchokedMap.get(peerId) || (currentOptimisticUnchoked == peerId)) return true;
+		return false;
+	}
+	
+	
 	public int getPortNumber() {
 		return portNumber;
 	}
