@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.Socket;
 
-import sun.security.util.BigInt;
 import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.protocol.BitField;
 import edu.ufl.cise.protocol.Choke;
@@ -27,6 +26,9 @@ public class ServerWorker implements Runnable {
 
 	public ServerWorker(Socket socket) {
 		this.clientSocket = socket;
+		String hostname = clientSocket.getInetAddress().getCanonicalHostName();
+		int peerId = Peer.getInstance().getHostNameToIdMap().get(hostname);
+		Peer.getInstance().getMap().get(peerId).setSocket(socket);
 	}
 
 	public void run() {

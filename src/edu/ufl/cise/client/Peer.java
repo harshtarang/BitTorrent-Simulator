@@ -2,6 +2,7 @@ package edu.ufl.cise.client;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -17,6 +18,7 @@ public class Peer {
 	int currentOptimisticUnchoked;
 	int numPeers;
 	int numPeersCompleted;
+	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
 	private HashMap<Integer, Integer> piecesCurrentlyDownloading;  // Maps pieces to the peer Id
 	private HashMap<Integer, Boolean> currentlyInterested;   // Peers currently interested in me. true if interested
@@ -26,6 +28,11 @@ public class Peer {
 	private HashMap<String, Integer> hostNameToIdMap;  // For checking which peerId this connection request belongs to when
 													   //  a connection request comes.
 
+	public void updatePeerBitset(int peerId, int pieceId){
+		PeerInfo info = map.get(peerId);
+		info.getPieceInfo().set(pieceId);
+	}
+	
 	/**
 	 * Check both unchoked map and OUN field to return if a peer is unchoked
 	 * @param peerId
@@ -183,6 +190,14 @@ public class Peer {
 
 	public void setHostNameToIdMap(HashMap<String, Integer> hostNameToIdMap) {
 		this.hostNameToIdMap = hostNameToIdMap;
+	}
+
+	public BitSet getPieceInfo() {
+		return pieceInfo;
+	}
+
+	public void setPieceInfo(BitSet pieceInfo) {
+		this.pieceInfo = pieceInfo;
 	}
 
 }

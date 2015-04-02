@@ -1,5 +1,8 @@
 package edu.ufl.cise.protocol;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.util.ExecutorPool;
 import edu.ufl.cise.util.FileHandlingUtils;
@@ -53,8 +56,26 @@ public class BitTorrentProtocol implements Runnable {
 	}
 
 	private void handlePiece() {
-		// TODO Auto-generated method stub
+		Piece pieceMessage = (Piece)message;
+		// Update own's bitset
+		int pieceId = pieceMessage.getIndex();
+		Peer.getInstance().getPieceInfo().set(pieceId);
+		// Broadcast Have message
+		HashMap<Integer, Boolean> peers = Peer.getInstance().getCurrentlyInterested();
+		Iterator<Integer> itr = peers.keySet().iterator();
+		while(itr.hasNext()){
+			int peerId1 = itr.next();
+			if(peerId1 != peerId){ // Send a have message
+				Have haveMessage = new Have(pieceId);
+				SendMessage sendMessage = new SendMessage(peerId, haveMessage.getBytes());
+				ExecutorPool.getInstance().getPool().execute(sendMessage);
+			}
+		}
+		// Recompute whether to send I/DI message to some peers.
 		
+		// Update I/DI map
+		
+		// Check whether system needs to shutdown
 	}
 
 	private void handleRequest() {
@@ -74,28 +95,35 @@ public class BitTorrentProtocol implements Runnable {
 	}
 
 	private void handleHave() {
-		// TODO Auto-generated method stub
+		// cast into Have message
+		Have haveMessage = (Have)message;
+		int pieceIndex = haveMessage.getPieceIndex();
+		// Update bit set of corresponding peer
+		Peer.getInstance().updatePeerBitset(peerId, pieceIndex);
+		// Evaluate if system needs to shutdown
 		
+		// if not then evaluate whether to send I/DI message
+		
+		// Update map
 	}
 
 	private void handleNotInterested() {
-		// TODO Auto-generated method stub
-		
+		// Update the Not Interested map
+		Peer.getInstance().getCurrentlyInterested().put(peerId, false);
 	}
 
 	private void handleInterested() {
-		// TODO Auto-generated method stub
-		
+		// Update the interested map
+		Peer.getInstance().getCurrentlyInterested().put(peerId, true);
 	}
 
 	private void handleUnChoke() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	private void handleChoke() {
-		// TODO Auto-generated method stub
-		
+		// Update unchoke map
+		Peer.getInstance().getUnchokedMap().put(peerId, true);
 	}
 
 }
