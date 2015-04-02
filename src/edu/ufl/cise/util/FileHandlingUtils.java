@@ -22,12 +22,12 @@ public class FileHandlingUtils {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}finally{
-			try{
-				if(out != null){
+		} finally {
+			try {
+				if (out != null) {
 					out.close();
 				}
-			}catch(IOException ex){
+			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
 		}
@@ -63,16 +63,54 @@ public class FileHandlingUtils {
 		return piece;
 	}
 
-	public void combinePieces(){
-		
+	public void combinePieces() {
+		FileOutputStream fout = null;
+		FileInputStream fin = null;
+		byte[] bytes = null;
+		int nPieces = MetaInfo.getnPieces();
+		String fileName = MetaInfo.getBasePath() + MetaInfo.getFileName();
+		File file = new File(fileName);
+		try {
+			fout = new FileOutputStream(file);
+			for (int i = 1; i < nPieces; i++) {
+				String pieceName = MetaInfo.getBasePath() + "piece" + i;
+				fin = new FileInputStream(pieceName);
+				bytes = new byte[MetaInfo.getPieceSize()];
+				fin.read(bytes);
+				fout.write(bytes);
+				bytes = null;
+			}
+			// finally write the last piece
+			String pieceName = MetaInfo.getBasePath() + "piece" + nPieces;
+			fin = new FileInputStream(pieceName);
+			bytes = new byte[MetaInfo.getLastPieceSize()];
+			fin.read(bytes);
+			fout.write(bytes);
+			bytes = null;
+			fin.close();
+			fout.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fin != null)
+					fin.close();
+				if (fout != null)
+					fout.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
-	
-	public void finish(){
-		
+
+	public void finish() {
+
 	}
-	
-	public void deletePieces(){
-		
+
+	public void deletePieces() {
+
 	}
-	
+
 }
