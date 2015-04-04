@@ -19,7 +19,7 @@ public class BitTorrentProtocol implements Runnable {
 
 	public void run() {
 		switch (message.mType) {
-		
+
 		case CHOKE:
 			handleChoke();
 			break;
@@ -52,59 +52,65 @@ public class BitTorrentProtocol implements Runnable {
 
 	private void handleBitField() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void handlePiece() {
-		Piece pieceMessage = (Piece)message;
+		Piece pieceMessage = (Piece) message;
 		// Update own's bitset
 		int pieceId = pieceMessage.getIndex();
 		Peer.getInstance().getPieceInfo().set(pieceId);
 		// Broadcast Have message
-		HashMap<Integer, Boolean> peers = Peer.getInstance().getCurrentlyInterested();
+		HashMap<Integer, Boolean> peers = Peer.getInstance()
+				.getCurrentlyInterested();
 		Iterator<Integer> itr = peers.keySet().iterator();
-		while(itr.hasNext()){
+		while (itr.hasNext()) {
 			int peerId1 = itr.next();
-			if(peerId1 != peerId){ // Send a have message
+			if (peerId1 != peerId) { // Send a have message
 				Have haveMessage = new Have(pieceId);
-				SendMessage sendMessage = new SendMessage(peerId, haveMessage.getBytes());
+				SendMessage sendMessage = new SendMessage(peerId,
+						haveMessage.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
 			}
 		}
-		// Recompute whether to send I/DI message to some peers.
-		
-		// Update I/DI map
-		
 		// Check whether system needs to shutdown
+		boolean isShutDown = Peer.getInstance().evaluateSystemShutDown();
+		if (!isShutDown) {
+			// Recompute whether to send I/DI message to some peers and send.
+			Peer.getInstance().determineToSendInterstedMessageToPeers();
+		}
 	}
 
 	private void handleRequest() {
 		// cast into Request message
-		Request requestMessage = (Request)message;
+		Request requestMessage = (Request) message;
 		int pieceId = requestMessage.getPieceIndex();
 		// Check if the peer is unchoked or not
-		if(Peer.getInstance().isUnchoked(peerId)){
+		if (Peer.getInstance().isUnchoked(peerId)) {
 			// Fetch the corresponding piece from hard disk
 			FileHandlingUtils util = new FileHandlingUtils();
 			byte[] piece = util.getPiece(pieceId);
 			// Create a piece message and send it
 			Piece pieceMessage = new Piece(pieceId, piece);
-			SendMessage sendMessage = new SendMessage(peerId, pieceMessage.getBytes());
+			SendMessage sendMessage = new SendMessage(peerId,
+					pieceMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(sendMessage);
 		}
 	}
 
 	private void handleHave() {
 		// cast into Have message
-		Have haveMessage = (Have)message;
+		Have haveMessage = (Have) message;
 		int pieceIndex = haveMessage.getPieceIndex();
 		// Update bit set of corresponding peer
 		Peer.getInstance().updatePeerBitset(peerId, pieceIndex);
 		// Evaluate if system needs to shutdown
-		
+		boolean isShutDown = Peer.getInstance().evaluateSystemShutDown();
 		// if not then evaluate whether to send I/DI message
-		
-		// Update map
+		if (!isShutDown) {
+			// Decide and send I/DI message
+			Peer.getInstance().determineToSendInterestedMessage(peerId);
+		}
 	}
 
 	private void handleNotInterested() {
@@ -118,12 +124,21 @@ public class BitTorrentProtocol implements Runnable {
 	}
 
 	private void handleUnChoke() {
-		
+
 	}
 
 	private void handleChoke() {
 		// Update unchoke map
-		Peer.getInstance().getUnchokedMap().put(peerId, true);
+		Peer.getInstance().getUnchokedMeMap().put(peerId, true);
+		// Select a random piece to request.
+		int pieceId = Peer.getInstance().getRandomPieceToRequest(peerId);
+		if (pieceId != -1) { // if there is such a piece
+			// Send a request message
+			Request requestMessage = new Request(pieceId);
+			SendMessage sendMessage = new SendMessage(peerId,
+					requestMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(sendMessage);
+		}
 	}
 
 }

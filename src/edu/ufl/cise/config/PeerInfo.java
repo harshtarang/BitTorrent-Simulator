@@ -5,10 +5,10 @@ import java.util.BitSet;
 
 public class PeerInfo {
 
-	Integer peerId;
-	String hostname;
-	int port;
-	boolean isCompleteFile;
+	private Integer peerId;
+	private String hostname;
+	private int port;
+	private boolean isCompleteFile;
 	boolean isChoke = false;
 	boolean isChokedBy = false;
 	boolean isOptimisticUnchoked = false;
@@ -19,9 +19,9 @@ public class PeerInfo {
 	boolean isBitFieldReceived = false;
 	boolean isRequestSent = false;
 	float downloadSpeed;
-	Socket socket;
-	BitSet pieceInfo;
-	BitSet piecesInterested;
+	private Socket socket;
+	private BitSet pieceInfo;
+	private BitSet piecesInterested;
 	
 	public PeerInfo(){}
 	
@@ -164,6 +164,14 @@ public class PeerInfo {
 	}
 	public void setCompleteFile(boolean isCompleteFile) {
 		this.isCompleteFile = isCompleteFile;
+	}
+
+	public BitSet getPiecesInterested() {
+		return piecesInterested;
+	}
+
+	public void setPiecesInterested(BitSet piecesInterested) {
+		this.piecesInterested = piecesInterested;
 	}
 	
 }

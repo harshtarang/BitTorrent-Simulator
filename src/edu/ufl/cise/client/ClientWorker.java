@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.Socket;
 
-import sun.security.util.BigInt;
 import edu.ufl.cise.protocol.BitField;
 import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.HandshakeMessage;
@@ -145,7 +144,7 @@ public class ClientWorker implements Runnable {
 		} else if (messageType == Message.MessageType.PIECE.value) {
 			byte[] pieceIndex = new byte[4];
 			pieceIndex = getPieceIndex(pos, input);
-			int index = new BigInt(pieceIndex).toInt();
+			int index = new BigInteger(pieceIndex).intValue();
 			len--;
 			pos += 4;
 			byte[] piece = getBitArray(input, pos, len);
