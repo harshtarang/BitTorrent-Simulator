@@ -1,5 +1,6 @@
 package edu.ufl.cise.protocol;
 
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -51,8 +52,13 @@ public class BitTorrentProtocol implements Runnable {
 	}
 
 	private void handleBitField() {
-		// TODO Auto-generated method stub
-
+		BitField bitField = (BitField) message;
+		// Convert bytes to BitSet
+		BitSet bs = bitField.getBitSet();
+		// Set the pieceInfo and piecesInterested of corresponding peer 
+		Peer.getInstance().updateBitSets(peerId, bs);
+		// Decide and send I/DI message
+		Peer.getInstance().determineToSendInterestedMessage(peerId);
 	}
 
 	private void handlePiece() {
@@ -123,11 +129,12 @@ public class BitTorrentProtocol implements Runnable {
 		Peer.getInstance().getCurrentlyInterested().put(peerId, true);
 	}
 
-	private void handleUnChoke() {
-
+	private void handleChoke() {
+		// Update unchoke map
+		Peer.getInstance().getUnchokedMeMap().put(peerId, true);
 	}
 
-	private void handleChoke() {
+	private void handleUnChoke() {
 		// Update unchoke map
 		Peer.getInstance().getUnchokedMeMap().put(peerId, true);
 		// Select a random piece to request.

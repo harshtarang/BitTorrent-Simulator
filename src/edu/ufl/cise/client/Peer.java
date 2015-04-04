@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
 import edu.ufl.cise.protocol.Interested;
-import edu.ufl.cise.protocol.Message;
 import edu.ufl.cise.protocol.NotInterested;
 import edu.ufl.cise.protocol.SendMessage;
 import edu.ufl.cise.server.Server;
@@ -356,6 +355,18 @@ public class Peer {
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
 			}
 		}
+	}
+
+	public void updateBitSets(int peerId2, BitSet bs) {
+		PeerInfo peerInfo = map.get(peerId);
+		peerInfo.setPieceInfo(bs);
+		BitSet currentPieceInfo = (BitSet) pieceInfo.clone();
+		// Flip the bits to get pieces interested in
+		currentPieceInfo.flip(0, currentPieceInfo.length());
+		// Take and AND with peer's bitset
+		currentPieceInfo.and(bs);
+		// update the map
+		peerInfo.setPiecesInterested(currentPieceInfo);
 	}
 
 }
