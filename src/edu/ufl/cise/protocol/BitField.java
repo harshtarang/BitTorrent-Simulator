@@ -16,10 +16,6 @@ public class BitField extends Message {
 		bitField = bitArray;
 	}
 
-	public BitField() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public byte[] getBytes() {
 		int bitFieldlen = bitField.length;
 		byte[] out = new byte[bitFieldlen + 5];

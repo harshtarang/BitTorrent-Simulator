@@ -376,8 +376,8 @@ public class Peer {
 	}
 
 	public BitField getBitFieldMessage() {
-		
-		return null;
+		BitField message = new BitField(pieceInfo.toByteArray());
+		return message;
 	}
 
 }
