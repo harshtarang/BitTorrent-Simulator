@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.net.Socket;
 
 import edu.ufl.cise.config.MetaInfo;
+import edu.ufl.cise.config.PeerInfo;
 import edu.ufl.cise.protocol.BitField;
 import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.HandshakeMessage;
@@ -19,8 +20,7 @@ import edu.ufl.cise.protocol.Piece;
 import edu.ufl.cise.protocol.Request;
 import edu.ufl.cise.protocol.SendMessage;
 import edu.ufl.cise.protocol.Unchoke;
-import edu.ufl.cise.test.ExecutorPool;
-import edu.ufl.cise.test.PeerInfo;
+import edu.ufl.cise.util.ExecutorPool;
 
 public class ClientWorker implements Runnable {
 
@@ -45,7 +45,7 @@ public class ClientWorker implements Runnable {
 			// connect to the socket
 			clientSocket = new Socket(hostName, port);
 			// update socket info corresponding to the peer
-			PeerInfo.getInstance().updateSocket(peerID, clientSocket);
+			Peer.getInstance().updateSocket(peerID, clientSocket);
 			
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
@@ -54,6 +54,9 @@ public class ClientWorker implements Runnable {
 			HandshakeMessage handShakeMessage = new  HandshakeMessage(currPeerId);
 			SendMessage message = new SendMessage(peerID, handShakeMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
+			
+			// Update the status of handshake sent
+			Peer.getInstance().updateHandshakeSent(peerID);
 
 			// Now just wait for replies from the peer
 			byte[] firstFour = new byte[4];

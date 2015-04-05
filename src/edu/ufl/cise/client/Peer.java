@@ -380,4 +380,14 @@ public class Peer {
 		return message;
 	}
 
+	public void updateSocket(int peerID2, Socket clientSocket) {
+		PeerInfo peerInfo = map.get(peerID2);
+		peerInfo.setSocket(clientSocket);
+	}
+
+	public void updateHandshakeSent(int peerId) {
+		PeerInfo peerInfo = map.get(peerId);
+		peerInfo.setHandShakeSent(true);
+	}
+
 }
