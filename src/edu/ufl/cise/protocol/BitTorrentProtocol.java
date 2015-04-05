@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import edu.ufl.cise.client.Peer;
+import edu.ufl.cise.test.PeerInfo;
 import edu.ufl.cise.util.ExecutorPool;
 import edu.ufl.cise.util.FileHandlingUtils;
 
@@ -46,8 +47,30 @@ public class BitTorrentProtocol implements Runnable {
 			handlePiece();
 			break;
 		default:
-			break;
+			handleHandShakeMessage();
+		}
+	}
 
+	private void handleHandShakeMessage() {
+		HandshakeMessage handShakeMessage  = (HandshakeMessage) message;
+		// Check if handshake message already sent.
+		boolean isHandshakeSent = Peer.getInstance().isHandshakeSent(peerId);
+		if(isHandshakeSent){
+			// Send BITFIELD message
+			BitField bitFieldMessage = Peer.getInstance().getBitFieldMessage();
+			SendMessage message = new SendMessage(peerId, bitFieldMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
+		}
+		else{
+			//Send handshake message 
+			int currPeerId = PeerInfo.getInstance().getPeerId(); // Todo : put peerId in metainfo
+			HandshakeMessage handShakeMessage1 = new  HandshakeMessage(currPeerId);
+			SendMessage message = new SendMessage(peerId, handShakeMessage1.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
+			// Send BITFIELD message
+			BitField bitFieldMessage = Peer.getInstance().getBitFieldMessage();
+			message = new SendMessage(peerId, bitFieldMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
 		}
 	}
 

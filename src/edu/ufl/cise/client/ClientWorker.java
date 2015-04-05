@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.Socket;
 
+import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.protocol.BitField;
 import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.HandshakeMessage;
@@ -16,28 +17,45 @@ import edu.ufl.cise.protocol.Message;
 import edu.ufl.cise.protocol.NotInterested;
 import edu.ufl.cise.protocol.Piece;
 import edu.ufl.cise.protocol.Request;
+import edu.ufl.cise.protocol.SendMessage;
 import edu.ufl.cise.protocol.Unchoke;
+import edu.ufl.cise.test.ExecutorPool;
+import edu.ufl.cise.test.PeerInfo;
 
 public class ClientWorker implements Runnable {
 
 	Socket clientSocket;
 	OutputStream out;
 	InputStream in;
+	int currPeerId;
 	int peerID;
 	int port;
 	String hostName;
 
 	public ClientWorker(int peerId, int port, String hostName) {
+		this.currPeerId = Peer.getInstance().getPeerId();  // toDo : put this in metainfo
 		this.peerID = peerId;
 		this.port = port;
 		this.hostName = hostName;
+		
 	}
 
 	public void run() {
 		try {
+			// connect to the socket
+			clientSocket = new Socket(hostName, port);
+			// update socket info corresponding to the peer
+			PeerInfo.getInstance().updateSocket(peerID, clientSocket);
+			
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
-			// byte[] buffer = new byte[1024];
+
+			// Send Handshake message
+			HandshakeMessage handShakeMessage = new  HandshakeMessage(currPeerId);
+			SendMessage message = new SendMessage(peerID, handShakeMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
+
+			// Now just wait for replies from the peer
 			byte[] firstFour = new byte[4];
 			while (true) {
 				// Determine message type and create a message

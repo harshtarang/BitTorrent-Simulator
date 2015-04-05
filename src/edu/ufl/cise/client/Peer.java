@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
+import edu.ufl.cise.protocol.BitField;
 import edu.ufl.cise.protocol.Interested;
 import edu.ufl.cise.protocol.NotInterested;
 import edu.ufl.cise.protocol.SendMessage;
@@ -367,6 +368,16 @@ public class Peer {
 		currentPieceInfo.and(bs);
 		// update the map
 		peerInfo.setPiecesInterested(currentPieceInfo);
+	}
+
+	public boolean isHandshakeSent(int peerId) {
+		PeerInfo peerInfo  = map.get(peerId);
+		return peerInfo.isHandShakeSent();
+	}
+
+	public BitField getBitFieldMessage() {
+		
+		return null;
 	}
 
 }
