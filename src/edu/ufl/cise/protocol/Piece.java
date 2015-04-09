@@ -31,11 +31,11 @@ public class Piece extends Message {
 	}
 
 	public byte[] getBytes(){
-		int bitFieldlen = piece.length;
-		byte[] out = new byte[bitFieldlen + 9]; // 4 for length + 1 for type + 4 for piece number
+		int pieceLen = piece.length;
+		byte[] out = new byte[pieceLen + 9]; // 4 for length + 1 for type + 4 for piece number
 		byte[] type = new byte[1];
-		byte[] lengthBytes  = intToByteArray(bitFieldlen + 5);
-		byte[] indexBytes  = intToByteArray(index);
+		byte[] lengthBytes  = intToByteArray(pieceLen + 5);
+		byte[] indexBytes  = intToByteArray(index); // piece Index
 		
 		type = intToByteArray(mType.value);
 
@@ -48,7 +48,7 @@ public class Piece extends Message {
 			out[i+5] = indexBytes[i];
 		}
 		
-		for(int i=0; i<bitFieldlen; i++){
+		for(int i=0; i<pieceLen; i++){
 			out[i+9] = piece[i];
 		}
 		

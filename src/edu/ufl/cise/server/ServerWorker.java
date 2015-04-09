@@ -9,6 +9,7 @@ import java.net.Socket;
 
 import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.protocol.BitField;
+import edu.ufl.cise.protocol.BitTorrentProtocol;
 import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.HandshakeMessage;
 import edu.ufl.cise.protocol.Have;
@@ -18,17 +19,19 @@ import edu.ufl.cise.protocol.NotInterested;
 import edu.ufl.cise.protocol.Piece;
 import edu.ufl.cise.protocol.Request;
 import edu.ufl.cise.protocol.Unchoke;
+import edu.ufl.cise.util.ExecutorPool;
 
 public class ServerWorker implements Runnable {
 	private Socket clientSocket = null;
 	private OutputStream out;
 	private InputStream in;
+	int peerID;
 
 	public ServerWorker(Socket socket) {
 		this.clientSocket = socket;
 		String hostname = clientSocket.getInetAddress().getCanonicalHostName();
-		int peerId = Peer.getInstance().getHostNameToIdMap().get(hostname);
-		Peer.getInstance().getMap().get(peerId).setSocket(socket);
+		this.peerID = Peer.getInstance().getHostNameToIdMap().get(hostname);
+		Peer.getInstance().getMap().get(peerID).setSocket(socket);
 	}
 
 	public void run() {
@@ -57,7 +60,7 @@ public class ServerWorker implements Runnable {
 						response = new HandshakeMessage(peerId);
 						// process handshake message.
 						// Need to store socket information in the map
-						Peer.getInstance().updateClientSocket(peerId, clientSocket);
+						Peer.getInstance().updateSocket(peerId, clientSocket);
 					}
 				} else {// Determine the message type and construct it
 					int len = new BigInteger(firstFour).intValue();  // get the length of message
@@ -66,6 +69,8 @@ public class ServerWorker implements Runnable {
 					response = returnMessageType(len, temp);
 				}
 				// Create a BitTorrent protocol job and pass it to executor service.
+				BitTorrentProtocol protocol = new BitTorrentProtocol(response, peerID);
+				ExecutorPool.getInstance().getPool().execute(protocol);
 			}
 		} catch (IOException e) {
 			// Add a log statement

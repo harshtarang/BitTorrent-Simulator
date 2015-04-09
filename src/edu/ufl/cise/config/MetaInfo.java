@@ -16,6 +16,7 @@ public class MetaInfo {
     private static ArrayList<Integer> peerList;
     private static String basePath;
     private static int lastPieceSize;
+    private static int portNumber;
     
 	public static int getnPieces() {
 		return nPieces;
@@ -102,6 +103,14 @@ public class MetaInfo {
 
 	public static void setLastPieceSize(int lastPieceSize) {
 		MetaInfo.lastPieceSize = lastPieceSize;
+	}
+
+	public static int getPortNumber() {
+		return portNumber;
+	}
+
+	public static void setPortNumber(int portNumber) {
+		MetaInfo.portNumber = portNumber;
 	}
 	
 }

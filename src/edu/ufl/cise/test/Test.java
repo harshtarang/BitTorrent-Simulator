@@ -30,6 +30,11 @@ public class Test{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		int a = 3;
+		int b = 2;
+		float c = (float)a/(float)b;
+		System.out.println(Math.ceil(c));
+		
 	}
 	
 }

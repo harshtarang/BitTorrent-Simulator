@@ -36,15 +36,16 @@ public class peerProcess {
 		
 		// Reads the Common Config file
 		CommonConfigReader.configReader(COMMON_CONFIG, base_path);
+
 		// Sets the number of pieces
 		int fileSize = MetaInfo.getFileSize();
 		int pieceSize = MetaInfo.getPieceSize();
-		int nPieces = fileSize/pieceSize + 1;
+		int nPieces = (int) Math.ceil( (float)fileSize/ (float)pieceSize) ;
 		MetaInfo.setnPieces(nPieces);
 		
 		// Reads the peerConfig file
 		LinkedHashMap<Integer, PeerInfo> peerMap; 
-		peerMap = PeerConfigReader.configReader(PEER_CONFIG, base_path);
+		peerMap = PeerConfigReader.configReader(PEER_CONFIG, base_path, Integer.parseInt(peerId));
 		
 		// Initializes PeerClient
 		int peerIdInt = Integer.parseInt(peerId);

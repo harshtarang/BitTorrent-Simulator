@@ -14,7 +14,7 @@ import edu.ufl.cise.config.PeerInfo;
 public class PeerConfigReader {
 	
 
-	public static LinkedHashMap<Integer, PeerInfo> configReader( String fileName, String filePath){
+	public static LinkedHashMap<Integer, PeerInfo> configReader( String fileName, String filePath, int peerId){
 		BufferedReader br = null;
 		LinkedHashMap<Integer, PeerInfo> peerMap = new LinkedHashMap<Integer, PeerInfo>();
 		HashMap<String, Integer> hostNameToPeerIdMap = new HashMap<String, Integer>();
@@ -33,6 +33,9 @@ public class PeerConfigReader {
 				peerInfo = new PeerInfo(peerIDInt, hostName, port, isCompleteFile);
 				peerMap.put(peerIDInt, peerInfo);
 				hostNameToPeerIdMap.put(hostName, peerIDInt);
+				if(peerId == peerIDInt.intValue()){
+					MetaInfo.setPortNumber(port);
+				}
 			}
 			Peer.getInstance().setHostNameToIdMap(hostNameToPeerIdMap);
 			// Set number of peers in MetaInfo

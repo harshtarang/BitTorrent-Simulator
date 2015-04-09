@@ -10,8 +10,10 @@ import java.util.LinkedHashMap;
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
 import edu.ufl.cise.protocol.BitField;
+import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.Interested;
 import edu.ufl.cise.protocol.NotInterested;
+import edu.ufl.cise.protocol.Request;
 import edu.ufl.cise.protocol.SendMessage;
 import edu.ufl.cise.server.Server;
 import edu.ufl.cise.util.ExecutorPool;
@@ -20,7 +22,6 @@ public class Peer {
 
 	private static volatile Peer instance;
 	private int peerId;
-	private int portNumber;
 	int numPeers;
 	int numPeersCompleted;
 	int numPiecesCompleted;
@@ -75,14 +76,6 @@ public class Peer {
 		return false;
 	}
 
-	public int getPortNumber() {
-		return portNumber;
-	}
-
-	public void setPortNumber(int portNumber) {
-		this.portNumber = portNumber;
-	}
-
 	public static Peer getInstance() {
 		if (instance == null) {
 			synchronized (Peer.class) {
@@ -117,16 +110,10 @@ public class Peer {
 		this.map = map;
 	}
 
-	public void updateClientSocket(int peerId, Socket socket) {
-		String peerIdString = peerId + "";
-		PeerInfo peerInfo = map.get(peerIdString);
-		peerInfo.setSocket(socket);
-	}
-
 	public void Serverinit() throws IOException {
+		int portNumber = MetaInfo.getPortNumber();
 		Server server = new Server(portNumber);
 		new Thread(server).start();
-		;
 	}
 
 	/**
@@ -137,14 +124,11 @@ public class Peer {
 		while (itr.hasNext()) {
 			int peerId1 = itr.next();
 			PeerInfo peerInfo = map.get(peerId1);
-			if (peerId1 > peerId)
+			if (peerId1 >= peerId){
 				continue;
-			else if (peerId1 == peerId) {
-				portNumber = peerInfo.getPort();
 			} else {
 				String hostName = peerInfo.getHostname();
 				int port = peerInfo.getPort();
-				// Client.init(peerId1, hostName, port);
 				ClientWorker worker = new ClientWorker(peerId1, port, hostName);
 				new Thread(worker).start();
 			}
@@ -258,7 +242,7 @@ public class Peer {
 	 */
 	public int getRandomPieceToRequest(int requestFromPeerId) {
 		int pieceId = -1;
-		Iterator<Integer> itr = unchokedMeMap.keySet().iterator();
+	//	Iterator<Integer> itr = unchokedMeMap.keySet().iterator();
 		BitSet piecesInterested = (BitSet) pieceInfo.clone(); // clone the
 																// existing
 																// pieceInfo
@@ -266,11 +250,8 @@ public class Peer {
 															// completely to
 															// make it pieces
 															// interested
-		while (itr.hasNext()) {
-			int peerId = itr.next();
-			PeerInfo peerInfo = map.get(peerId);
-			piecesInterested.and(peerInfo.getPiecesInterested());
-		}
+		PeerInfo peerInfo = map.get(requestFromPeerId);
+		piecesInterested.and(peerInfo.getPieceInfo());
 		if (!piecesInterested.isEmpty()) { // if there is some piece which can
 											// be requested
 			for (pieceId = piecesInterested.nextSetBit(0); pieceId >= 0; pieceId = piecesInterested
@@ -340,6 +321,9 @@ public class Peer {
 				NotInterested message = new NotInterested();
 				SendMessage sendMessage = new SendMessage(peerId2, message.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
+				
+				//TODO: update interestedSent map
+				interestedSent.put(peerId2,false);
 			}
 			else{
 				// Do nothing
@@ -354,6 +338,9 @@ public class Peer {
 				Interested message = new Interested();
 				SendMessage sendMessage = new SendMessage(peerId2, message.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
+				
+				//TODO: update interestedSent map
+				interestedSent.put(peerId2, true);
 			}
 		}
 	}
@@ -388,6 +375,42 @@ public class Peer {
 	public void updateHandshakeSent(int peerId) {
 		PeerInfo peerInfo = map.get(peerId);
 		peerInfo.setHandShakeSent(true);
+	}
+	
+	public void updateAndSendChoke(int peerId){
+		if(getUnchokedMap().get(peerId)){ // returns true if unchoked
+			// Send choke and update map
+			getUnchokedMap().put(peerId, false);
+			Choke choke = new Choke();
+			SendMessage sendMessage = new SendMessage(peerId, choke.getBytes());
+			ExecutorPool.getInstance().getPool().execute(sendMessage);
+		}
+
+	}
+
+	public void determineAndSendPieceRequest(int peerId2) 
+	{
+		if(unchokedMeMap.get(peerId2))
+		{
+		
+			int pieceId=getRandomPieceToRequest(peerId2);
+		
+			
+			sendRequestMessage(peerId2,pieceId);
+			
+
+		}
+	}
+
+	private void sendRequestMessage(int peerId2, int pieceId) {
+		// TODO Auto-generated method stub
+		Request requestMessage = new Request(pieceId);
+		
+		SendMessage sendMessage = new SendMessage(peerId,
+				requestMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(sendMessage);
+			
+			piecesCurrentlyDownloading.put(pieceId,peerId2);
 	}
 
 }

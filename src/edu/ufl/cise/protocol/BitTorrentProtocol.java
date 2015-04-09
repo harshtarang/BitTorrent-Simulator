@@ -52,7 +52,6 @@ public class BitTorrentProtocol implements Runnable {
 	}
 
 	private void handleHandShakeMessage() {
-		HandshakeMessage handShakeMessage  = (HandshakeMessage) message;
 		// Check if handshake message already sent.
 		boolean isHandshakeSent = Peer.getInstance().isHandshakeSent(peerId);
 		if(isHandshakeSent){
@@ -67,6 +66,7 @@ public class BitTorrentProtocol implements Runnable {
 			HandshakeMessage handShakeMessage1 = new  HandshakeMessage(currPeerId);
 			SendMessage message = new SendMessage(peerId, handShakeMessage1.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
+			Peer.getInstance().updateHandshakeSent(peerId);
 			// Send BITFIELD message
 			BitField bitFieldMessage = Peer.getInstance().getBitFieldMessage();
 			message = new SendMessage(peerId, bitFieldMessage.getBytes());
@@ -107,6 +107,8 @@ public class BitTorrentProtocol implements Runnable {
 		if (!isShutDown) {
 			// Recompute whether to send I/DI message to some peers and send.
 			Peer.getInstance().determineToSendInterstedMessageToPeers();
+			
+			Peer.getInstance().determineAndSendPieceRequest(peerId);
 		}
 	}
 
@@ -145,6 +147,8 @@ public class BitTorrentProtocol implements Runnable {
 	private void handleNotInterested() {
 		// Update the Not Interested map
 		Peer.getInstance().getCurrentlyInterested().put(peerId, false);
+		// Check if unchoked choke it.
+		Peer.getInstance().updateAndSendChoke(peerId);
 	}
 
 	private void handleInterested() {
