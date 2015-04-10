@@ -285,7 +285,6 @@ public class Peer {
 						message.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
 
-				// TODO: update interestedSent map
 				interestedSent.put(peerId2, false);
 			} else {
 				// Do nothing
@@ -301,7 +300,6 @@ public class Peer {
 						message.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
 
-				// TODO: update interestedSent map
 				interestedSent.put(peerId2, true);
 			}
 		}

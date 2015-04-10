@@ -13,6 +13,7 @@ public class PeerInfo {
 
 	private int peerId;
 	private int portNumber;
+	private String hostName;
 	private LinkedHashMap<Integer, State> map;
 	
 	public int getPeerId() {
@@ -113,6 +114,14 @@ public class PeerInfo {
 				new Thread(worker).start();
 			}
 		}
+	}
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
 	}
 	
 }

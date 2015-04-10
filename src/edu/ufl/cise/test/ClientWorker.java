@@ -7,10 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+
 public class ClientWorker implements Runnable {
 	private Socket socket = null;
 	private PrintWriter out;
 	private BufferedReader in;
+	String hostName;
 	int port;
 	int peerId;
 	int currPeerId;
@@ -20,9 +22,10 @@ public class ClientWorker implements Runnable {
 		this.peerId = peerId;
 		this.currPeerId = PeerInfo.getInstance().getPeerId();
 		this.port = port;
+		this.hostName = PeerInfo.getInstance().getHostName();
 		
 		System.out.println("Peer: " + currPeerId +" connecting on port: " + port);
-		socket = new Socket("localhost", port);
+		socket = new Socket(hostName, port);
 		System.out.println(socket.isConnected());
 
 		PeerInfo.getInstance().updateSocket(peerId, socket);
