@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import edu.ufl.cise.client.Peer;
+import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.test.PeerInfo;
 import edu.ufl.cise.util.ExecutorPool;
 import edu.ufl.cise.util.FileHandlingUtils;
@@ -56,21 +57,16 @@ public class BitTorrentProtocol implements Runnable {
 		boolean isHandshakeSent = Peer.getInstance().isHandshakeSent(peerId);
 		if(isHandshakeSent){
 			// Send BITFIELD message
-			BitField bitFieldMessage = Peer.getInstance().getBitFieldMessage();
-			SendMessage message = new SendMessage(peerId, bitFieldMessage.getBytes());
-			ExecutorPool.getInstance().getPool().execute(message);
+			Peer.getInstance().updateAndSendBitField(peerId);
 		}
 		else{
 			//Send handshake message 
-			int currPeerId = PeerInfo.getInstance().getPeerId(); // Todo : put peerId in metainfo
+			int currPeerId = MetaInfo.getPeerId(); 
 			HandshakeMessage handShakeMessage1 = new  HandshakeMessage(currPeerId);
 			SendMessage message = new SendMessage(peerId, handShakeMessage1.getBytes());
-			ExecutorPool.getInstance().getPool().execute(message);
-			Peer.getInstance().updateHandshakeSent(peerId);
+			Peer.getInstance().updateAndSendHandshakeMessage(peerId, message);
 			// Send BITFIELD message
-			BitField bitFieldMessage = Peer.getInstance().getBitFieldMessage();
-			message = new SendMessage(peerId, bitFieldMessage.getBytes());
-			ExecutorPool.getInstance().getPool().execute(message);
+			Peer.getInstance().updateAndSendBitField(peerId);
 		}
 	}
 
@@ -81,18 +77,16 @@ public class BitTorrentProtocol implements Runnable {
 		// Set the pieceInfo and piecesInterested of corresponding peer 
 		Peer.getInstance().updateBitSets(peerId, bs);
 		// Decide and send I/DI message
-		Peer.getInstance().determineToSendInterestedMessage(peerId);
+		Peer.getInstance().determineAndSendInterestedMessage(peerId);
 	}
 
 	private void handlePiece() {
 		Piece pieceMessage = (Piece) message;
 		// Update own's bitset
 		int pieceId = pieceMessage.getIndex();
-		Peer.getInstance().getPieceInfo().set(pieceId);
+		Peer.getInstance().updateOwnBitSet(pieceId);
 		// Broadcast Have message
-		HashMap<Integer, Boolean> peers = Peer.getInstance()
-				.getCurrentlyInterested();
-		Iterator<Integer> itr = peers.keySet().iterator();
+		Iterator<Integer> itr = MetaInfo.getPeerList().iterator();
 		while (itr.hasNext()) {
 			int peerId1 = itr.next();
 			if (peerId1 != peerId) { // Send a have message
@@ -106,8 +100,7 @@ public class BitTorrentProtocol implements Runnable {
 		boolean isShutDown = Peer.getInstance().evaluateSystemShutDown();
 		if (!isShutDown) {
 			// Recompute whether to send I/DI message to some peers and send.
-			Peer.getInstance().determineToSendInterstedMessageToPeers();
-			
+			Peer.getInstance().determineAndSendInterstedMessageToPeers();
 			Peer.getInstance().determineAndSendPieceRequest(peerId);
 		}
 	}
@@ -140,7 +133,7 @@ public class BitTorrentProtocol implements Runnable {
 		// if not then evaluate whether to send I/DI message
 		if (!isShutDown) {
 			// Decide and send I/DI message
-			Peer.getInstance().determineToSendInterestedMessage(peerId);
+			Peer.getInstance().determineAndSendInterestedMessage(peerId);
 		}
 	}
 
@@ -168,10 +161,7 @@ public class BitTorrentProtocol implements Runnable {
 		int pieceId = Peer.getInstance().getRandomPieceToRequest(peerId);
 		if (pieceId != -1) { // if there is such a piece
 			// Send a request message
-			Request requestMessage = new Request(pieceId);
-			SendMessage sendMessage = new SendMessage(peerId,
-					requestMessage.getBytes());
-			ExecutorPool.getInstance().getPool().execute(sendMessage);
+			Peer.getInstance().sendRequestMessage(peerId, pieceId);
 		}
 	}
 

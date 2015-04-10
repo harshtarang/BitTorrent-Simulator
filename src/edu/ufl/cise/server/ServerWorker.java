@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.net.Socket;
 
 import edu.ufl.cise.client.Peer;
+import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.protocol.BitField;
 import edu.ufl.cise.protocol.BitTorrentProtocol;
 import edu.ufl.cise.protocol.Choke;
@@ -30,7 +31,7 @@ public class ServerWorker implements Runnable {
 	public ServerWorker(Socket socket) {
 		this.clientSocket = socket;
 		String hostname = clientSocket.getInetAddress().getCanonicalHostName();
-		this.peerID = Peer.getInstance().getHostNameToIdMap().get(hostname);
+		this.peerID = MetaInfo.getHostNameToIdMap().get(hostname);
 		Peer.getInstance().getMap().get(peerID).setSocket(socket);
 	}
 

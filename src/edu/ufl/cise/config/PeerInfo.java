@@ -9,19 +9,15 @@ public class PeerInfo {
 	private String hostname;
 	private int port;
 	private boolean isCompleteFile;
-	boolean isChoke = false;
-	boolean isChokedBy = false;
-	boolean isOptimisticUnchoked = false;
-	boolean interested = false;
 	boolean isHandShakeSent = false;
 	boolean isHandShakeReceived = false;
 	boolean isBitFieldSent = false;
 	boolean isBitFieldReceived = false;
-	boolean isRequestSent = false;
 	float downloadSpeed;
 	private Socket socket;
 	private BitSet pieceInfo;
 	private BitSet piecesInterested;
+	private int numPiecesInterested;
 	
 	public PeerInfo(){}
 	
@@ -75,52 +71,12 @@ public class PeerInfo {
 		this.isBitFieldReceived = isBitFieldReceived;
 	}
 
-	public boolean isRequestSent() {
-		return isRequestSent;
-	}
-
-	public void setRequestSent(boolean isRequestSent) {
-		this.isRequestSent = isRequestSent;
-	}
-
 	public BitSet getPieceInfo() {
 		return pieceInfo;
 	}
 
 	public void setPieceInfo(BitSet pieceInfo) {
 		this.pieceInfo = pieceInfo;
-	}
-	
-	public boolean isChoke() {
-		return isChoke;
-	}
-
-	public void setChoke(boolean isChoke) {
-		this.isChoke = isChoke;
-	}
-
-	public boolean isChokedBy() {
-		return isChokedBy;
-	}
-
-	public void setChokedBy(boolean isChokedBy) {
-		this.isChokedBy = isChokedBy;
-	}
-
-	public boolean isOptimisticUnchoked() {
-		return isOptimisticUnchoked;
-	}
-
-	public void setOptimisticUnchoked(boolean isOptimisticUnchoked) {
-		this.isOptimisticUnchoked = isOptimisticUnchoked;
-	}
-
-	public boolean isInterested() {
-		return interested;
-	}
-
-	public void setInterested(boolean interested) {
-		this.interested = interested;
 	}
 
 	public float getDownloadSpeed() {
@@ -172,6 +128,18 @@ public class PeerInfo {
 
 	public void setPiecesInterested(BitSet piecesInterested) {
 		this.piecesInterested = piecesInterested;
+	}
+
+	public int getNumPiecesInterested() {
+		return numPiecesInterested;
+	}
+
+	public void setNumPiecesInterested(int numPiecesInterested) {
+		this.numPiecesInterested = numPiecesInterested;
+	}
+
+	public void updatePieceInterested() {
+		numPiecesInterested--;
 	}
 	
 }

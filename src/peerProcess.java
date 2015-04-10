@@ -43,6 +43,9 @@ public class peerProcess {
 		int nPieces = (int) Math.ceil( (float)fileSize/ (float)pieceSize) ;
 		MetaInfo.setnPieces(nPieces);
 		
+		// Set peerID 
+		MetaInfo.setPeerId(Integer.parseInt(peerId));
+		
 		// Reads the peerConfig file
 		LinkedHashMap<Integer, PeerInfo> peerMap; 
 		peerMap = PeerConfigReader.configReader(PEER_CONFIG, base_path, Integer.parseInt(peerId));

@@ -34,7 +34,7 @@ public class ClientWorker implements Runnable {
 	String hostName;
 
 	public ClientWorker(int peerId, int port, String hostName) {
-		this.currPeerId = Peer.getInstance().getPeerId();  // toDo : put this in metainfo
+		this.currPeerId = MetaInfo.getPeerId();  
 		this.peerID = peerId;
 		this.port = port;
 		this.hostName = hostName;
