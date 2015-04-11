@@ -55,15 +55,16 @@ public class BitTorrentProtocol implements Runnable {
 	private void handleHandShakeMessage() {
 		// Check if handshake message already sent.
 		boolean isHandshakeSent = Peer.getInstance().isHandshakeSent(peerId);
-		if(isHandshakeSent){
+		if (isHandshakeSent) {
 			// Send BITFIELD message
 			Peer.getInstance().updateAndSendBitField(peerId);
-		}
-		else{
-			//Send handshake message 
-			int currPeerId = MetaInfo.getPeerId(); 
-			HandshakeMessage handShakeMessage1 = new  HandshakeMessage(currPeerId);
-			SendMessage message = new SendMessage(peerId, handShakeMessage1.getBytes());
+		} else {
+			// Send handshake message
+			int currPeerId = MetaInfo.getPeerId();
+			HandshakeMessage handShakeMessage1 = new HandshakeMessage(
+					currPeerId);
+			SendMessage message = new SendMessage(peerId,
+					handShakeMessage1.getBytes());
 			Peer.getInstance().updateAndSendHandshakeMessage(peerId, message);
 			// Send BITFIELD message
 			Peer.getInstance().updateAndSendBitField(peerId);
@@ -74,7 +75,7 @@ public class BitTorrentProtocol implements Runnable {
 		BitField bitField = (BitField) message;
 		// Convert bytes to BitSet
 		BitSet bs = bitField.getBitSet();
-		// Set the pieceInfo and piecesInterested of corresponding peer 
+		// Set the pieceInfo and piecesInterested of corresponding peer
 		Peer.getInstance().updateBitSets(peerId, bs);
 		// Decide and send I/DI message
 		Peer.getInstance().determineAndSendInterestedMessage(peerId);
@@ -109,17 +110,14 @@ public class BitTorrentProtocol implements Runnable {
 		// cast into Request message
 		Request requestMessage = (Request) message;
 		int pieceId = requestMessage.getPieceIndex();
-		// Check if the peer is unchoked or not
-		if (Peer.getInstance().isUnchoked(peerId)) {
-			// Fetch the corresponding piece from hard disk
-			FileHandlingUtils util = new FileHandlingUtils();
-			byte[] piece = util.getPiece(pieceId);
-			// Create a piece message and send it
-			Piece pieceMessage = new Piece(pieceId, piece);
-			SendMessage sendMessage = new SendMessage(peerId,
-					pieceMessage.getBytes());
-			ExecutorPool.getInstance().getPool().execute(sendMessage);
-		}
+		// Fetch the corresponding piece from hard disk and then finally check 
+		// if the peer is unchoked or not. 
+		// Thus reducing check by 1
+		FileHandlingUtils util = new FileHandlingUtils();
+		byte[] piece = util.getPiece(pieceId);
+		// Create a piece message and send it
+		Piece pieceMessage = new Piece(pieceId, piece);
+		Peer.getInstance().sendPieceMessage(peerId, pieceMessage);
 	}
 
 	private void handleHave() {
@@ -151,18 +149,14 @@ public class BitTorrentProtocol implements Runnable {
 
 	private void handleChoke() {
 		// Update unchoke map
-		Peer.getInstance().getUnchokedMeMap().put(peerId, true);
+		Peer.getInstance().getUnchokedMeMap().put(peerId, false);
 	}
 
 	private void handleUnChoke() {
 		// Update unchoke map
 		Peer.getInstance().getUnchokedMeMap().put(peerId, true);
 		// Select a random piece to request.
-		int pieceId = Peer.getInstance().getRandomPieceToRequest(peerId);
-		if (pieceId != -1) { // if there is such a piece
-			// Send a request message
-			Peer.getInstance().sendRequestMessage(peerId, pieceId);
-		}
+		Peer.getInstance().determineAndSendPieceRequest(peerId);
 	}
 
 }

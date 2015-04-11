@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.Random;
 
 public class Test{
 
@@ -39,7 +40,10 @@ public class Test{
 		BitSet bs = new BitSet(size);
 		bs.flip(0, 2);
 		System.out.println(bs.get(0) + " " + bs.get(1) + " " + " " + bs.get(2) + " " +  bs.size());
-		
+		Random random = new Random();
+		int index = random.nextInt(2);
+		System.out.println(index);
+
 	}
 	
 }

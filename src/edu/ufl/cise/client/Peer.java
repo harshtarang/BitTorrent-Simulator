@@ -30,7 +30,11 @@ public class Peer {
 	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
 
-	private HashMap<Integer, Boolean> piecesCurrentlyDownloading; // If the piece is currently been requested
+	private HashMap<Integer, Boolean> piecesCurrentlyDownloading; // If the
+																	// piece is
+																	// currently
+																	// been
+																	// requested
 
 	private HashMap<Integer, Boolean> unchokedMap; // Peers who I have currently
 													// unchoked . true if
@@ -67,6 +71,7 @@ public class Peer {
 
 	/**
 	 * Initializes all the maps
+	 * 
 	 * @param peerId
 	 * @param peerMap
 	 */
@@ -77,24 +82,24 @@ public class Peer {
 		// Initialize pieceInfo
 		pieceInfo = new BitSet(nPieces);
 		numPiecesCompleted = 0;
-		if(MetaInfo.isCompletefile()){
+		if (MetaInfo.isCompletefile()) {
 			pieceInfo.flip(0, nPieces);
 			numPiecesCompleted = nPieces;
 		}
 		// Initialize currently downloading
 		piecesCurrentlyDownloading = new HashMap<Integer, Boolean>();
-		for( int i=0; i<nPieces; i++){
+		for (int i = 0; i < nPieces; i++) {
 			piecesCurrentlyDownloading.put(i, false);
 		}
 		// Initialize all the maps
-		unchokedMap         = new HashMap<Integer, Boolean>();
-		unchokedMeMap       = new HashMap<Integer, Boolean>();
-		interestedSent      = new HashMap<Integer, Boolean>();
+		unchokedMap = new HashMap<Integer, Boolean>();
+		unchokedMeMap = new HashMap<Integer, Boolean>();
+		interestedSent = new HashMap<Integer, Boolean>();
 		currentlyInterested = new HashMap<Integer, Boolean>();
-		preferredNeighbors  = new HashMap<Integer, Boolean>();
+		preferredNeighbors = new HashMap<Integer, Boolean>();
 		ArrayList<Integer> peerList = MetaInfo.getPeerList();
 		Iterator<Integer> itr = peerList.iterator();
-		while(itr.hasNext()){
+		while (itr.hasNext()) {
 			int peer = itr.next();
 			unchokedMap.put(peer, false);
 			unchokedMeMap.put(peer, false);
@@ -130,7 +135,7 @@ public class Peer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Update preferred neighbors randomly
 	 */
@@ -140,9 +145,10 @@ public class Peer {
 		HashMap<Integer, Boolean> currentlyInterested = getCurrentlyInterested();
 		// Get the currently Interested neighbors
 		Iterator<Integer> itr1 = currentlyInterested.keySet().iterator();
-		while(itr1.hasNext()){
+		while (itr1.hasNext()) {
 			int peerId = itr1.next();
-			if(currentlyInterested.get(peerId)) peerList.add(peerId);
+			if (currentlyInterested.get(peerId))
+				peerList.add(peerId);
 		}
 		int currentInterestedSize = currentlyInterested.size();
 		Random random = new Random();
@@ -157,33 +163,45 @@ public class Peer {
 					count++;
 				}
 			}
+		} else { // Add everyone
+			for (int peerId : peerList)
+				newlySelectedNeighbor.put(peerId, true);
 		}
-		else{ // Add everyone
-			for(int peerId: peerList) newlySelectedNeighbor.put(peerId, true);
-		}
-		// Iterate the current map and send choke and unchoke messages based on newly selected map.
+		// Iterate the current map and send choke and unchoke messages based on
+		// newly selected map.
 		HashMap<Integer, Boolean> oldMap = getPreferredNeighbors();
 		Iterator<Integer> itr = oldMap.keySet().iterator();
-		while(itr.hasNext()){
+		while (itr.hasNext()) {
 			int peerID = itr.next();
-			if ( oldMap.get(peerID) && newlySelectedNeighbor.containsKey(peerID)){ // if an already preferred neighbor is selected again
-				continue;                                                          // keep it and enjoy. No need to send unchoke message
-			}
-			else if( oldMap.get(peerID) && !newlySelectedNeighbor.containsKey(peerID)){
-				// Peer was a preferred neighbor but not selected. Send choke message
+			if (oldMap.get(peerID) && newlySelectedNeighbor.containsKey(peerID)) { // if
+																					// an
+																					// already
+																					// preferred
+																					// neighbor
+																					// is
+																					// selected
+																					// again
+				continue; // keep it and enjoy. No need to send unchoke message
+			} else if (oldMap.get(peerID)
+					&& !newlySelectedNeighbor.containsKey(peerID)) {
+				// Peer was a preferred neighbor but not selected. Send choke
+				// message
 				Choke choke = new Choke();
-				SendMessage sendMessage = new SendMessage(peerID, choke.getBytes());
+				SendMessage sendMessage = new SendMessage(peerID,
+						choke.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
 				// Add the current peer entry as not interested
 				newlySelectedNeighbor.put(peerID, false);
-			}
-			else if( !oldMap.get(peerID) && newlySelectedNeighbor.containsKey(peerID)){
-				// Peer was not a preferred neighbor but now selected. Send unchoke message
+			} else if (!oldMap.get(peerID)
+					&& newlySelectedNeighbor.containsKey(peerID)) {
+				// Peer was not a preferred neighbor but now selected. Send
+				// unchoke message
 				Unchoke unchoke = new Unchoke();
-				SendMessage sendMessage = new SendMessage(peerID, unchoke.getBytes());
+				SendMessage sendMessage = new SendMessage(peerID,
+						unchoke.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
-			}else{ // neither it was a preferred neighbor nor it got selected
-				// Just add an entry in the current map
+			} else { // neither it was a preferred neighbor nor it got selected
+						// Just add an entry in the current map
 				newlySelectedNeighbor.put(peerID, false);
 			}
 		}
@@ -202,7 +220,7 @@ public class Peer {
 		BitSet piecesInterested = (BitSet) pieceInfo.clone(); // clone the
 																// existing
 																// pieceInfo
-		piecesInterested.flip(0, piecesInterested.size()); // and flip it
+		piecesInterested.flip(0, MetaInfo.getnPieces()); // and flip it
 															// completely to
 															// make it pieces
 															// interested
@@ -220,7 +238,7 @@ public class Peer {
 				}
 			}
 			// Generate a random number if there exists a piece
-			if(!arr.isEmpty()){
+			if (!arr.isEmpty()) {
 				Random random = new Random();
 				int index = random.nextInt(arr.size());
 				pieceId = arr.get(index);
@@ -273,9 +291,9 @@ public class Peer {
 		PeerInfo peerInfo = map.get(peerId2); // peer info of the given peer
 		BitSet currentPeerBitSet = (BitSet) pieceInfo.clone();
 		// Flip current bit set to get pieces intersted
-		currentPeerBitSet.flip(0, currentPeerBitSet.length());
+		currentPeerBitSet.flip(0, MetaInfo.getnPieces());
 		// Do an and to get intersection
-		currentPeerBitSet.and(peerInfo.getPiecesInterested());
+		currentPeerBitSet.and(peerInfo.getPieceInfo());
 		if (interestedSent.containsKey(peerId2) && interestedSent.get(peerId2)) {
 			if (currentPeerBitSet.isEmpty()) { // if current peer is not
 												// interested in peerID2
@@ -305,59 +323,61 @@ public class Peer {
 		}
 	}
 
+	/**
+	 * Update the piece info for the corresponding peer
+	 * 
+	 * @param peerId2
+	 * @param bs
+	 */
 	public void updateBitSets(int peerId2, BitSet bs) {
-		PeerInfo peerInfo = map.get(MetaInfo.getPeerId());
+		PeerInfo peerInfo = map.get(peerId2);
 		peerInfo.setPieceInfo(bs);
-		BitSet currentPieceInfo = (BitSet) pieceInfo.clone();
-		// Flip the bits to get pieces interested in
-		currentPieceInfo.flip(0, currentPieceInfo.length());
-		// Take and AND with peer's bitset
-		currentPieceInfo.and(bs);
-		// update the map
-		peerInfo.setPiecesInterested(currentPieceInfo);
 	}
-	
+
 	public void updateOwnBitSet(int pieceId) {
 		piecesCurrentlyDownloading.put(pieceId, false);
 		numPiecesCompleted--;
 		pieceInfo.set(pieceId);
-		if(numPiecesCompleted == 0){
+		if (numPiecesCompleted == 0) {
 			numPeersCompleted++;
 		}
 	}
-	
+
 	public void updatePeerBitset(int peerId, int pieceId) {
 		PeerInfo info = map.get(peerId);
 		info.getPieceInfo().set(pieceId);
 		info.updatePieceInterested(); // decrement pieces interested in
-		if(info.getNumPiecesInterested() == 0){
+		if (info.getNumPiecesInterested() == 0) {
 			numPeersCompleted++;
 		}
 	}
 
 	// Send message related methods
-	
+
 	/**
 	 * update flag and send bitfield message
+	 * 
 	 * @param peerId
 	 */
 	public void updateAndSendBitField(int peerId) {
 		BitField bitFieldMessage = getBitFieldMessage();
-		SendMessage message = new SendMessage(peerId, bitFieldMessage.getBytes());
+		SendMessage message = new SendMessage(peerId,
+				bitFieldMessage.getBytes());
 		ExecutorPool.getInstance().getPool().execute(message);
 		updateBitFieldSent(peerId);
 	}
 
 	/**
 	 * Update and sent handshake message
+	 * 
 	 * @param peerId
 	 * @param message
 	 */
-	public void updateAndSendHandshakeMessage(int peerId, SendMessage message){
+	public void updateAndSendHandshakeMessage(int peerId, SendMessage message) {
 		ExecutorPool.getInstance().getPool().execute(message);
 		updateHandshakeSent(peerId);
 	}
-	
+
 	public void updateAndSendChoke(int peerId) {
 		if (getUnchokedMap().get(peerId)) { // returns true if unchoked
 			// Send choke and update map
@@ -369,22 +389,23 @@ public class Peer {
 
 	}
 
-	public void determineAndSendPieceRequest(int peerId2) {
-		if (unchokedMeMap.get(peerId2)) {
-			int pieceId = getRandomPieceToRequest(peerId2);
-			sendRequestMessage(peerId2, pieceId);
-		}
-	}
-
 	/**
-	 * Check if it is still unchoked.
-	 * Sends a request message to the peer for the pieceId
-	 * Updates the piecesCurrentlyDownloading map
+	 * Check if it is still unchoked. Sends a request message to the peer for
+	 * the pieceId Updates the piecesCurrentlyDownloading map
+	 * 
 	 * @param peerId2
 	 * @param pieceId
 	 */
+	public void determineAndSendPieceRequest(int peerId2) {
+		if (!unchokedMeMap.get(peerId2))
+			return;
+		int pieceId = getRandomPieceToRequest(peerId2);
+		if(pieceId != -1 ) sendRequestMessage(peerId2, pieceId);
+	}
+
 	public void sendRequestMessage(int peerId2, int pieceId) {
-		if(!unchokedMeMap.get(peerId2)) return;
+		if (!unchokedMeMap.get(peerId2))
+			return;
 		Request requestMessage = new Request(pieceId);
 		SendMessage sendMessage = new SendMessage(peerId2,
 				requestMessage.getBytes());
@@ -393,18 +414,19 @@ public class Peer {
 	}
 
 	/**
-	 * Check if the peer is still unchoked.
-	 * Send the piece message
+	 * Check if the peer is still unchoked. Send the piece message
+	 * 
 	 * @param peerId
 	 * @param pieceMessage
 	 */
-	public void sendPieceMessage(int peerId, Piece pieceMessage){
-		if(!unchokedMap.get(peerId)) return;
+	public void sendPieceMessage(int peerId, Piece pieceMessage) {
+		if (!unchokedMap.get(peerId))
+			return;
 		SendMessage sendMessage = new SendMessage(peerId,
 				pieceMessage.getBytes());
 		ExecutorPool.getInstance().getPool().execute(sendMessage);
 	}
-	
+
 	/**
 	 * Check both unchoked map and OUN field to return if a peer is unchoked
 	 * 
@@ -418,7 +440,7 @@ public class Peer {
 	}
 
 	// PeerInfo related methods
-	
+
 	public boolean isHandshakeSent(int peerId) {
 		PeerInfo peerInfo = map.get(peerId);
 		return peerInfo.isHandShakeSent();
@@ -443,9 +465,9 @@ public class Peer {
 		PeerInfo peerInfo = map.get(peerId);
 		peerInfo.setBitFieldSent(true);
 	}
-	
+
 	// Getters and Setters
-	
+
 	public LinkedHashMap<Integer, PeerInfo> getMap() {
 		return map;
 	}

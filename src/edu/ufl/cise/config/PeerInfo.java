@@ -16,7 +16,6 @@ public class PeerInfo {
 	float downloadSpeed;
 	private Socket socket;
 	private BitSet pieceInfo;
-	private BitSet piecesInterested;
 	private int numPiecesInterested;
 	
 	public PeerInfo(){}
@@ -31,7 +30,6 @@ public class PeerInfo {
 		this.isCompleteFile = isCompleteFile;
 		int nPieces = MetaInfo.getnPieces();
 		pieceInfo = new BitSet(nPieces);
-		piecesInterested = new BitSet(nPieces);
 		
 		// if complete file set all the bits to true
 		if(isCompleteFile){
@@ -120,14 +118,6 @@ public class PeerInfo {
 	}
 	public void setCompleteFile(boolean isCompleteFile) {
 		this.isCompleteFile = isCompleteFile;
-	}
-
-	public BitSet getPiecesInterested() {
-		return piecesInterested;
-	}
-
-	public void setPiecesInterested(BitSet piecesInterested) {
-		this.piecesInterested = piecesInterested;
 	}
 
 	public int getNumPiecesInterested() {
