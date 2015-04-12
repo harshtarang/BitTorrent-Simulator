@@ -1,8 +1,10 @@
 package edu.ufl.cise.test;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -15,6 +17,8 @@ public class PeerInfo {
 	private int portNumber;
 	private String hostName;
 	private LinkedHashMap<Integer, State> map;
+	private HashMap<String, Integer> hostNameToIdMap;
+	
 	
 	public int getPeerId() {
 		return peerId;
@@ -110,7 +114,7 @@ public class PeerInfo {
 			} else {
 				System.out.println("Starting client worker for: " + peerId1);
 				int port = peerInfo.getPort();
-				ClientWorker worker = new ClientWorker(peerId1, port);
+				ClientWorker worker = new ClientWorker(peerId1, port, "localhost");
 				new Thread(worker).start();
 			}
 		}
@@ -122,6 +126,19 @@ public class PeerInfo {
 
 	public void setHostName(String hostName) {
 		this.hostName = hostName;
+	}
+
+	public HashMap<String, Integer> getHostNameToIdMap() {
+		return hostNameToIdMap;
+	}
+
+	public void setHostNameToIdMap(HashMap<String, Integer> hostNameToIdMap) {
+		this.hostNameToIdMap = hostNameToIdMap;
+	}
+
+	public void updateOutputStream(int peerID2, OutputStream out) throws IOException {
+		State state = map.get(peerID2);
+		state.setOut(out);
 	}
 	
 }

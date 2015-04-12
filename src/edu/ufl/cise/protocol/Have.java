@@ -39,6 +39,7 @@ public class Have extends Message {
 		for(int i=0; i<4; i++){
 			out[5+i] = pieceIndexBytes[i];
 		}
+		System.out.println("BYTES :" + out);
 		return out;
 	}
 	

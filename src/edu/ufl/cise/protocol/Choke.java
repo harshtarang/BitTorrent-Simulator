@@ -17,6 +17,7 @@ public class Choke extends Message {
 			out[i] = len[i];
 		}
 		out[4] = type[0];
+		System.out.println("Bytes :" + out );
 		return out;
 	}
 	

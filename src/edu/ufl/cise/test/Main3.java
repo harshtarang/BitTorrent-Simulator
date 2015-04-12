@@ -19,7 +19,8 @@ public class Main3 {
 		PeerInfo.getInstance().setPeerId(3);
 		PeerInfo.getInstance().setPortNumber(9999);
 		PeerInfo.getInstance().setHostName("lin116-03.cise.ufl.edu");
-
+		PeerInfo.getInstance().setHostName("localhost");
+		
 		// Start executor service
 		ExecutorPool.getInstance().init(3);
 

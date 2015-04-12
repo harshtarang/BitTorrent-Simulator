@@ -1,53 +1,106 @@
 package edu.ufl.cise.test;
 
-import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
+import edu.ufl.cise.protocol.BitField;
+import edu.ufl.cise.protocol.Choke;
+import edu.ufl.cise.protocol.HandshakeMessage;
+import edu.ufl.cise.protocol.Have;
+import edu.ufl.cise.protocol.Interested;
+import edu.ufl.cise.protocol.Message;
+import edu.ufl.cise.protocol.NotInterested;
+import edu.ufl.cise.protocol.Piece;
+import edu.ufl.cise.protocol.Request;
+import edu.ufl.cise.protocol.Unchoke;
 
-public class ClientWorker implements Runnable {
-	private Socket socket = null;
-	private PrintWriter out;
-	private BufferedReader in;
-	String hostName;
-	int port;
-	int peerId;
+public class ClientWorker extends ReadWorker implements Runnable {
+
+	Socket clientSocket;
+	OutputStream out;
+	InputStream in;
 	int currPeerId;
+	int peerID;
+	int port;
+	String hostName;
 
-	public ClientWorker(int peerId, int port) throws UnknownHostException,
-			IOException {
-		this.peerId = peerId;
-		this.currPeerId = PeerInfo.getInstance().getPeerId();
+	public ClientWorker(int peerId, int port, String hostName) {
+		this.currPeerId = PeerInfo.getInstance().getPeerId();  
+		this.peerID = peerId;
 		this.port = port;
-		this.hostName = PeerInfo.getInstance().getHostName();
-		
-		System.out.println("Peer: " + currPeerId +" connecting on port: " + port);
-		socket = new Socket(hostName, port);
-		System.out.println(socket.isConnected());
-
-		PeerInfo.getInstance().updateSocket(peerId, socket);
-		System.out.println("Sending message : " + currPeerId + " to: " + peerId);
-		PeerInfo.getInstance().updateFirstMessageSent(peerId);
-
-		SendMessage message = new SendMessage(peerId, ""+currPeerId);
-		ExecutorPool.getInstance().getPool().execute(message);
+		this.hostName = hostName;
+		System.out.println("Connecting to " + peerID + "  " + port);
 	}
 
 	public void run() {
 		try {
-			// out = new PrintWriter(socket.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(
-					socket.getInputStream()));
-			String input;
-			while ((input = in.readLine()) != null) {
-				processInput(input);
-			}
+			clientSocket = new Socket(hostName, port);
+			System.out.println(" Created socket " + hostName + " " + port);
+			
+			out = new DataOutputStream(clientSocket.getOutputStream());
+			in = clientSocket.getInputStream();
+			PeerInfo.getInstance().updateSocket(peerID, clientSocket);
+			PeerInfo.getInstance().updateOutputStream(peerID, out);
+			
+			// Send Handshake message
+			HandshakeMessage handShakeMessage = new HandshakeMessage(12);
+			SendMessage message = new SendMessage(peerID,
+					handShakeMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
 
+			// Send Have message
+			Have haveMessage = new Have(12);
+			message = new SendMessage(peerID,
+					haveMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
+
+			// Send Request message
+			Request requestMessage = new Request(12);
+			message = new SendMessage(peerID,
+					requestMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
+			
+			// Send Choke message
+			Choke chokeMessage = new Choke();
+			message = new SendMessage(peerID,
+					chokeMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
+			
+			// Now just wait for replies from the peer
+			byte[] firstFour = new byte[4];
+			byte[] temp;
+			byte[] header;
+			Message response = null;
+
+			while (true) {
+				in.read(firstFour, 0, 4);
+				if (isHandShakeMessage(firstFour)) {	// Check the type of message
+					System.out.println("Handshake message");
+					temp = new byte[32];
+					in.read(temp, 4, 14);  // read next 14 
+					header = getHeader(firstFour, temp);
+					String headerString = new String(header);
+					
+					if (headerString.equalsIgnoreCase(HandshakeMessage.HEADER)) {
+						System.out.println("Header");
+						in.read(temp, 18, 14);  // read the remaining bytes
+						int peerId = getPeerId(temp);  
+						response = new HandshakeMessage(peerId);
+					}
+				} else {// Determine the message type and construct it
+					System.out.println("Message type 2");
+					int len = new BigInteger(firstFour).intValue();  // get the length of message
+					temp = new byte[len+4];
+					in.read(temp, 4, len);
+					response = returnMessageType(len, temp);
+				}
+			}
 		} catch (IOException e) {
-			// Add a log statement
 			e.printStackTrace();
 		} finally {
 			try {
@@ -61,28 +114,4 @@ public class ClientWorker implements Runnable {
 
 		}
 	}
-
-	private void processInput(String input) {
-		//System.out.println("processinput");
-		System.out.println("Received message on " + currPeerId + ":" + input);
-		if (isNumeric(input)) {
-			int peerIdReceived = Integer.parseInt(input);
-			/*if (peerIdReceived == peerId) {
-				System.out.println("Received back response for: " + currPeerId
-						+ " from: " + peerId);
-			}*/
-		}
-		Protocol protocol = new Protocol(currPeerId, peerId, input);
-		ExecutorPool.getInstance().getPool().execute(protocol);
-	}
-
-	private boolean isNumeric(String str) {
-		try {
-			Integer.parseInt(str);
-		} catch (NumberFormatException nfe) {
-			return false;
-		}
-		return true;
-	}
-
 }

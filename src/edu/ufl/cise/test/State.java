@@ -1,10 +1,13 @@
 package edu.ufl.cise.test;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 
 	class State{
 		int port;
 		Socket socket;
+		OutputStream out;
 		boolean firstMessageSent;
 		boolean firstMessageReceived;
 		boolean secondMessageSent;
@@ -53,5 +56,14 @@ import java.net.Socket;
 		}
 		public void setSecondMessageReceived(boolean secondMessageReceived) {
 			this.secondMessageReceived = secondMessageReceived;
+		}
+
+		public OutputStream getOut() {
+			return out;
+		}
+
+		public void setOut(OutputStream out) throws IOException {
+			this.out = out;
+			System.out.println("  INDISE STATE  " );
 		}
 	}

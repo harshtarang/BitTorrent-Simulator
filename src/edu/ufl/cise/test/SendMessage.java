@@ -1,27 +1,26 @@
 package edu.ufl.cise.test;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.io.OutputStream;
 
 public class SendMessage implements Runnable{
 
 	int peerId;
-	String message;
+	byte[] message;
 	
-	public SendMessage(int peerId, String message){
+	public SendMessage(int peerId, byte[] message){
 		this.peerId = peerId;
 		this.message = message;
 	}
 	
 	public void run() {
-		PrintWriter out;
-		Socket socket = PeerInfo.getInstance().getMap().get(peerId).getSocket();
+		OutputStream out = PeerInfo.getInstance().getMap().get(peerId).getOut();
 		try {
-			//System.out.println("Sending message: " + message);
-			 out = new PrintWriter(socket.getOutputStream(), true);
-			 out.println(message );
-			 out.flush();
+			 synchronized (out) {
+				 out.write(message);
+				 System.out.println(" SendEMssage " +  new String(message));
+				 out.flush();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

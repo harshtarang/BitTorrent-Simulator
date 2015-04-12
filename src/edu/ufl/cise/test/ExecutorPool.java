@@ -7,7 +7,7 @@ public class ExecutorPool {
 	
 	public static int NUM_THREADS = 2;
 	private ExecutorService pool;
-	private static ExecutorPool instance;
+	private static volatile ExecutorPool instance;
 		
 	public static ExecutorPool getInstance() {
 		if (instance == null) {

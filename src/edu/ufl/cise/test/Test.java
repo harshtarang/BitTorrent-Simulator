@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.Random;
 
@@ -40,10 +41,23 @@ public class Test{
 		BitSet bs = new BitSet(size);
 		bs.flip(0, 2);
 		System.out.println(bs.get(0) + " " + bs.get(1) + " " + " " + bs.get(2) + " " +  bs.size());
-		Random random = new Random();
-		int index = random.nextInt(2);
-		System.out.println(index);
-
+		byte arr[] = intToByteArray(1);
+		System.out.println(arr[0]);
+		System.out.println(arr[1]);
+		System.out.println(arr[2]);
+		System.out.println(arr[3]);
+		System.out.println(new BigInteger(arr).intValue());
 	}
+	
+	public static byte[] intToByteArray(int a) {
+		byte[] ret = new byte[4];
+		ret[3] = (byte) (a & 0xFF);
+		ret[2] = (byte) ((a >> 8) & 0xFF);
+		ret[1] = (byte) ((a >> 16) & 0xFF);
+		ret[0] = (byte) ((a >> 24) & 0xFF);
+		return ret;
+	}
+
+	
 	
 }

@@ -25,7 +25,7 @@ public class Protocol implements Runnable {
 				PeerInfo.getInstance().updateFirstMessageReceived(peerId);
 				PeerInfo.getInstance().updateFirstMessageSent(peerId);
 				
-				SendMessage message = new SendMessage(peerId, "" + currPeerId);
+				SendMessage message = new SendMessage(peerId, (""+currPeerId).getBytes());
 				System.out.println("Sending message : " + currPeerId + " to: "
 						+ peerId);
 				ExecutorPool.getInstance().getPool().execute(message);
@@ -36,7 +36,7 @@ public class Protocol implements Runnable {
 						+ peerId);
 
 				PeerInfo.getInstance().updateSecondMessageSent(peerId);
-				SendMessage message = new SendMessage(peerId, "firstMessage");
+				SendMessage message = new SendMessage(peerId, "firstMessage".getBytes());
 				ExecutorPool.getInstance().getPool().execute(message);
 			}
 		}else if(!PeerInfo.getInstance().getMap().get(peerId).isSecondMessageSent()){
@@ -46,7 +46,7 @@ public class Protocol implements Runnable {
 					+ peerId);
 
 			PeerInfo.getInstance().updateSecondMessageSent(peerId);
-			SendMessage message = new SendMessage(peerId, "firstMessage");
+			SendMessage message = new SendMessage(peerId, "firstMessage".getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
 		}else {
 			System.out.println("Condition4");
