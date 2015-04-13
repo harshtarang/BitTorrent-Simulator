@@ -37,27 +37,18 @@ public abstract class ReadWorker {
 	public boolean isHandShakeMessage(byte[] firstFour) {
 		String firstFourBytes = new String(firstFour);
 		System.out.println(" FIRSTFOUR " + firstFourBytes);
-		if (isNumeric(firstFourBytes)) {
-			return false;
-		} else
+		if (firstFourBytes.equalsIgnoreCase("P2PF")) {
 			return true;
+		} else
+			return false;
 	}
 
 	public Message returnMessageType(int len, byte[] input) {
 		byte[] mType = new byte[1];
-		mType[0] = input[5];
-		int messageType = -1;
-		try {
-			messageType = Integer.parseInt(new String(mType, "UTF-8"));
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		mType[0] = input[4];
+		int messageType = (int) mType[0];
 		int pos = 5;
-
+		System.out.println("Message Type : " + messageType);
 		Message response = null;
 		if (messageType == Message.MessageType.CHOKE.value) {
 			response = new Choke();

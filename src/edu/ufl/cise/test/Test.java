@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.Random;
 
@@ -37,16 +36,18 @@ public class Test{
 		int b = 2;
 		float c = (float)a/(float)b;
 		int size = (int) Math.ceil(c);
-		System.out.println(size);
+		//System.out.println(size);
 		BitSet bs = new BitSet(size);
 		bs.flip(0, 2);
-		System.out.println(bs.get(0) + " " + bs.get(1) + " " + " " + bs.get(2) + " " +  bs.size());
-		byte arr[] = intToByteArray(1);
+		//System.out.println(bs.get(0) + " " + bs.get(1) + " " + " " + bs.get(2) + " " +  bs.size());
+		byte arr[] = intToByteArray(3);
 		System.out.println(arr[0]);
 		System.out.println(arr[1]);
 		System.out.println(arr[2]);
 		System.out.println(arr[3]);
-		System.out.println(new BigInteger(arr).intValue());
+		System.out.println("*****");
+		//System.out.println(new BigInteger(arr).intValue());
+		System.out.println(byteArrayToInt(arr));
 	}
 	
 	public static byte[] intToByteArray(int a) {
@@ -58,6 +59,14 @@ public class Test{
 		return ret;
 	}
 
-	
+	public static int byteArrayToInt(byte[] b) {
+		int value = 0;
+		for (int i = 0; i < 4; i++) {
+			int shift = (4 - 1 - i) * 8;
+			value += (b[i] & 0x000000FF) << shift;
+		}
+		return value;
+	}
+
 	
 }

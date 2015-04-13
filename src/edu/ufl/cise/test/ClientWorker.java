@@ -59,7 +59,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 					haveMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
 
-			// Send Request message
+/*			// Send Request message
 			Request requestMessage = new Request(12);
 			message = new SendMessage(peerID,
 					requestMessage.getBytes());
@@ -70,7 +70,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			message = new SendMessage(peerID,
 					chokeMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
-			
+*/			
 			// Now just wait for replies from the peer
 			byte[] firstFour = new byte[4];
 			byte[] temp;

@@ -43,7 +43,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 					handShakeMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
 
-			// Send Have message
+/*			// Send Have message
 			Have haveMessage = new Have(12);
 			message = new SendMessage(peerID,
 					haveMessage.getBytes());
@@ -54,7 +54,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 			message = new SendMessage(peerID,
 					requestMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
-			
+*/			
 			// Send Choke message
 			Choke chokeMessage = new Choke();
 			message = new SendMessage(peerID,
@@ -85,6 +85,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 				} else {// Determine the message type and construct it
 					System.out.println("Message type 2");
 					int len = new BigInteger(firstFour).intValue();  // get the length of message
+					System.out.println("Lenght of message is : " + len);
 					temp = new byte[len+4];
 					in.read(temp, 4, len);
 					response = returnMessageType(len, temp);
