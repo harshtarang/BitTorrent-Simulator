@@ -1,5 +1,6 @@
 package edu.ufl.cise.config;
 
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.BitSet;
 
@@ -15,6 +16,7 @@ public class PeerInfo {
 	boolean isBitFieldReceived = false;
 	float downloadSpeed;
 	private Socket socket;
+	private OutputStream out;
 	private BitSet pieceInfo;
 	private int numPiecesInterested;
 	
@@ -130,6 +132,14 @@ public class PeerInfo {
 
 	public void updatePieceInterested() {
 		numPiecesInterested--;
+	}
+
+	public OutputStream getOut() {
+		return out;
+	}
+
+	public void setOut(OutputStream out) {
+		this.out = out;
 	}
 	
 }

@@ -1,6 +1,7 @@
 package edu.ufl.cise.client;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -451,9 +452,10 @@ public class Peer {
 		return message;
 	}
 
-	public void updateSocket(int peerID2, Socket clientSocket) {
+	public void updateSocket(int peerID2, Socket clientSocket, OutputStream out) {
 		PeerInfo peerInfo = map.get(peerID2);
 		peerInfo.setSocket(clientSocket);
+		peerInfo.setOut(out);
 	}
 
 	public void updateHandshakeSent(int peerId) {
