@@ -55,7 +55,8 @@ public class Peer {
 
 	private HashMap<Integer, Boolean> preferredNeighbors; // Current preferred
 															// neighbors
-	int currentOptimisticUnchoked;
+	private int currentOptimisticUnchoked;
+	private int count;  // For testing purposes
 
 	public static Peer getInstance() {
 		if (instance == null) {
@@ -109,6 +110,8 @@ public class Peer {
 			preferredNeighbors.put(peer, false);
 		}
 		currentOptimisticUnchoked = -1;
+		// For testing purposes
+		count = peerId;
 	}
 
 	public void Serverinit() throws IOException {
@@ -559,6 +562,15 @@ public class Peer {
 
 	public void setNumPiecesCompleted(int numPiecesCompleted) {
 		this.numPiecesCompleted = numPiecesCompleted;
+	}
+
+	public int getCount() {
+		count++;
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 }

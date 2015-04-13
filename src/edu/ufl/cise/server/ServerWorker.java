@@ -23,8 +23,12 @@ public class ServerWorker extends ReadWorker implements Runnable {
 
 	public ServerWorker(Socket socket) {
 		this.clientSocket = socket;
-		String hostname = clientSocket.getInetAddress().getCanonicalHostName();
-		this.peerID = MetaInfo.getHostNameToIdMap().get(hostname);
+		String hostName = clientSocket.getInetAddress().getCanonicalHostName();
+		// Currently for testing purposes since everything is localhost we will append 
+		// count to hostname and extract the peerId. in fact count = current peerId.
+		int count = Peer.getInstance().getCount();
+		hostName = hostName + count;
+		this.peerID = MetaInfo.getHostNameToIdMap().get(hostName);
 		this.currPeerId = MetaInfo.getPeerId();
 	}
 
