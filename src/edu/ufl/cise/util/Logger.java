@@ -4,12 +4,16 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import edu.ufl.cise.config.MetaInfo;
+
 public class Logger {
 
 	// Ensures a single instance for the logger
 	private static volatile Logger instance ;
+	private static String fileName;
 
 	private Logger() {
+		fileName = MetaInfo.getLogPath();
 	}
 
 	public static Logger getInstance() {
@@ -22,7 +26,6 @@ public class Logger {
 	}
 
 	public void log(String peerId, String message) {
-		String fileName = "log_peer_" + peerId;
 		BufferedWriter bw = null;
 		try {
 			try {

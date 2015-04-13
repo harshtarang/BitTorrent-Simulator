@@ -16,16 +16,19 @@ public class MetaInfo {
 	private static int numPeers;
 	private static ArrayList<Integer> peerList;
 	private static String basePath;
+	private static String logPath;
 	private static int lastPieceSize;
 	private static int portNumber;
 	private static int peerId;
 	private static int peersComplete;
-	private static HashMap<String, Integer> hostNameToIdMap; // For checking which
-														// peerId this
-														// connection request
-														// belongs to
-														// when a connection
-														// request comes
+	private static HashMap<String, Integer> hostNameToIdMap; // For checking
+																// which
+
+	// peerId this
+	// connection request
+	// belongs to
+	// when a connection
+	// request comes
 
 	public static int getnPieces() {
 		return nPieces;
@@ -146,7 +149,8 @@ public class MetaInfo {
 		return hostNameToIdMap;
 	}
 
-	public static void setHostNameToIdMap(HashMap<String, Integer> hostNameToIdMap) {
+	public static void setHostNameToIdMap(
+			HashMap<String, Integer> hostNameToIdMap) {
 		MetaInfo.hostNameToIdMap = hostNameToIdMap;
 	}
 
@@ -158,4 +162,33 @@ public class MetaInfo {
 		MetaInfo.peersComplete = peersComplete;
 	}
 
+	public static String getString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("numPreferredNeighbours: " + getNumPreferredNeighbours() + "\n");
+		sb.append("unchokingInterval: " + getUnchokingInterval()+ "\n");
+		sb.append("optimisticUnchokingInterval: " + getUnchokingInterval()+ "\n");
+		sb.append("fileName: " + getFileName()+ "\n");
+		sb.append("fileSize: " + getFileSize()+ "\n");
+		sb.append("pieceSize: " + getPieceSize()+ "\n");
+		sb.append("nPieces: " + getnPieces()+ "\n");
+
+		sb.append("isCompletefile" + isCompletefile()+ "\n");
+		sb.append("numPeers: " + getNumPeers()+ "\n");
+		sb.append("peerList: " + getPeerList().toString()+ "\n");
+		sb.append("basePath: " + getBasePath()+ "\n");
+		sb.append("lastPieceSize: " + getLastPieceSize()+ "\n");
+		sb.append("portNumber: " + getPortNumber()+ "\n");
+		sb.append("peerId: " + getPeerId()+ "\n");
+		sb.append("hostNameToIdMap: " + hostNameToIdMap.toString()+ "\n");
+		sb.append("logPath: "  + getLogPath()+ "\n");
+		return sb.toString();
+	}
+
+	public static String getLogPath() {
+		return logPath;
+	}
+
+	public static void setLogPath(String logPath) {
+		MetaInfo.logPath = logPath;
+	}
 }

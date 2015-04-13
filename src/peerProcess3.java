@@ -10,7 +10,7 @@ import edu.ufl.cise.util.CommonConfigReader;
 import edu.ufl.cise.util.PeerConfigReader;
 
 
-public class peerProcess {
+public class peerProcess3 {
 
 	public static final String COMMON_CONFIG = "Commong.cfg";
 	public static final String PEER_CONFIG   = "PeerInfo.cfg";
@@ -24,7 +24,8 @@ public class peerProcess {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		String peerId = args[0];
+		//String peerId = args[0];
+		String peerId = "3";
 		init(peerId);
 	}
 	

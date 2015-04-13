@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
 
@@ -25,6 +24,8 @@ public class PeerConfigReader {
 			int countPeersComplete = 0;
 			br = new BufferedReader(new FileReader(filePath + fileName));
 			while ((line = br.readLine()) != null) {
+				if(line.startsWith("#") || line.isEmpty()) continue;
+				
 				PeerInfo peerInfo = new PeerInfo();
 				String arr[] = line.split(" ");
 

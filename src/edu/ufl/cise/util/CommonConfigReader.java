@@ -21,6 +21,8 @@ public class CommonConfigReader {
 			String line;
 			br = new BufferedReader(new FileReader(filePath + fileName));
 			while ((line = br.readLine()) != null) {
+				if(line.startsWith("#") || line.isEmpty()) continue;
+				
 				String arr[] = line.split(" ");
 				String property = arr[0];
 				String value = arr[1];
