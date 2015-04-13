@@ -1,8 +1,6 @@
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.LinkedHashMap;
 
 import edu.ufl.cise.client.OptimisticUnchokeTask;
@@ -43,7 +41,11 @@ public class peerProcess1 {
 		int fileSize = MetaInfo.getFileSize();
 		int pieceSize = MetaInfo.getPieceSize();
 		int nPieces = (int) Math.ceil((float) fileSize / (float) pieceSize);
+		int lastPieceSize = fileSize -  (fileSize/pieceSize)*pieceSize;
+		
+		MetaInfo.setLastPieceSize(lastPieceSize);
 		MetaInfo.setnPieces(nPieces);
+		MetaInfo.setBasePath(base_path);
 
 		// Create a log file and set the path
 		String logFile = base_path + directory + "peer_" + peerID + ".log";
