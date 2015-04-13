@@ -1,6 +1,5 @@
 package edu.ufl.cise.protocol;
 
-import java.math.BigInteger;
 import java.util.BitSet;
 
 import edu.ufl.cise.config.MetaInfo;
@@ -19,15 +18,21 @@ public class BitField extends Message {
 	public byte[] getBytes() {
 		int bitFieldlen = bitField.length;
 		byte[] out = new byte[bitFieldlen + 5];
-		byte[] type = new byte[1];
-		type = intToByteArray(mType.value);
+		byte[] type = new byte[4];
+		byte[] lengthBytes;
 
-		byte[] lengthBytes = intToByteArray(bitFieldlen + 5);
-		for (int i = 0; i < 4; i++) {
+		lengthBytes = intToByteArray(bitFieldlen + 5);
+        type = intToByteArray(mType.value);
+		
+        // copy the length bytes in out
+        for (int i = 0; i < 4; i++) {
 			out[i] = lengthBytes[i];
 		}
-		out[4] = type[0];
-
+		// copy the type bytes.
+		// since LSB will be at the end of array get the last byte.
+		out[4] = type[3];
+		
+		// copy the bitfield into out
 		for (int i = 0; i < bitFieldlen; i++) {
 			out[5 + i] = bitField[i];
 		}

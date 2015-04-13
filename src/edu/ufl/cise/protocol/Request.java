@@ -29,22 +29,34 @@ public class Request extends Message {
 	}
 
 	public byte[] getBytes() {
-		byte[] out = new byte[9];
-		byte[] len = new byte[4];
-		byte[] type = new byte[5];
-		byte[] pieceIndexBytes = new byte[4];
-		len = intToByteArray(1);
+		byte[] out = new byte[9];  // total length of packet which is 9bytes
+		byte[] len = new byte[4];  // length bytes to be send before
+		byte[] type = new byte[4];  // length of type
+		byte[] pieceIndexBytes = new byte[4];  // pieceIndex in bytes
+		
+		len  = intToByteArray(5);  // 1 byte for message type + 4 bytes of piece index
 		type = intToByteArray(mType.value);
-		for (int i = 0; i < 4; i++) {
+		// copy the length bytes
+		for(int i=0; i<4; i++){
 			out[i] = len[i];
 		}
-		out[4] = type[0];
+		// copy the type bytes.
+		// since LSB will be at the end of array get the last byte.
+		out[4] = type[3];
+//		System.out.println(out[4]);
+		
+		// copy the piece index bytes
 		pieceIndexBytes = intToByteArray(pieceIndex);
-		for (int i = 0; i < 4; i++) {
-			out[5 + i] = pieceIndexBytes[i];
+		for(int i=0; i<4; i++){
+			out[5+i] = pieceIndexBytes[i];
 		}
-		System.out.println("BYTES :" + out);
-		return out;
+/*		System.out.println("BYTES REQUEST: " );
+		for(int i=0; i<9; i++){
+			System.out.print(out[i]);
+		}
+		System.out.println();
+		System.out.println(" ****** ");
+*/		return out;
 	}
 
 }

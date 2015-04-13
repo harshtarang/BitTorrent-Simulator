@@ -3,19 +3,23 @@ package edu.ufl.cise.test;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
 
 import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.HandshakeMessage;
 import edu.ufl.cise.protocol.Have;
+import edu.ufl.cise.protocol.Interested;
 import edu.ufl.cise.protocol.Message;
+import edu.ufl.cise.protocol.NotInterested;
 import edu.ufl.cise.protocol.Request;
+import edu.ufl.cise.protocol.Unchoke;
 
 public class ServerWorker extends ReadWorker implements Runnable {
 
 	private Socket clientSocket = null;
-	private DataOutputStream out;
+	private OutputStream out;
 	private InputStream in;
 	int peerID;
 	int port;
@@ -32,33 +36,33 @@ public class ServerWorker extends ReadWorker implements Runnable {
 
 	public void run() {
 		try {
-			out = new DataOutputStream(clientSocket.getOutputStream());
+			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
 			PeerInfo.getInstance().updateOutputStream(peerID, out);
 			PeerInfo.getInstance().updateSocket(peerID, clientSocket);
 
 			// Send Handshake message
-			HandshakeMessage handShakeMessage = new HandshakeMessage(currPeerId);
+			HandshakeMessage handShakeMessage = new HandshakeMessage(12);
 			SendMessage message = new SendMessage(peerID,
 					handShakeMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
 
-/*			// Send Have message
-			Have haveMessage = new Have(12);
+			// Send Interested message
+			Interested haveMessage = new Interested();
 			message = new SendMessage(peerID,
 					haveMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
 
-			// Send Request message
-			Request requestMessage = new Request(12);
-			message = new SendMessage(peerID,
-					requestMessage.getBytes());
-			ExecutorPool.getInstance().getPool().execute(message);
-*/			
-			// Send Choke message
-			Choke chokeMessage = new Choke();
+			// Send NI message
+			NotInterested chokeMessage = new NotInterested();
 			message = new SendMessage(peerID,
 					chokeMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
+
+			// Send Unchoke message
+			Unchoke unchokeMessage = new Unchoke();
+			message = new SendMessage(peerID,
+					unchokeMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
 			
 			// Now just wait for replies from the peer
@@ -70,22 +74,23 @@ public class ServerWorker extends ReadWorker implements Runnable {
 			while (true) {
 				in.read(firstFour, 0, 4);
 				if (isHandShakeMessage(firstFour)) {	// Check the type of message
-					System.out.println("Handshake message");
+					System.out.println("* Handshake message Received *");
 					temp = new byte[32];
 					in.read(temp, 4, 14);  // read next 14 
 					header = getHeader(firstFour, temp);
 					String headerString = new String(header);
 					
 					if (headerString.equalsIgnoreCase(HandshakeMessage.HEADER)) {
-						System.out.println("Header");
+						System.out.println("* Header Verified *");
 						in.read(temp, 18, 14);  // read the remaining bytes
 						int peerId = getPeerId(temp);  
+						System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
 					}
-				} else {// Determine the message type and construct it
-					System.out.println("Message type 2");
+				} else {  // Determine the message type and construct it
+					System.out.println("* Second type of Message *");
 					int len = new BigInteger(firstFour).intValue();  // get the length of message
-					System.out.println("Lenght of message is : " + len);
+					System.out.println("Length of message is : " + len);
 					temp = new byte[len+4];
 					in.read(temp, 4, len);
 					response = returnMessageType(len, temp);

@@ -42,7 +42,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			clientSocket = new Socket(hostName, port);
 			System.out.println(" Created socket " + hostName + " " + port);
 			
-			out = new DataOutputStream(clientSocket.getOutputStream());
+			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
 			PeerInfo.getInstance().updateSocket(peerID, clientSocket);
 			PeerInfo.getInstance().updateOutputStream(peerID, out);
@@ -53,24 +53,25 @@ public class ClientWorker extends ReadWorker implements Runnable {
 					handShakeMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
 
-			// Send Have message
-			Have haveMessage = new Have(12);
+			// Send Interested message
+			Interested haveMessage = new Interested();
 			message = new SendMessage(peerID,
 					haveMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
 
-/*			// Send Request message
-			Request requestMessage = new Request(12);
-			message = new SendMessage(peerID,
-					requestMessage.getBytes());
-			ExecutorPool.getInstance().getPool().execute(message);
-			
-			// Send Choke message
-			Choke chokeMessage = new Choke();
+			// Send NI message
+			NotInterested chokeMessage = new NotInterested();
 			message = new SendMessage(peerID,
 					chokeMessage.getBytes());
 			ExecutorPool.getInstance().getPool().execute(message);
-*/			
+
+			// Send Unchoke message
+			Unchoke unchokeMessage = new Unchoke();
+			message = new SendMessage(peerID,
+					unchokeMessage.getBytes());
+			ExecutorPool.getInstance().getPool().execute(message);
+
+			
 			// Now just wait for replies from the peer
 			byte[] firstFour = new byte[4];
 			byte[] temp;
@@ -90,6 +91,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 						System.out.println("Header");
 						in.read(temp, 18, 14);  // read the remaining bytes
 						int peerId = getPeerId(temp);  
+						System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
 					}
 				} else {// Determine the message type and construct it

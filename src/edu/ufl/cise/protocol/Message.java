@@ -8,6 +8,12 @@ public abstract class Message {
 //	public enum Type {
 //		CHOKE, UNCHOKE, INTERESTED, NOT_INTERESTED, HAVE, BITFIELD, REQUEST, PIECE
 //	}
+	
+	public static final int PIECE_INDEX_LENGTH = 4;
+	public static final int PEER_ID_LENGTH = 4;
+	public static final int MESSAGE_TYPE_LENGTH = 1;
+	public static final int HAVE_LENGTH = 5;
+	public static final int REQUEST_LENGTH = 5;
 
 	public enum MessageType {
 		CHOKE(0),

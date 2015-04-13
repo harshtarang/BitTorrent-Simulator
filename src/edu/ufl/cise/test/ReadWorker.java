@@ -44,10 +44,13 @@ public abstract class ReadWorker {
 	}
 
 	public Message returnMessageType(int len, byte[] input) {
+		byte[] pieceIndex;
+		byte[] bitArray ;
 		byte[] mType = new byte[1];
+		int pos = 5;
+		
 		mType[0] = input[4];
 		int messageType = (int) mType[0];
-		int pos = 5;
 		System.out.println("Message Type : " + messageType);
 		Message response = null;
 		if (messageType == Message.MessageType.CHOKE.value) {
@@ -63,22 +66,18 @@ public abstract class ReadWorker {
 			response = new NotInterested();
 			System.out.println("Not interested");
 		} else if (messageType == Message.MessageType.HAVE.value) {
-			byte[] pieceIndex;
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Have(pieceIndex);
 			System.out.println("Have");
 		} else if (messageType == Message.MessageType.BITFIELD.value) {
-			byte[] bitArray ;
 			bitArray = getBitArray(input, pos, len-1);
 			response = new BitField(bitArray);
 			System.out.println("BitField");
 		} else if (messageType == Message.MessageType.REQUEST.value) {
-			byte[] pieceIndex;
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Request(pieceIndex);
 			System.out.println("REquest");
 		} else if (messageType == Message.MessageType.PIECE.value) {
-			byte[] pieceIndex;
 			pieceIndex = getPieceIndex(pos, input);
 			int index = new BigInteger(pieceIndex).intValue();
 			len -= 5;
@@ -92,8 +91,8 @@ public abstract class ReadWorker {
 
 	private byte[] getPieceIndex(int pos, byte[] input){
 		byte[] pieceIndex = new byte[4];
-		pieceIndex[0] = input[pos]; pieceIndex[1] = input[pos+1];
-		pieceIndex[2] = input[pos+2]; pieceIndex[3] = input[pos+3];
+		pieceIndex[3] = input[pos]; pieceIndex[2] = input[pos+1];
+		pieceIndex[1] = input[pos+2]; pieceIndex[0] = input[pos+3];
 		return pieceIndex;
 	}
 	

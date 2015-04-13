@@ -17,14 +17,19 @@ public class HandshakeMessage extends Message {
 		byte[] out = new byte[32];
 		byte[] header = new byte[18];
 		byte[] peerIdBytes = new byte[4];
+		
 		header = HEADER.getBytes();
 		peerIdBytes = intToByteArray(peerId);
+		
+		// Copy the header into out
 		for( int i=0; i<18; i++){
 			out[i] = header[i];
 		}
+		// Fill with zeros
 		for( int i=18; i<28; i++){
 			out[i] = 0x00;
 		}
+		
 		for( int i=0; i<4; i++){
 			out[28+i] = peerIdBytes[i];
 		}

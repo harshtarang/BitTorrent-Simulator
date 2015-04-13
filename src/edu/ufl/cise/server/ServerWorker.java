@@ -18,11 +18,12 @@ import edu.ufl.cise.protocol.Interested;
 import edu.ufl.cise.protocol.Message;
 import edu.ufl.cise.protocol.NotInterested;
 import edu.ufl.cise.protocol.Piece;
+import edu.ufl.cise.protocol.ReadWorker;
 import edu.ufl.cise.protocol.Request;
 import edu.ufl.cise.protocol.Unchoke;
 import edu.ufl.cise.util.ExecutorPool;
 
-public class ServerWorker implements Runnable {
+public class ServerWorker extends ReadWorker implements Runnable {
 	private Socket clientSocket = null;
 	private OutputStream out;
 	private InputStream in;
@@ -88,97 +89,4 @@ public class ServerWorker implements Runnable {
 
 		}
 	}
-
-	private byte[] getHeader(byte[] firstFour, byte[] temp) {
-		byte[] header = new byte[18];
-		for(int i=0; i<4; i++){
-			header[i] = firstFour[i];
-		}
-		for(int i=0; i<14; i++){
-			header[4+i] = temp[i];
-		}
-		return header;
-	}
-
-	public boolean isHandShakeMessage(byte[] firstFour) {
-		String firstFourBytes = new String(firstFour);
-		if (isNumeric(firstFourBytes)) {
-			return false;
-		} else
-			return true;
-	}
-
-	public Message returnMessageType(int len, byte[] input) {
-		// Determine message type
-		byte[] mType = new byte[1];
-		mType[0] = input[0];
-		int messageType = -1;
-		try {
-			messageType = Integer.parseInt(new String(mType, "UTF-8"));
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		int pos = 1;
-
-		Message response = null;
-		if (messageType == Message.MessageType.CHOKE.value) {
-			response = new Choke();
-		} else if (messageType == Message.MessageType.UNCHOKE.value) {
-			response = new Unchoke();
-		} else if (messageType == Message.MessageType.INTERESTED.value) {
-			response = new Interested();
-		} else if (messageType == Message.MessageType.NOT_INTERESTED.value) {
-			response = new NotInterested();
-		} else if (messageType == Message.MessageType.HAVE.value) {
-			byte[] pieceIndex = new byte[4];
-			pieceIndex = getPieceIndex(pos, input);
-			response = new Have(pieceIndex);
-		} else if (messageType == Message.MessageType.BITFIELD.value) {
-			byte[] bitArray = new byte[len-1];
-			bitArray = getBitArray(input, pos, len-1);
-			response = new BitField(bitArray);
-		} else if (messageType == Message.MessageType.REQUEST.value) {
-			byte[] pieceIndex = new byte[4];
-			pieceIndex = getPieceIndex(pos, input);
-			response = new Request(pieceIndex);
-		} else if (messageType == Message.MessageType.PIECE.value) {
-			byte[] pieceIndex = new byte[4];
-			pieceIndex = getPieceIndex(pos, input);
-			int index = new BigInteger(pieceIndex).intValue();
-			len--;
-			pos += 4;
-			byte[] piece = getBitArray(input, pos, len);
-			response = new Piece(index, piece);
-		}
-		return response;
-	}
-
-	private byte[] getPieceIndex(int pos, byte[] input){
-		byte[] pieceIndex = new byte[4];
-		pieceIndex[0] = input[pos]; pieceIndex[1] = input[pos+1];
-		pieceIndex[2] = input[pos+2]; pieceIndex[3] = input[pos+3];
-		return pieceIndex;
-	}
-	
-	private byte[] getBitArray(byte[] input, int pos, int len) {
-		byte[] bitArray = new byte[len];
-		for (int i = 0; i < len; i++) {
-			bitArray[i] = input[pos + i];
-		}
-		return bitArray;
-	}
-
-	private boolean isNumeric(String str) {
-		try {
-			Double.parseDouble(str);
-		} catch (NumberFormatException nfe) {
-			return false;
-		}
-		return true;
-	}
-
 }
