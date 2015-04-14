@@ -26,6 +26,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 		String hostName = clientSocket.getInetAddress().getCanonicalHostName();
 		// Currently for testing purposes since everything is localhost we will append 
 		// count to hostname and extract the peerId. in fact count = current peerId.
+		// TODO : Fix it before running on cise machines.
 		int count = Peer.getInstance().getCount();
 		hostName = hostName + count;
 		this.peerID = MetaInfo.getHostNameToIdMap().get(hostName);
@@ -63,7 +64,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 						response = new HandshakeMessage(peerId);
 					}
 				} else {// Determine the message type and construct it
-					System.out.println("Message type 2");
+					System.out.println("Second type of message");
 					int len = new BigInteger(firstFour).intValue(); // get the
 																	// length of
 																	// message

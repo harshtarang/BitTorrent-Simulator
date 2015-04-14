@@ -34,7 +34,8 @@ public class ClientWorker extends ReadWorker implements Runnable {
 	public void run() {
 		try {
 			// connect to the socket
-			clientSocket = new Socket(hostName, port);
+			// TODO : Fix the hardcoding before running on the cise machines. 
+			clientSocket = new Socket("localhost", port);
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
 

@@ -145,33 +145,36 @@ public class Peer {
 	 * Update preferred neighbors randomly
 	 */
 	public void randomSelect() {
+		Random random = new Random();
+		int count = 0;
+		HashMap<Integer, Boolean> newlySelectedNeighbor = new HashMap<Integer, Boolean>();
 		int k = MetaInfo.getNumPreferredNeighbours();
-		ArrayList<Integer> peerList = new ArrayList<Integer>();
+		ArrayList<Integer> interestedPeerList = new ArrayList<Integer>();
 		HashMap<Integer, Boolean> currentlyInterested = getCurrentlyInterested();
-		// Get the currently Interested neighbors
+
+		// Get the currently Interested neighbors in a ArrayList
 		Iterator<Integer> itr1 = currentlyInterested.keySet().iterator();
 		while (itr1.hasNext()) {
 			int peerId = itr1.next();
 			if (currentlyInterested.get(peerId))
-				peerList.add(peerId);
+				interestedPeerList.add(peerId);
 		}
-		int currentInterestedSize = currentlyInterested.size();
-		Random random = new Random();
-		int count = 0;
-		HashMap<Integer, Boolean> newlySelectedNeighbor = new HashMap<Integer, Boolean>();
+		int currentInterestedSize = interestedPeerList.size();
+
 		if (currentInterestedSize > k) {
 			while (count < k) {
 				Integer randNum = random.nextInt(k);
-				int peerId = peerList.get(randNum);
+				int peerId = interestedPeerList.get(randNum);
 				if (!newlySelectedNeighbor.containsKey(peerId)) {
 					newlySelectedNeighbor.put(peerId, true);
 					count++;
 				}
 			}
-		} else { // Add everyone
-			for (int peerId : peerList)
+		} else if(currentInterestedSize <= k  && currentInterestedSize != 0) { // Add everyone
+			for (int peerId : interestedPeerList)
 				newlySelectedNeighbor.put(peerId, true);
 		}
+		
 		// Iterate the current map and send choke and unchoke messages based on
 		// newly selected map.
 		HashMap<Integer, Boolean> oldMap = getPreferredNeighbors();

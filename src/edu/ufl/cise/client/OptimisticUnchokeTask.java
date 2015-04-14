@@ -32,22 +32,24 @@ public class OptimisticUnchokeTask extends TimerTask {
 	}
 
 	private void randomSelect() {
-		ArrayList<Integer> peerList = new ArrayList<Integer>();
+		Random random = new Random();
+		ArrayList<Integer> interestedPeerList = new ArrayList<Integer>();
 		HashMap<Integer, Boolean> currentlyInterested = Peer.getInstance()
 				.getCurrentlyInterested();
 		HashMap<Integer, Boolean> currentPreferredNeigbor = Peer.getInstance()
 				.getPreferredNeighbors();
 		int selectedOUN = -1;
 		int count = 0;
+		
 		// Get the currently Interested neighbors
 		Iterator<Integer> itr1 = currentlyInterested.keySet().iterator();
 		while (itr1.hasNext()) {
 			int peerId = itr1.next();
 			if (currentlyInterested.get(peerId))
-				peerList.add(peerId);
+				interestedPeerList.add(peerId);
 		}
-		int currentInterestedSize = currentlyInterested.size();
-		Random random = new Random();
+		int currentInterestedSize = interestedPeerList.size();
+		
 		if (currentInterestedSize > 0) {
 			while (count++ < currentInterestedSize) { // to break the possibly
 														// infinite loop when
@@ -55,7 +57,7 @@ public class OptimisticUnchokeTask extends TimerTask {
 														// same as preferred
 														// neighbors
 				Integer randNum = random.nextInt(currentInterestedSize);
-				int peerId = peerList.get(randNum);
+				int peerId = interestedPeerList.get(randNum);
 				if (currentlyInterested.get(peerId)
 						&& currentInterestedSize == 1) { // if only one is
 															// interested then
@@ -75,6 +77,7 @@ public class OptimisticUnchokeTask extends TimerTask {
 		} else { // if no one is interested just return
 			return;
 		}
+		
 		// Send choke or unchoke message
 		int previouseOUN = Peer.getInstance().getCurrentOptimisticUnchoked();
 		if (previouseOUN != selectedOUN) {
@@ -102,7 +105,7 @@ public class OptimisticUnchokeTask extends TimerTask {
 		time = MetaInfo.getOptimisticUnchokingInterval();
 		TimerTask timerTask = new OptimisticUnchokeTask();
 		Timer timer = new Timer(true);
-		timer.scheduleAtFixedRate(timerTask, 0, time);
+		timer.scheduleAtFixedRate(timerTask, 0, time*1000);
 	}
 
 }
