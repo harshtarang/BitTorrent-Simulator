@@ -60,6 +60,10 @@ public class Have extends Message {
 		System.out.println(have.getBytes());
 	}
 	
+	public String toString()
+	{
+		return "["+this.mType+"]";
+	}
 	
 }
 

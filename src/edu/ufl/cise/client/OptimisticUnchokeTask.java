@@ -83,7 +83,8 @@ public class OptimisticUnchokeTask extends TimerTask {
 		if (previouseOUN != selectedOUN) {
 			// Send choke message to previous OUN if its not in current selected
 			// neighbor
-			if (!Peer.getInstance().getPreferredNeighbors().get(previouseOUN)) {
+			
+			if ((previouseOUN!=-1)&&(!Peer.getInstance().getPreferredNeighbors().get(previouseOUN))) {
 				Choke choke = new Choke();
 				SendMessage sendMessage = new SendMessage(previouseOUN,
 						choke.getBytes());

@@ -73,5 +73,10 @@ public class HandshakeMessage extends Message {
 		}
 	}
 	
+	public String toString()
+	{
+		return "["+this.mType+"]";
+	}
+	
 
 }

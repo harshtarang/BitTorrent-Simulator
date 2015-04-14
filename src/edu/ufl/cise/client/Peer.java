@@ -194,6 +194,7 @@ public class Peer {
 					&& !newlySelectedNeighbor.containsKey(peerID)) {
 				// Peer was a preferred neighbor but not selected. Send choke
 				// message
+				getUnchokedMap().put(peerID, false);
 				Choke choke = new Choke();
 				SendMessage sendMessage = new SendMessage(peerID,
 						choke.getBytes());
@@ -204,6 +205,7 @@ public class Peer {
 					&& newlySelectedNeighbor.containsKey(peerID)) {
 				// Peer was not a preferred neighbor but now selected. Send
 				// unchoke message
+				getUnchokedMap().put(peerID, true);
 				Unchoke unchoke = new Unchoke();
 				SendMessage sendMessage = new SendMessage(peerID,
 						unchoke.getBytes());
@@ -241,7 +243,7 @@ public class Peer {
 					.nextSetBit(pieceId + 1)) {
 				// check if this piece is not already currently downloading
 				// add the piece to arraylist to get a random piece
-				if (!piecesCurrentlyDownloading.containsKey(pieceId)) {
+				if (!piecesCurrentlyDownloading.get(pieceId)) {
 					arr.add(pieceId);
 				}
 			}
@@ -322,6 +324,11 @@ public class Peer {
 			if (currentPeerBitSet.isEmpty()) { // if current peer is not
 												// interested in peerID2 still
 				// Don't do anything
+				NotInterested message = new NotInterested();
+				SendMessage sendMessage = new SendMessage(peerId2,
+						message.getBytes());
+				ExecutorPool.getInstance().getPool().execute(sendMessage);
+				
 			} else { // now current peer is interested
 						// Send interested message
 				Interested message = new Interested();

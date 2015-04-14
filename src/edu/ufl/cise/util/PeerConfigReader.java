@@ -45,13 +45,14 @@ public class PeerConfigReader {
 				else{
 					peerInfo.setNumPiecesInterested(numPieces);
 				}
-				MetaInfo.setCompletefile(isCompleteFile);
+				
 				
 				peerMap.put(peerIDInt, peerInfo);
 				hostNameToPeerIdMap.put(hostName, peerIDInt);
 				
 				if(peerId == peerIDInt.intValue()){
 					MetaInfo.setPortNumber(port);
+					MetaInfo.setCompletefile(isCompleteFile);
 				}
 			}
 			MetaInfo.setHostNameToIdMap(hostNameToPeerIdMap);

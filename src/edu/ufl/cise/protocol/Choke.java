@@ -31,4 +31,9 @@ public class Choke extends Message {
 */		return out;
 	}
 	
+	public String toString()
+	{
+		return "["+this.mType+"]";
+	}
+	
 }

@@ -175,7 +175,7 @@ public class FileHandlingUtils {
 
 	public void finish() {
 		combinePieces();
-		deletePieces();
+		//deletePieces();
 	}
 
 	public void deletePieces() {

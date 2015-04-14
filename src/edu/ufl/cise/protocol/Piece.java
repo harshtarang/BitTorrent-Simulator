@@ -63,5 +63,9 @@ public class Piece extends Message {
 		
 	}
 	
+	public String toString()
+	{
+		return "["+this.mType+"]";
+	}
 	
 }

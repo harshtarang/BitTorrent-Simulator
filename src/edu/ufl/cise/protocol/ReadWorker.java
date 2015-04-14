@@ -99,8 +99,8 @@ public abstract class ReadWorker {
 
 	private byte[] getPieceIndex(int pos, byte[] input){
 		byte[] pieceIndex = new byte[4];
-		pieceIndex[3] = input[pos]; pieceIndex[2] = input[pos+1];
-		pieceIndex[1] = input[pos+2]; pieceIndex[0] = input[pos+3];
+		pieceIndex[0] = input[pos]; pieceIndex[1] = input[pos+1];
+		pieceIndex[2] = input[pos+2]; pieceIndex[3] = input[pos+3];
 		return pieceIndex;
 	}
 	

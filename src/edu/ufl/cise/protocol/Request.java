@@ -58,5 +58,10 @@ public class Request extends Message {
 		System.out.println(" ****** ");
 */		return out;
 	}
+	
+	public String toString()
+	{
+		return "["+this.mType+"]";
+	}
 
 }

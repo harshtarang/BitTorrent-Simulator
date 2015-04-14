@@ -10,6 +10,7 @@ import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.protocol.BitTorrentProtocol;
 import edu.ufl.cise.protocol.HandshakeMessage;
 import edu.ufl.cise.protocol.Message;
+import edu.ufl.cise.protocol.Message.MessageType;
 import edu.ufl.cise.protocol.ReadWorker;
 import edu.ufl.cise.protocol.SendMessage;
 import edu.ufl.cise.util.ExecutorPool;
@@ -74,6 +75,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 						int peerId = getPeerId(temp);
 						System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
+						response.setmType(MessageType.HANDSHAKE);
 					}
 				} else {// Determine the message type and construct it
 					System.out.println("Message type 2");

@@ -58,5 +58,11 @@ public abstract class Message {
 	public void setmType(MessageType mType) {
 		this.mType = mType;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "["+this.mType+"]";
+	}
 
 }

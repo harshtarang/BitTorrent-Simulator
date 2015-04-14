@@ -31,5 +31,10 @@ public class Interested extends Message {
 		System.out.println("*****");
 */		return out;
 	}
+	
+	public String toString()
+	{
+		return "["+this.mType+"]";
+	}
 
 }

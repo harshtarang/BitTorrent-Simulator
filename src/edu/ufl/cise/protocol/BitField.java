@@ -80,6 +80,11 @@ public class BitField extends Message {
 			System.out.println(bs.get(i));
 		}
 	}
-
+	
+	@Override
+	public String toString()
+	{
+		return "["+this.mType.value+"]";
+	}
 
 }

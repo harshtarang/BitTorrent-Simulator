@@ -3,9 +3,11 @@ package edu.ufl.cise.protocol;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.Socket;
 
 import edu.ufl.cise.client.Peer;
+import edu.ufl.cise.protocol.Message.MessageType;
 
 public class SendMessage implements Runnable{
 
@@ -21,7 +23,7 @@ public class SendMessage implements Runnable{
 		OutputStream out;
 		Socket socket = Peer.getInstance().getMap().get(peerId).getSocket();
 		try {
-			System.out.println("Sending message: " + message);
+			System.out.println("Sending to peer "+ peerId+" message : " + message[4]);
 			 out = socket.getOutputStream();
 			 synchronized (out) {
 				 out.write(message);
@@ -31,5 +33,7 @@ public class SendMessage implements Runnable{
 		}
 		
 	}
+	
+	
 
 }
