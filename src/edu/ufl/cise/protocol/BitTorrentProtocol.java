@@ -39,6 +39,7 @@ public class BitTorrentProtocol implements Runnable {
 			handleHave();
 			break;
 		case BITFIELD:
+			System.out.println("BITFIELD");
 			handleBitField();
 			break;
 		case REQUEST:
@@ -47,8 +48,9 @@ public class BitTorrentProtocol implements Runnable {
 		case PIECE:
 			handlePiece();
 			break;
-		default:
+		case HANDSHAKE:
 			handleHandShakeMessage();
+			break;
 		}
 	}
 

@@ -25,6 +25,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 	String hostName;
 
 	public ClientWorker(int peerId, int port, String hostName) {
+		System.out.println("Starting clientWorker for: " + peerId);
 		this.currPeerId = MetaInfo.getPeerId();
 		this.peerID = peerId;
 		this.port = port;

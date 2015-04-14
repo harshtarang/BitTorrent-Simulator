@@ -12,6 +12,7 @@ import edu.ufl.cise.protocol.BitTorrentProtocol;
 import edu.ufl.cise.protocol.HandshakeMessage;
 import edu.ufl.cise.protocol.Message;
 import edu.ufl.cise.protocol.ReadWorker;
+import edu.ufl.cise.protocol.Message.MessageType;
 import edu.ufl.cise.util.ExecutorPool;
 
 public class ServerWorker extends ReadWorker implements Runnable {
@@ -24,6 +25,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 	public ServerWorker(Socket socket) {
 		this.clientSocket = socket;
 		String hostName = clientSocket.getInetAddress().getCanonicalHostName();
+		System.out.println("Receiving request from: " + hostName);
 		// Currently for testing purposes since everything is localhost we will append 
 		// count to hostname and extract the peerId. in fact count = current peerId.
 		// TODO : Fix it before running on cise machines.
@@ -62,6 +64,8 @@ public class ServerWorker extends ReadWorker implements Runnable {
 						int peerId = getPeerId(temp);
 						System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
+						response.setmType(MessageType.HANDSHAKE);
+						System.out.println(response.mType);
 					}
 				} else {// Determine the message type and construct it
 					System.out.println("Second type of message");

@@ -3,7 +3,7 @@ package edu.ufl.cise.protocol;
 public abstract class Message {
 
 //	Type type;
-	MessageType mType;
+	public MessageType mType;
 
 //	public enum Type {
 //		CHOKE, UNCHOKE, INTERESTED, NOT_INTERESTED, HAVE, BITFIELD, REQUEST, PIECE
@@ -23,7 +23,8 @@ public abstract class Message {
 		HAVE(4),
 		BITFIELD(5),
 		REQUEST(6),
-		PIECE(7);
+		PIECE(7),
+		HANDSHAKE(8);
 		
 		public int value;
 		
@@ -48,6 +49,14 @@ public abstract class Message {
 		ret[1] = (byte) ((a >> 16) & 0xFF);
 		ret[0] = (byte) ((a >> 24) & 0xFF);
 		return ret;
+	}
+
+	public MessageType getmType() {
+		return mType;
+	}
+
+	public void setmType(MessageType mType) {
+		this.mType = mType;
 	}
 
 }

@@ -7,6 +7,7 @@ import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.Have;
 import edu.ufl.cise.protocol.Interested;
 import edu.ufl.cise.protocol.Message;
+import edu.ufl.cise.protocol.Message.MessageType;
 import edu.ufl.cise.protocol.NotInterested;
 import edu.ufl.cise.protocol.Piece;
 import edu.ufl.cise.protocol.Request;
@@ -54,27 +55,34 @@ public abstract class ReadWorker {
 		Message response = null;
 		if (messageType == Message.MessageType.CHOKE.value) {
 			response = new Choke();
+			response.setmType(MessageType.CHOKE);
 			System.out.println("Choke");
 		} else if (messageType == Message.MessageType.UNCHOKE.value) {
 			response = new Unchoke();
+			response.setmType(MessageType.UNCHOKE);
 			System.out.println("Unchoke");
 		} else if (messageType == Message.MessageType.INTERESTED.value) {
 			response = new Interested();
+			response.setmType(MessageType.INTERESTED);
 			System.out.println("Interested");
 		} else if (messageType == Message.MessageType.NOT_INTERESTED.value) {
 			response = new NotInterested();
+			response.setmType(MessageType.NOT_INTERESTED);
 			System.out.println("Not interested");
 		} else if (messageType == Message.MessageType.HAVE.value) {
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Have(pieceIndex);
+			response.setmType(MessageType.HAVE);
 			System.out.println("Have");
 		} else if (messageType == Message.MessageType.BITFIELD.value) {
 			bitArray = getBitArray(input, pos, len-1);
 			response = new BitField(bitArray);
+			response.setmType(MessageType.BITFIELD);
 			System.out.println("BitField");
 		} else if (messageType == Message.MessageType.REQUEST.value) {
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Request(pieceIndex);
+			response.setmType(MessageType.REQUEST);
 			System.out.println("REquest");
 		} else if (messageType == Message.MessageType.PIECE.value) {
 			pieceIndex = getPieceIndex(pos, input);
@@ -83,6 +91,7 @@ public abstract class ReadWorker {
 			pos += 4;
 			byte[] piece = getBitArray(input, pos, len);
 			response = new Piece(index, piece);
+			response.setmType(MessageType.PIECE);
 			System.out.println("Piece");
 		}
 		return response;
@@ -99,7 +108,9 @@ public abstract class ReadWorker {
 		byte[] bitArray = new byte[len];
 		for (int i = 0; i < len; i++) {
 			bitArray[i] = input[pos + i];
+			System.out.print(bitArray[i]);
 		}
+		System.out.println();
 		return bitArray;
 	}
 

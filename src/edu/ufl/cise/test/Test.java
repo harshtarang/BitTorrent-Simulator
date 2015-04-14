@@ -41,14 +41,24 @@ public class Test{
 		bs.flip(0, 2);
 		//System.out.println(bs.get(0) + " " + bs.get(1) + " " + " " + bs.get(2) + " " +  bs.size());
 		byte arr[] = intToByteArray(3);
-		System.out.println(arr[0]);
+/*		System.out.println(arr[0]);
 		System.out.println(arr[1]);
 		System.out.println(arr[2]);
 		System.out.println(arr[3]);
 		System.out.println("*****");
 		//System.out.println(new BigInteger(arr).intValue());
 		System.out.println(byteArrayToInt(arr));
+*/
+	    Base base = null;
+	    base = new SubClass();
+	    test(base);
 	}
+	
+	public static void test(Base base){
+		SubClass sub = (SubClass) base;
+		System.out.println(sub.a);
+	}
+	
 	
 	public static byte[] intToByteArray(int a) {
 		byte[] ret = new byte[4];
