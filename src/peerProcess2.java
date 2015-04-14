@@ -69,7 +69,7 @@ public class peerProcess2 {
 			fh.createPieces();
 			fh = null;
 		}
-		
+
 		System.out.println(MetaInfo.getString());
 
 /*		// Starts PeerServer

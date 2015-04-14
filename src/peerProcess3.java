@@ -72,7 +72,7 @@ public class peerProcess3 {
 		
 		System.out.println(MetaInfo.getString());
 
-/*		// Starts PeerServer
+		// Starts PeerServer
 		Peer.getInstance().Serverinit();
 
 		// Starts PeerClient
@@ -83,7 +83,7 @@ public class peerProcess3 {
 
 		// Start optimistically unchoke scheduler task thread
 		OptimisticUnchokeTask.initTimerTast();
-*/
+
 	}
 
 	private static void createLogFile() {

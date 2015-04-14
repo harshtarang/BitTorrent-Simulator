@@ -73,8 +73,8 @@ public class FileHandlingUtils {
 		File file = new File(fileName);
 		try {
 			fout = new FileOutputStream(file);
-			for (int i = 1; i < nPieces; i++) {
-				String pieceName = MetaInfo.getBasePath() + "piece" + i;
+			for (int i = 0; i < nPieces-1; i++) {
+				String pieceName = MetaInfo.getBasePath() + "piece_" + i;
 				fin = new FileInputStream(pieceName);
 				bytes = new byte[MetaInfo.getPieceSize()];
 				fin.read(bytes);
@@ -82,7 +82,7 @@ public class FileHandlingUtils {
 				bytes = null;
 			}
 			// finally write the last piece
-			String pieceName = MetaInfo.getBasePath() + "piece" + nPieces;
+			String pieceName = MetaInfo.getBasePath() + "piece_" + (nPieces-1);
 			fin = new FileInputStream(pieceName);
 			bytes = new byte[MetaInfo.getLastPieceSize()];
 			fin.read(bytes);
@@ -121,7 +121,7 @@ public class FileHandlingUtils {
 		int nPieces = MetaInfo.getnPieces();
 
 		try {
-			 rFile = new RandomAccessFile(file, "r");
+			rFile = new RandomAccessFile(file, "r");
 
 			for (int i = 0; i < nPieces - 1; i++) {
 				String pieceName = "piece_" + i;
@@ -174,11 +174,17 @@ public class FileHandlingUtils {
 	}
 
 	public void finish() {
-
+		combinePieces();
+		deletePieces();
 	}
 
 	public void deletePieces() {
-
+		String dir = MetaInfo.getBasePath();
+		File dirFile = new File(dir);
+		for (File file : dirFile.listFiles()) {
+			if (file.getName().contains("piece"))
+				file.delete();
+		}
 	}
 
 }

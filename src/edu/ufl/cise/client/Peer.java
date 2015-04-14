@@ -22,6 +22,7 @@ import edu.ufl.cise.protocol.SendMessage;
 import edu.ufl.cise.protocol.Unchoke;
 import edu.ufl.cise.server.Server;
 import edu.ufl.cise.util.ExecutorPool;
+import edu.ufl.cise.util.FileHandlingUtils;
 
 public class Peer {
 
@@ -262,6 +263,9 @@ public class Peer {
 		// and all the peers have completed
 		if ((MetaInfo.getnPieces() == numPiecesCompleted)
 				&& (MetaInfo.getNumPeers() == numPeersCompleted)) {
+			// Assemble all the pieces
+			FileHandlingUtils fh = new FileHandlingUtils();
+			fh.finish();
 			shutdown();
 			return true;
 		}
