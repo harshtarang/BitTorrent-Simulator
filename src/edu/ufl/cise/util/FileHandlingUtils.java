@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 
 import edu.ufl.cise.config.MetaInfo;
 
@@ -103,6 +104,73 @@ public class FileHandlingUtils {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	public void createPieces() {
+		OutputStream out_piece = null;
+		RandomAccessFile rFile = null;
+		byte[] buffer;
+		int pos = 0;
+
+		String fileName = MetaInfo.getFileName();
+		String basePath = MetaInfo.getBasePath();
+		String filePath = basePath + fileName;
+		File file = new File(filePath);
+
+		int pieceSize = MetaInfo.getPieceSize();
+		int nPieces = MetaInfo.getnPieces();
+
+		try {
+			 rFile = new RandomAccessFile(file, "r");
+
+			for (int i = 0; i < nPieces - 1; i++) {
+				String pieceName = "piece_" + i;
+				File pieceFile = new File(basePath + pieceName);
+				out_piece = new FileOutputStream(pieceFile);
+
+				buffer = new byte[pieceSize];
+				rFile.seek(pos);
+
+				// Read pieceSize equivalent bytes from the original file
+				rFile.read(buffer);
+				out_piece.write(buffer);
+				pos += pieceSize;
+
+				out_piece.close();
+			}
+			// Write the last piece
+			pieceSize = MetaInfo.getLastPieceSize();
+			String pieceName = "piece_" + (nPieces - 1);
+			File pieceFile = new File(basePath + pieceName);
+			out_piece = new FileOutputStream(pieceFile);
+
+			buffer = new byte[pieceSize];
+			rFile.seek(pos);
+
+			// Read pieceSize equivalent bytes from the original file
+			rFile.read(buffer);
+			out_piece.write(buffer);
+			pos += pieceSize;
+			assert (pos == MetaInfo.getFileSize());
+
+			out_piece.close();
+			rFile.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (out_piece != null)
+					out_piece.close();
+				if (rFile != null)
+					rFile.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+
 	}
 
 	public void finish() {

@@ -22,6 +22,7 @@ public class PeerConfigReader {
 		try {
 			String line;
 			int countPeersComplete = 0;
+			boolean isCompleteFile = false;
 			br = new BufferedReader(new FileReader(filePath + fileName));
 			while ((line = br.readLine()) != null) {
 				if(line.startsWith("#") || line.isEmpty()) continue;
@@ -33,7 +34,8 @@ public class PeerConfigReader {
 				peerList.add(peerIDInt);
 				String hostName = arr[1];
 				int port = Integer.parseInt(arr[2]);
-				boolean isCompleteFile = Boolean.parseBoolean(arr[3]);
+				int completeFile = Integer.parseInt(arr[3]);
+				if( completeFile == 1) isCompleteFile = true;
 				
 				peerInfo = new PeerInfo(peerIDInt, hostName, port, isCompleteFile);
 				if(isCompleteFile){
@@ -43,6 +45,7 @@ public class PeerConfigReader {
 				else{
 					peerInfo.setNumPiecesInterested(numPieces);
 				}
+				MetaInfo.setCompletefile(isCompleteFile);
 				
 				peerMap.put(peerIDInt, peerInfo);
 				hostNameToPeerIdMap.put(hostName, peerIDInt);

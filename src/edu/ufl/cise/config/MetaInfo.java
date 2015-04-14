@@ -172,7 +172,7 @@ public class MetaInfo {
 		sb.append("pieceSize: " + getPieceSize()+ "\n");
 		sb.append("nPieces: " + getnPieces()+ "\n");
 
-		sb.append("isCompletefile" + isCompletefile()+ "\n");
+		sb.append("isCompletefile: " + isCompletefile()+ "\n");
 		sb.append("numPeers: " + getNumPeers()+ "\n");
 		sb.append("peerList: " + getPeerList().toString()+ "\n");
 		sb.append("basePath: " + getBasePath()+ "\n");
