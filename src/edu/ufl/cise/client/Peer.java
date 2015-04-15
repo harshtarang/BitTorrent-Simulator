@@ -144,10 +144,8 @@ public class Peer {
 	public void randomSelectOptimisticUnchoke() {
 		Random random = new Random();
 		ArrayList<Integer> interestedPeerList = new ArrayList<Integer>();
-		HashMap<Integer, Boolean> currentlyInterested = Peer.getInstance()
-				.getCurrentlyInterested();
-		HashMap<Integer, Boolean> currentPreferredNeigbor = Peer.getInstance()
-				.getPreferredNeighbors();
+		HashMap<Integer, Boolean> currentlyInterested = getCurrentlyInterested();
+		HashMap<Integer, Boolean> currentPreferredNeigbor = getPreferredNeighbors();
 		int selectedOUN = -1;
 		int count = 0;
 		
@@ -189,21 +187,21 @@ public class Peer {
 		}
 		
 		// Send choke or unchoke message
-		int previouseOUN = Peer.getInstance().getCurrentOptimisticUnchoked();
+		int previouseOUN = getCurrentOptimisticUnchoked();
 		if (previouseOUN != selectedOUN) {
 			// Send choke message to previous OUN if its not in current selected
 			// neighbor
 			
-			if ((previouseOUN!=-1)&&(!Peer.getInstance().getPreferredNeighbors().get(previouseOUN))) {
+			if ((previouseOUN!=-1)&&(!getPreferredNeighbors().get(previouseOUN))) {
 				Choke choke = new Choke();
 				SendMessage sendMessage = new SendMessage(previouseOUN,
 						choke.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
 			}
 			// Set the current OUN
-			Peer.getInstance().setCurrentOptimisticUnchoked(selectedOUN);
+			setCurrentOptimisticUnchoked(selectedOUN);
 			// Send the unchoke message if its not already unchoked
-			if(!Peer.getInstance().getPreferredNeighbors().get(selectedOUN)){
+			if(!getPreferredNeighbors().get(selectedOUN)){
 				Unchoke unchoke = new Unchoke();
 				SendMessage sendMessage = new SendMessage(selectedOUN,
 						unchoke.getBytes());
