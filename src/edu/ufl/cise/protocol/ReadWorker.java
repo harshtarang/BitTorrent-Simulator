@@ -92,7 +92,7 @@ public abstract class ReadWorker {
 			byte[] piece = getBitArray(input, pos, len);
 			response = new Piece(index, piece);
 			response.setmType(MessageType.PIECE);
-			System.out.println("Piece");
+			System.out.println("Received Piece : "+index);
 		}
 		return response;
 	}

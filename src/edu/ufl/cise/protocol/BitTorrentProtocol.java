@@ -85,8 +85,11 @@ public class BitTorrentProtocol implements Runnable {
 
 	private void handlePiece() {
 		Piece pieceMessage = (Piece) message;
+		FileHandlingUtils fh=new FileHandlingUtils();
+		
 		// Update own's bitset
 		int pieceId = pieceMessage.getIndex();
+		fh.writePiece(pieceId, pieceMessage.getPiece());
 		Peer.getInstance().updateOwnBitSet(pieceId);
 		// Broadcast Have message
 		Iterator<Integer> itr = MetaInfo.getPeerList().iterator();

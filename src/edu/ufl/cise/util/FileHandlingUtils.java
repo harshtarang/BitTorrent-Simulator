@@ -14,7 +14,14 @@ import edu.ufl.cise.config.MetaInfo;
 public class FileHandlingUtils {
 
 	public void writePiece(int pieceId, byte[] piece) {
-		String fileName = MetaInfo.getBasePath() + "piece_" + pieceId;
+		
+		String fileName=null;
+		if(MetaInfo.getBasePath()==null)
+			fileName="/home/harsh/project1/hty.tmp";
+		else
+		 fileName = MetaInfo.getBasePath() + "piece_" + pieceId;
+		
+		
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(new File(fileName));
@@ -50,7 +57,8 @@ public class FileHandlingUtils {
 
 			File file = new File(fileName);
 			in = new FileInputStream(file);
-			in.read(piece);
+			int bytesRead=in.read(piece);
+			System.out.println(bytesRead);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -185,6 +193,32 @@ public class FileHandlingUtils {
 			if (file.getName().contains("piece"))
 				file.delete();
 		}
+	}
+	
+	public static void main(String[] args)
+	{
+		
+		FileInputStream in=null;
+		byte[] temp=new byte[5];
+		try {
+
+			
+			File file = new File("a.tmp");
+			in = new FileInputStream(file);
+			in.read(temp);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		FileHandlingUtils fh=new FileHandlingUtils();
+		fh.writePiece(45, temp);
 	}
 
 }

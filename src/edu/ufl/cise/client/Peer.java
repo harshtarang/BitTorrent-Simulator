@@ -165,6 +165,8 @@ public class Peer {
 			while (count < k) {
 				Integer randNum = random.nextInt(k);
 				int peerId = interestedPeerList.get(randNum);
+				if(peerId==MetaInfo.getPeerId())
+					System.out.println("********************************************* this is wrong************");
 				if (!newlySelectedNeighbor.containsKey(peerId)) {
 					newlySelectedNeighbor.put(peerId, true);
 					count++;
@@ -288,7 +290,9 @@ public class Peer {
 	public void determineAndSendInterstedMessageToPeers() {
 		Iterator<Integer> itr = interestedSent.keySet().iterator();
 		while (itr.hasNext()) {
+			
 			int peerId = itr.next();
+			if(peerId!=MetaInfo.getPeerId())
 			determineAndSendInterestedMessage(peerId);
 		}
 	}
@@ -311,6 +315,8 @@ public class Peer {
 			if (currentPeerBitSet.isEmpty()) { // if current peer is not
 												// interested in peerID2
 				// Send not interested message
+				
+				
 				NotInterested message = new NotInterested();
 				SendMessage sendMessage = new SendMessage(peerId2,
 						message.getBytes());
