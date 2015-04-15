@@ -25,12 +25,13 @@ public class ServerWorker extends ReadWorker implements Runnable {
 	public ServerWorker(Socket socket) {
 		this.clientSocket = socket;
 		String hostName = clientSocket.getInetAddress().getCanonicalHostName();
-		System.out.println("Receiving request from: " + hostName);
+		
 		// Currently for testing purposes since everything is localhost we will append 
 		// count to hostname and extract the peerId. in fact count = current peerId.
 		// TODO : Fix it before running on cise machines.
 		int count = Peer.getInstance().getCount();
 		hostName = hostName + count;
+		System.out.println("Receiving request from: " + hostName);
 		this.peerID = MetaInfo.getHostNameToIdMap().get(hostName);
 		this.currPeerId = MetaInfo.getPeerId();
 	}
@@ -68,13 +69,13 @@ public class ServerWorker extends ReadWorker implements Runnable {
 						System.out.println(response.mType);
 					}
 				} else {// Determine the message type and construct it
-					System.out.println("Second type of message");
+					//System.out.println("Second type of message");
 					int len = new BigInteger(firstFour).intValue(); // get the
 																	// length of
 																	// message
 					temp = new byte[len + 4];
 					in.read(temp, 4, len);
-					response = returnMessageType(len, temp);
+					response = returnMessageType(len, temp,peerID);
 				}
 			
 				// Create a BitTorrent protocol job and pass it to executor service.

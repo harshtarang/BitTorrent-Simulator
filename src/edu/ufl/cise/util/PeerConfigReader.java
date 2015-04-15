@@ -22,9 +22,10 @@ public class PeerConfigReader {
 		try {
 			String line;
 			int countPeersComplete = 0;
-			boolean isCompleteFile = false;
+			
 			br = new BufferedReader(new FileReader(filePath + fileName));
 			while ((line = br.readLine()) != null) {
+				boolean isCompleteFile = false;
 				if(line.startsWith("#") || line.isEmpty()) continue;
 				
 				PeerInfo peerInfo = new PeerInfo();

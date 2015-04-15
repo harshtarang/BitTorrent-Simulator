@@ -60,6 +60,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			Message response = null;
 
 			while (true) {
+				System.out.println(" port number:"+port);
 				in.read(firstFour, 0, 4);
 				if (isHandShakeMessage(firstFour)) { // Check the type of
 														// message
@@ -78,13 +79,13 @@ public class ClientWorker extends ReadWorker implements Runnable {
 						response.setmType(MessageType.HANDSHAKE);
 					}
 				} else {// Determine the message type and construct it
-					System.out.println("Message type 2");
+					//System.out.println("Message type 2");
 					int len = new BigInteger(firstFour).intValue(); // get the
 																	// length of
 																	// message
 					temp = new byte[len + 4];
 					in.read(temp, 4, len);
-					response = returnMessageType(len, temp);
+					response = returnMessageType(len, temp,peerID);
 				}
 				// Create a BitTorrent protocol job and pass it to executor
 				// service.

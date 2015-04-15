@@ -39,19 +39,19 @@ public class Have extends Message {
 		// copy the type bytes.
 		// since LSB will be at the end of array get the last byte.
 		out[4] = type[3];
-		System.out.println(out[4]);
+		//System.out.println(out[4]);
 		
 		// copy the piece index bytes
 		pieceIndexBytes = intToByteArray(pieceIndex);
 		for(int i=0; i<4; i++){
 			out[5+i] = pieceIndexBytes[i];
 		}
-		System.out.println("BYTES HAVE: " );
+		//System.out.println("BYTES HAVE: " );
 		for(int i=0; i<9; i++){
-			System.out.print(out[i]);
+			//System.out.print(out[i]);
 		}
-		System.out.println();
-		System.out.println(" ****** ");
+		//System.out.println();
+		//System.out.println(" ****** ");
 		return out;
 	}
 	

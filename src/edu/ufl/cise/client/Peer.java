@@ -338,6 +338,12 @@ public class Peer {
 	public boolean evaluateSystemShutDown() {
 		// Check if the current peer has all the pieces
 		// and all the peers have completed
+		if (MetaInfo.getnPieces() == numPiecesCompleted)
+		{
+			FileHandlingUtils fh = new FileHandlingUtils();
+			fh.finish();
+		}
+		
 		if ((MetaInfo.getnPieces() == numPiecesCompleted)
 				&& (MetaInfo.getNumPeers() == numPeersCompleted)) {
 			// Assemble all the pieces
@@ -362,8 +368,12 @@ public class Peer {
 		while (itr.hasNext()) {
 			
 			int peerId = itr.next();
-			if(peerId!=MetaInfo.getPeerId())
-			determineAndSendInterestedMessage(peerId);
+			
+			if(peerId!=MetaInfo.getPeerId() && interestedSent.get(peerId))
+			{
+				
+				determineAndSendInterestedMessage(peerId);
+			}
 		}
 	}
 
@@ -400,6 +410,7 @@ public class Peer {
 			if (currentPeerBitSet.isEmpty()) { // if current peer is not
 												// interested in peerID2 still
 				// Don't do anything
+				
 				NotInterested message = new NotInterested();
 				SendMessage sendMessage = new SendMessage(peerId2,
 						message.getBytes());

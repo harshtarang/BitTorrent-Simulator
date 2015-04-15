@@ -36,14 +36,14 @@ public abstract class ReadWorker {
 
 	public boolean isHandShakeMessage(byte[] firstFour) {
 		String firstFourBytes = new String(firstFour);
-		System.out.println(" FIRSTFOUR " + firstFourBytes);
+		//System.out.println(" FIRSTFOUR " + firstFourBytes);
 		if (firstFourBytes.equalsIgnoreCase("P2PF")) {
 			return true;
 		} else
 			return false;
 	}
 
-	public Message returnMessageType(int len, byte[] input) {
+	public Message returnMessageType(int len, byte[] input,int peerId) {
 		byte[] pieceIndex;
 		byte[] bitArray ;
 		byte[] mType = new byte[1];
@@ -56,34 +56,34 @@ public abstract class ReadWorker {
 		if (messageType == Message.MessageType.CHOKE.value) {
 			response = new Choke();
 			response.setmType(MessageType.CHOKE);
-			System.out.println("Choke");
+			System.out.println("Received Choke from "+peerId);
 		} else if (messageType == Message.MessageType.UNCHOKE.value) {
 			response = new Unchoke();
 			response.setmType(MessageType.UNCHOKE);
-			System.out.println("Unchoke");
+			System.out.println("Received Unchoke");
 		} else if (messageType == Message.MessageType.INTERESTED.value) {
 			response = new Interested();
 			response.setmType(MessageType.INTERESTED);
-			System.out.println("Interested");
+			System.out.println("Received Interested from "+peerId);
 		} else if (messageType == Message.MessageType.NOT_INTERESTED.value) {
 			response = new NotInterested();
 			response.setmType(MessageType.NOT_INTERESTED);
-			System.out.println("Not interested");
+			System.out.println("Received Not interested from "+peerId);
 		} else if (messageType == Message.MessageType.HAVE.value) {
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Have(pieceIndex);
 			response.setmType(MessageType.HAVE);
-			System.out.println("Have");
+			System.out.println("Received Have from "+peerId);
 		} else if (messageType == Message.MessageType.BITFIELD.value) {
 			bitArray = getBitArray(input, pos, len-1);
 			response = new BitField(bitArray);
 			response.setmType(MessageType.BITFIELD);
-			System.out.println("BitField");
+			System.out.println("Received BitField from "+peerId);
 		} else if (messageType == Message.MessageType.REQUEST.value) {
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Request(pieceIndex);
 			response.setmType(MessageType.REQUEST);
-			System.out.println("REquest");
+			System.out.println("Received Request from "+peerId);
 		} else if (messageType == Message.MessageType.PIECE.value) {
 			pieceIndex = getPieceIndex(pos, input);
 			int index = new BigInteger(pieceIndex).intValue();
@@ -92,7 +92,7 @@ public abstract class ReadWorker {
 			byte[] piece = getBitArray(input, pos, len);
 			response = new Piece(index, piece);
 			response.setmType(MessageType.PIECE);
-			System.out.println("Received Piece : "+index);
+			System.out.println("Received Piece : "+index+ "from "+peerId);
 		}
 		return response;
 	}

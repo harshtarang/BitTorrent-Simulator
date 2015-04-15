@@ -16,9 +16,7 @@ public class FileHandlingUtils {
 	public void writePiece(int pieceId, byte[] piece) {
 		
 		String fileName=null;
-		if(MetaInfo.getBasePath()==null)
-			fileName="/home/harsh/project1/hty.tmp";
-		else
+		
 		 fileName = MetaInfo.getBasePath() + "piece_" + pieceId;
 		
 		
@@ -26,6 +24,7 @@ public class FileHandlingUtils {
 		try {
 			out = new FileOutputStream(new File(fileName));
 			out.write(piece);
+			out.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -58,7 +57,8 @@ public class FileHandlingUtils {
 			File file = new File(fileName);
 			in = new FileInputStream(file);
 			int bytesRead=in.read(piece);
-			System.out.println(bytesRead);
+			in.close();
+			//System.out.println(bytesRead);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -88,6 +88,7 @@ public class FileHandlingUtils {
 				fin.read(bytes);
 				fout.write(bytes);
 				bytes = null;
+				fin.close();
 			}
 			// finally write the last piece
 			String pieceName = MetaInfo.getBasePath() + "piece_" + (nPieces-1);
