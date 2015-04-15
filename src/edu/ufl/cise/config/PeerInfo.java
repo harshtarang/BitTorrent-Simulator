@@ -35,7 +35,7 @@ public class PeerInfo {
 		
 		// if complete file set all the bits to true
 		if(isCompleteFile){
-			pieceInfo.set(0, pieceInfo.length());
+			pieceInfo.set(0, nPieces);
 		}
 	}
 	

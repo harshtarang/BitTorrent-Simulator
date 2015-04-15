@@ -76,9 +76,10 @@ public class BitField extends Message {
 		arr[0] = arr0; arr[1] = arr1; arr[2] = arr2;
 		BitField message = new BitField(arr);
 		BitSet bs = message.getBitSet();
-		for(int i=0; i<20; i++){
-			System.out.println(bs.get(i));
-		}
+		//for(int i=0; i<20; i++){
+		//	System.out.println(bs.get(i));
+		//}
+		
 	}
 	
 	@Override
