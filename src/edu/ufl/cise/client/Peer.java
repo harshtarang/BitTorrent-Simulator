@@ -237,6 +237,7 @@ public class Peer {
 															// make it pieces
 															// interested
 		PeerInfo peerInfo = map.get(requestFromPeerId);
+		int n=MetaInfo.getnPieces();
 		piecesInterested.and(peerInfo.getPieceInfo());
 		if (!piecesInterested.isEmpty()) { // if there is some piece which can
 											// be requested
@@ -360,9 +361,9 @@ public class Peer {
 
 	public void updateOwnBitSet(int pieceId) {
 		piecesCurrentlyDownloading.put(pieceId, false);
-		numPiecesCompleted--;
+		numPiecesCompleted++;
 		pieceInfo.set(pieceId);
-		if (numPiecesCompleted == 0) {
+		if (numPiecesCompleted == MetaInfo.getnPieces()) {
 			numPeersCompleted++;
 		}
 	}
