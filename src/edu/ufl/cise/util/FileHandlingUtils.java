@@ -45,7 +45,7 @@ public class FileHandlingUtils {
 		int pieceLength;
 		byte[] piece = null;
 		InputStream in = null;
-		if (pieceId == MetaInfo.getnPieces()) {
+		if (pieceId == MetaInfo.getnPieces()-1) {
 			pieceLength = MetaInfo.getLastPieceSize();
 		} else {
 			pieceLength = MetaInfo.getPieceSize();

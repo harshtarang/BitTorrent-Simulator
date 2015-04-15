@@ -308,6 +308,7 @@ public class Peer {
 															// make it pieces
 															// interested
 		PeerInfo peerInfo = map.get(requestFromPeerId);
+		int n=MetaInfo.getnPieces();
 		piecesInterested.and(peerInfo.getPieceInfo());
 		if (!piecesInterested.isEmpty()) { // if there is some piece which can
 											// be requested

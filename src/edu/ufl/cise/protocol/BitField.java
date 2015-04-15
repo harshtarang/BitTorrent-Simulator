@@ -54,7 +54,7 @@ public class BitField extends Message {
 		int count = 0;
 		for (int i = 0; i < bitField.length; i++) {
 			byte b = bitField[i];
-			for (int j = 0; j < 8; j++) {
+			for (int j = 7; j >= 0; j--) {
 				if (count >= len) {
 					break;
 				}
