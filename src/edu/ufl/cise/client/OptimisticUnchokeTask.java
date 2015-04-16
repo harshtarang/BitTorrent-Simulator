@@ -8,10 +8,17 @@ import edu.ufl.cise.config.MetaInfo;
 public class OptimisticUnchokeTask extends TimerTask {
 
 	private static int time;
+	static TimerTask timerTask;
+	static Timer timer;
 
 	@Override
 	public void run() {
-		if( Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()) return; 
+		if (Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()) {
+			timerTask.cancel();
+			timer.cancel();
+			// return;
+		}
+
 		optimisticallyUnchokeNeighbor();
 	}
 
@@ -26,9 +33,9 @@ public class OptimisticUnchokeTask extends TimerTask {
 
 	public static void initTimerTast() {
 		time = MetaInfo.getOptimisticUnchokingInterval();
-		TimerTask timerTask = new OptimisticUnchokeTask();
-		Timer timer = new Timer(true);
-		timer.scheduleAtFixedRate(timerTask, 0, time*1000);
+		timerTask = new OptimisticUnchokeTask();
+		timer = new Timer(true);
+		timer.scheduleAtFixedRate(timerTask, 0, time * 1000);
 	}
 
 }

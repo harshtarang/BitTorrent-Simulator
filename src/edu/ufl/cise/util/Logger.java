@@ -53,13 +53,6 @@ public class Logger {
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if (bw != null)
-					bw.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
 		}
 	}
 }

@@ -365,7 +365,7 @@ public class Peer {
 	public boolean evaluateSystemShutDown() {
 		// Check if the current peer has all the pieces
 		// and all the peers have completed
-		if (MetaInfo.getnPieces() == numPiecesCompleted) {
+		if ( !MetaInfo.isCompletefile() && MetaInfo.getnPieces() == numPiecesCompleted) {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the complete file ";
 			Logger.getInstance().log(logMessage);

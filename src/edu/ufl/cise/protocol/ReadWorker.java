@@ -129,9 +129,9 @@ public abstract class ReadWorker {
 		byte[] bitArray = new byte[len];
 		for (int i = 0; i < len; i++) {
 			bitArray[i] = input[pos + i];
-			System.out.print(bitArray[i]);
+			//System.out.print(bitArray[i]);
 		}
-		System.out.println();
+		//System.out.println();
 		return bitArray;
 	}
 
