@@ -79,7 +79,7 @@ public abstract class ReadWorker {
 			response = new NotInterested();
 			response.setmType(MessageType.NOT_INTERESTED);
 			
-			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the not interested message by Peer "  + peerId;
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the not interested message from Peer "  + peerId;
 			Logger.getInstance().log(logMessage);
 			//System.out.println("Received Not interested from "+peerId);
 		} else if (messageType == Message.MessageType.HAVE.value) {
@@ -104,8 +104,9 @@ public abstract class ReadWorker {
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Request(pieceIndex);
 			response.setmType(MessageType.REQUEST);
+			int pieceId=new BigInteger(pieceIndex).intValue();
 			//TODO : Remove this
-			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the Request message from Peer "  + peerId;
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the Request message from Peer "  + peerId+ " for piece number: "+ pieceId;
 			Logger.getInstance().log(logMessage);
 			//System.out.println("Received Request from "+peerId);
 		} else if (messageType == Message.MessageType.PIECE.value) {

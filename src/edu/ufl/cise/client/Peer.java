@@ -384,7 +384,7 @@ public class Peer {
 
 		if ((MetaInfo.getnPieces() == numPiecesCompleted)
 				&& (MetaInfo.getNumPeers() == numPeersCompleted)) {
-			Logger.getInstance().close();
+			//Logger.getInstance().close();
 			//System.exit(1);
 			shutdown();
 			return true;
