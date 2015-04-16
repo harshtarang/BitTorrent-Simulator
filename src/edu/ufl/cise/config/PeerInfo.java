@@ -131,7 +131,13 @@ public class PeerInfo {
 	}
 
 	public void updatePieceInterested() {
-		numPiecesInterested--;
+		int pieceId = -1;
+		int piecesInterested = MetaInfo.getnPieces();
+		for (pieceId = pieceInfo.nextSetBit(0); pieceId >= 0; pieceId = pieceInfo
+				.nextSetBit(pieceId + 1)) {
+			piecesInterested--;
+		}
+		numPiecesInterested = piecesInterested;
 	}
 
 	public OutputStream getOut() {

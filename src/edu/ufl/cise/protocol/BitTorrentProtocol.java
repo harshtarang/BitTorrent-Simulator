@@ -78,7 +78,7 @@ public class BitTorrentProtocol implements Runnable {
 		// Convert bytes to BitSet
 		BitSet bs = bitField.getBitSet();
 		// Set the pieceInfo and piecesInterested of corresponding peer
-		Peer.getInstance().updateBitSets(peerId, bs);
+		Peer.getInstance().updatePeerBitset(peerId, bs);
 		// Decide and send I/DI message
 		Peer.getInstance().determineAndSendInterestedMessage(peerId);
 	}
@@ -95,7 +95,7 @@ public class BitTorrentProtocol implements Runnable {
 		Iterator<Integer> itr = MetaInfo.getPeerList().iterator();
 		while (itr.hasNext()) {
 			int peerId1 = itr.next();
-			if (peerId1 != MetaInfo.getPeerId() && Peer.getInstance().getIsConnected().get(peerId1)) { // Send a have message
+			if (Peer.getInstance().isReadyToSendHave(peerId1)) { // Send a have message
 				Have haveMessage = new Have(pieceId);
 				SendMessage sendMessage = new SendMessage(peerId1,
 						haveMessage.getBytes());

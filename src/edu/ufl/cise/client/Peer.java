@@ -30,6 +30,7 @@ public class Peer {
 	private static volatile Peer instance;
 	int numPeersCompleted;
 	int numPiecesCompleted;
+	int numPiecesInterested;
 	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
 
@@ -374,15 +375,15 @@ public class Peer {
 					+ " has downloaded the complete file ";
 			Logger.getInstance().log(logMessage);
 
+			MetaInfo.setCompletefile(true);
+			
+			// Assemble pieces
 			FileHandlingUtils fh = new FileHandlingUtils();
 			fh.finish();
 		}
 
 		if ((MetaInfo.getnPieces() == numPiecesCompleted)
 				&& (MetaInfo.getNumPeers() == numPeersCompleted)) {
-			// Assemble all the pieces
-			FileHandlingUtils fh = new FileHandlingUtils();
-			fh.finish();
 			Logger.getInstance().close();
 			//System.exit(1);
 			shutdown();
@@ -462,20 +463,26 @@ public class Peer {
 		}
 	}
 
+	public boolean isReadyToSendHave(int peerId2){
+		PeerInfo peerInfo = map.get(peerId2);
+		if(isConnected.get(peerId2) && peerInfo.isBitFieldSent() && peerId2 != MetaInfo.getPeerId()){
+			return true;
+		}
+		return false;
+	}
+	
+	
 	/**
 	 * Update the piece info for the corresponding peer
 	 * 
 	 * @param peerId2
 	 * @param bs
 	 */
-	public void updateBitSets(int peerId2, BitSet bs) {
+	public void updatePeerBitset(int peerId2, BitSet bs) {
 		PeerInfo peerInfo = map.get(peerId2);
-		int pieceId = -1;
-		for (pieceId = bs.nextSetBit(0); pieceId >= 0; pieceId = bs
-				.nextSetBit(pieceId + 1)) {
-			peerInfo.updatePieceInterested();	
-		}
 		peerInfo.setPieceInfo(bs);
+		peerInfo.updatePieceInterested();	
+		if(peerInfo.getNumPiecesInterested() == 0) numPeersCompleted++;
 	}
 
 	public void updateOwnBitSet(int pieceId, int peerId2) {
@@ -496,11 +503,22 @@ public class Peer {
 	public void updatePeerBitset(int peerId, int pieceId) {
 		PeerInfo info = map.get(peerId);
 		info.getPieceInfo().set(pieceId);
-		info.updatePieceInterested(); // decrement pieces interested in
+		info.updatePieceInterested(); 
 		if (info.getNumPiecesInterested() == 0) {
 			numPeersCompleted++;
 		}
 	}
+	
+	public void updatePieceInterested() {
+		int pieceId = -1;
+		int piecesInterested = MetaInfo.getnPieces();
+		for (pieceId = pieceInfo.nextSetBit(0); pieceId >= 0; pieceId = pieceInfo
+				.nextSetBit(pieceId + 1)) {
+			piecesInterested--;
+		}
+		numPiecesInterested = piecesInterested;
+	}
+
 
 	// Send message related methods
 
