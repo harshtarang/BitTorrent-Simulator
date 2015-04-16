@@ -39,6 +39,10 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			// connect to the socket
 			// TODO : Fix the hardcoding before running on the cise machines. 
 			clientSocket = new Socket("localhost", port);
+
+			// update isConnected map
+			Peer.getInstance().getIsConnected().put(peerID, true);
+			
 			String logMessage = "Peer " + this.currPeerId + " makes a connection to Peer "  + this.peerID;
 			Logger.getInstance().log(logMessage);
 

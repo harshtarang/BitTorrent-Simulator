@@ -33,6 +33,7 @@ public class Peer {
 	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
 
+	private HashMap<Integer, Boolean> isConnected; 
 	private HashMap<Integer, Boolean> piecesCurrentlyDownloading; // If the
 																	// piece is
 																	// currently
@@ -101,6 +102,7 @@ public class Peer {
 		interestedSent = new HashMap<Integer, Boolean>();
 		currentlyInterested = new HashMap<Integer, Boolean>();
 		preferredNeighbors = new HashMap<Integer, Boolean>();
+		isConnected  = new HashMap<Integer, Boolean>();
 		ArrayList<Integer> peerList = MetaInfo.getPeerList();
 		Iterator<Integer> itr = peerList.iterator();
 		while (itr.hasNext()) {
@@ -110,10 +112,12 @@ public class Peer {
 			interestedSent.put(peer, false);
 			currentlyInterested.put(peer, false);
 			preferredNeighbors.put(peer, false);
+			isConnected.put(peer, false);
 		}
 		currentOptimisticUnchoked = -1;
 		// For testing purposes
 		count = peerId;
+		
 	}
 
 	public void Serverinit() throws IOException {
@@ -466,6 +470,11 @@ public class Peer {
 	 */
 	public void updateBitSets(int peerId2, BitSet bs) {
 		PeerInfo peerInfo = map.get(peerId2);
+		int pieceId = -1;
+		for (pieceId = bs.nextSetBit(0); pieceId >= 0; pieceId = bs
+				.nextSetBit(pieceId + 1)) {
+			peerInfo.updatePieceInterested();	
+		}
 		peerInfo.setPieceInfo(bs);
 	}
 
@@ -709,6 +718,14 @@ public class Peer {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	public HashMap<Integer, Boolean> getIsConnected() {
+		return isConnected;
+	}
+
+	public void setIsConnected(HashMap<Integer, Boolean> isConnected) {
+		this.isConnected = isConnected;
 	}
 
 }

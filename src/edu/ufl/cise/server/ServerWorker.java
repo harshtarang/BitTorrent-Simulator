@@ -36,6 +36,9 @@ public class ServerWorker extends ReadWorker implements Runnable {
 		this.peerID = MetaInfo.getHostNameToIdMap().get(hostName);
 		this.currPeerId = MetaInfo.getPeerId();
 		
+		// update isConnected map
+		Peer.getInstance().getIsConnected().put(peerID, true);
+		
 		String logMessage = "Peer " + this.currPeerId + " is connected from Peer "  + this.peerID;
 		Logger.getInstance().log(logMessage);
 	}

@@ -95,7 +95,7 @@ public class BitTorrentProtocol implements Runnable {
 		Iterator<Integer> itr = MetaInfo.getPeerList().iterator();
 		while (itr.hasNext()) {
 			int peerId1 = itr.next();
-			if (peerId1 != MetaInfo.getPeerId()) { // Send a have message
+			if (peerId1 != MetaInfo.getPeerId() && Peer.getInstance().getIsConnected().get(peerId1)) { // Send a have message
 				Have haveMessage = new Have(pieceId);
 				SendMessage sendMessage = new SendMessage(peerId1,
 						haveMessage.getBytes());
