@@ -1,8 +1,12 @@
 package edu.ufl.cise.util;
 
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 
 import edu.ufl.cise.config.MetaInfo;
@@ -12,10 +16,15 @@ public class Logger {
 	// Ensures a single instance for the logger
 	private static volatile Logger instance;
 	private static String fileName;
-	private static BufferedWriter bw = null;
+	private OutputStream out = null;
 
 	private Logger() {
 		fileName = MetaInfo.getLogPath();
+		try {
+			out = new FileOutputStream(new File(fileName));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static Logger getInstance() {
@@ -28,15 +37,15 @@ public class Logger {
 		return instance;
 	}
 
-	public static void close() {
+	public void close() {
 		try {
-			bw.close();
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (bw != null)
-					bw.close();
+				if (out != null)
+					out.close();
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -47,10 +56,8 @@ public class Logger {
 	public void log(String message) {
 		try {
 			Date date = new Date();
-			bw = new BufferedWriter(new FileWriter(fileName));
-			bw.write(date.getTime() + ": " + message);
-			bw.newLine();
-			bw.close();
+			String logMessage = date.getTime() + ": " + message + "\n";
+			out.write(logMessage.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

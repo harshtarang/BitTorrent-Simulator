@@ -379,7 +379,8 @@ public class Peer {
 			// Assemble all the pieces
 			FileHandlingUtils fh = new FileHandlingUtils();
 			fh.finish();
-			System.exit(1);
+			Logger.getInstance().close();
+			//System.exit(1);
 			shutdown();
 			return true;
 		}

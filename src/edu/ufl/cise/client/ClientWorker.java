@@ -64,7 +64,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			Message response = null;
 
 			while (true) {
-				System.out.println(" port number:"+port);
+				//System.out.println(" port number:"+port);
 				in.read(firstFour, 0, 4);
 				if (isHandShakeMessage(firstFour)) { // Check the type of
 														// message
