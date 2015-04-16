@@ -14,6 +14,7 @@ import edu.ufl.cise.protocol.Message;
 import edu.ufl.cise.protocol.ReadWorker;
 import edu.ufl.cise.protocol.Message.MessageType;
 import edu.ufl.cise.util.ExecutorPool;
+import edu.ufl.cise.util.Logger;
 
 public class ServerWorker extends ReadWorker implements Runnable {
 	private Socket clientSocket = null;
@@ -31,9 +32,12 @@ public class ServerWorker extends ReadWorker implements Runnable {
 		// TODO : Fix it before running on cise machines.
 		int count = Peer.getInstance().getCount();
 		hostName = hostName + count;
-		System.out.println("Receiving request from: " + hostName);
+		
 		this.peerID = MetaInfo.getHostNameToIdMap().get(hostName);
 		this.currPeerId = MetaInfo.getPeerId();
+		
+		String logMessage = "Peer " + this.currPeerId + " is connected from Peer "  + this.peerID;
+		Logger.getInstance().log(logMessage);
 	}
 
 	public void run() {

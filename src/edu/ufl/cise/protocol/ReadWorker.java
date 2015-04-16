@@ -2,6 +2,7 @@ package edu.ufl.cise.protocol;
 
 import java.math.BigInteger;
 
+import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.protocol.BitField;
 import edu.ufl.cise.protocol.Choke;
 import edu.ufl.cise.protocol.Have;
@@ -12,6 +13,7 @@ import edu.ufl.cise.protocol.NotInterested;
 import edu.ufl.cise.protocol.Piece;
 import edu.ufl.cise.protocol.Request;
 import edu.ufl.cise.protocol.Unchoke;
+import edu.ufl.cise.util.Logger;
 
 public abstract class ReadWorker {
 
@@ -56,29 +58,49 @@ public abstract class ReadWorker {
 		if (messageType == Message.MessageType.CHOKE.value) {
 			response = new Choke();
 			response.setmType(MessageType.CHOKE);
-			System.out.println("Received Choke from "+peerId);
+			
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " is choked by Peer "  + peerId;
+			Logger.getInstance().log(logMessage);
+			//System.out.println("Received Choke from "+peerId);
 		} else if (messageType == Message.MessageType.UNCHOKE.value) {
 			response = new Unchoke();
 			response.setmType(MessageType.UNCHOKE);
-			System.out.println("Received Unchoke");
+
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " is unchoked by Peer "  + peerId;
+			Logger.getInstance().log(logMessage);
+			//System.out.println("Received Unchoke");
 		} else if (messageType == Message.MessageType.INTERESTED.value) {
 			response = new Interested();
 			response.setmType(MessageType.INTERESTED);
-			System.out.println("Received Interested from "+peerId);
+			
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the interested message by Peer "  + peerId;
+			Logger.getInstance().log(logMessage);
+			//System.out.println("Received Interested from "+peerId);
 		} else if (messageType == Message.MessageType.NOT_INTERESTED.value) {
 			response = new NotInterested();
 			response.setmType(MessageType.NOT_INTERESTED);
-			System.out.println("Received Not interested from "+peerId);
+			
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the not interested message by Peer "  + peerId;
+			Logger.getInstance().log(logMessage);
+			//System.out.println("Received Not interested from "+peerId);
 		} else if (messageType == Message.MessageType.HAVE.value) {
 			pieceIndex = getPieceIndex(pos, input);
+			int pieceID = new BigInteger(pieceIndex).intValue();
 			response = new Have(pieceIndex);
 			response.setmType(MessageType.HAVE);
-			System.out.println("Received Have from "+peerId);
+			
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the have message from Peer " 
+							+ peerId + " for the piece " + pieceID;
+			Logger.getInstance().log(logMessage);
+			//System.out.println("Received Have from "+peerId);
 		} else if (messageType == Message.MessageType.BITFIELD.value) {
 			bitArray = getBitArray(input, pos, len-1);
 			response = new BitField(bitArray);
 			response.setmType(MessageType.BITFIELD);
-			System.out.println("Received BitField from "+peerId);
+			
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the interested message by Peer "  + peerId;
+			Logger.getInstance().log(logMessage);
+			//System.out.println("Received BitField from "+peerId);
 		} else if (messageType == Message.MessageType.REQUEST.value) {
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Request(pieceIndex);

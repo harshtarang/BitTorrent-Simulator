@@ -23,6 +23,7 @@ import edu.ufl.cise.protocol.Unchoke;
 import edu.ufl.cise.server.Server;
 import edu.ufl.cise.util.ExecutorPool;
 import edu.ufl.cise.util.FileHandlingUtils;
+import edu.ufl.cise.util.Logger;
 
 public class Peer {
 
@@ -340,6 +341,9 @@ public class Peer {
 		// and all the peers have completed
 		if (MetaInfo.getnPieces() == numPiecesCompleted)
 		{
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " has downloaded the complete file ";
+			Logger.getInstance().log(logMessage);
+			
 			FileHandlingUtils fh = new FileHandlingUtils();
 			fh.finish();
 		}
@@ -439,9 +443,14 @@ public class Peer {
 		peerInfo.setPieceInfo(bs);
 	}
 
-	public void updateOwnBitSet(int pieceId) {
+	public void updateOwnBitSet(int pieceId, int peerId2) {
 		piecesCurrentlyDownloading.put(pieceId, false);
 		numPiecesCompleted++;
+
+		String logMessage = "Peer " + MetaInfo.getPeerId() + " has downloaded the piece "  + pieceId + " from " +
+							 peerId2  + ". Now the number of pieces it has is " + numPiecesCompleted;
+		Logger.getInstance().log(logMessage);
+		
 		pieceInfo.set(pieceId);
 		if (numPiecesCompleted == MetaInfo.getnPieces()) {
 			numPeersCompleted++;

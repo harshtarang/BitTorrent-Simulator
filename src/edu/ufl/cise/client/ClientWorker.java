@@ -14,6 +14,7 @@ import edu.ufl.cise.protocol.Message.MessageType;
 import edu.ufl.cise.protocol.ReadWorker;
 import edu.ufl.cise.protocol.SendMessage;
 import edu.ufl.cise.util.ExecutorPool;
+import edu.ufl.cise.util.Logger;
 
 public class ClientWorker extends ReadWorker implements Runnable {
 
@@ -38,6 +39,9 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			// connect to the socket
 			// TODO : Fix the hardcoding before running on the cise machines. 
 			clientSocket = new Socket("localhost", port);
+			String logMessage = "Peer " + this.currPeerId + " makes a connection to Peer "  + this.peerID;
+			Logger.getInstance().log(logMessage);
+
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
 
