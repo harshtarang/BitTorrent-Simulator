@@ -11,6 +11,7 @@ public class OptimisticUnchokeTask extends TimerTask {
 
 	@Override
 	public void run() {
+		if( Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()) return; 
 		optimisticallyUnchokeNeighbor();
 	}
 

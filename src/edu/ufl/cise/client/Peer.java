@@ -58,7 +58,7 @@ public class Peer {
 	private HashMap<Integer, Boolean> preferredNeighbors; // Current preferred
 															// neighbors
 	private int currentOptimisticUnchoked;
-	private int count;  // For testing purposes
+	private int count; // For testing purposes
 
 	public static Peer getInstance() {
 		if (instance == null) {
@@ -141,7 +141,7 @@ public class Peer {
 			}
 		}
 	}
-	
+
 	public void randomSelectOptimisticUnchoke() {
 		Random random = new Random();
 		ArrayList<Integer> interestedPeerList = new ArrayList<Integer>();
@@ -149,16 +149,17 @@ public class Peer {
 		HashMap<Integer, Boolean> currentPreferredNeigbor = getPreferredNeighbors();
 		int selectedOUN = -1;
 		int count = 0;
-		
+
 		// Get the currently Interested neighbors
 		Iterator<Integer> itr1 = currentlyInterested.keySet().iterator();
 		while (itr1.hasNext()) {
 			int peerId = itr1.next();
-			if (currentlyInterested.get(peerId))
+			if (currentlyInterested.get(peerId)
+					&& peerId != MetaInfo.getPeerId())
 				interestedPeerList.add(peerId);
 		}
 		int currentInterestedSize = interestedPeerList.size();
-		
+
 		if (currentInterestedSize > 0) {
 			while (count++ < currentInterestedSize) { // to break the possibly
 														// infinite loop when
@@ -167,10 +168,9 @@ public class Peer {
 														// neighbors
 				Integer randNum = random.nextInt(currentInterestedSize);
 				int peerId = interestedPeerList.get(randNum);
-				if (currentlyInterested.get(peerId)
-						&& currentInterestedSize == 1) { // if only one is
-															// interested then
-															// just take it
+				if (currentInterestedSize == 1) { // if only one is
+													// interested then
+													// just take it
 					selectedOUN = peerId;
 					break;
 				} else if (currentPreferredNeigbor.get(peerId)) { // more than 1
@@ -186,23 +186,30 @@ public class Peer {
 		} else { // if no one is interested just return
 			return;
 		}
+
+		// Log the newly selected OUN
+		String logMessage = "Peer " + MetaInfo.getPeerId() + " has the optimistically unchoked neighbor " + 
+						selectedOUN;
+		Logger.getInstance().log(logMessage);
 		
 		// Send choke or unchoke message
-		int previouseOUN = getCurrentOptimisticUnchoked();
+		int previouseOUN = currentOptimisticUnchoked;
 		if (previouseOUN != selectedOUN) {
 			// Send choke message to previous OUN if its not in current selected
 			// neighbor
-			
-			if ((previouseOUN!=-1)&&(!getPreferredNeighbors().get(previouseOUN))) {
-				Choke choke = new Choke();
-				SendMessage sendMessage = new SendMessage(previouseOUN,
-						choke.getBytes());
-				ExecutorPool.getInstance().getPool().execute(sendMessage);
+
+			if (previouseOUN != -1) {
+				if (!preferredNeighbors.get(previouseOUN)) {
+					Choke choke = new Choke();
+					SendMessage sendMessage = new SendMessage(previouseOUN,
+							choke.getBytes());
+					ExecutorPool.getInstance().getPool().execute(sendMessage);
+				}
 			}
 			// Set the current OUN
 			setCurrentOptimisticUnchoked(selectedOUN);
 			// Send the unchoke message if its not already unchoked
-			if(!getPreferredNeighbors().get(selectedOUN)){
+			if (!preferredNeighbors.get(selectedOUN)) {
 				Unchoke unchoke = new Unchoke();
 				SendMessage sendMessage = new SendMessage(selectedOUN,
 						unchoke.getBytes());
@@ -216,37 +223,56 @@ public class Peer {
 	 */
 	public void randomSelect() {
 		Random random = new Random();
-		int count = 0;
 		HashMap<Integer, Boolean> newlySelectedNeighbor = new HashMap<Integer, Boolean>();
-		int k = MetaInfo.getNumPreferredNeighbours();
 		ArrayList<Integer> interestedPeerList = new ArrayList<Integer>();
 		HashMap<Integer, Boolean> currentlyInterested = getCurrentlyInterested();
+		int k = MetaInfo.getNumPreferredNeighbours();
+		int count = 0;
+		StringBuilder sb = new StringBuilder();
 
 		// Get the currently Interested neighbors in a ArrayList
 		Iterator<Integer> itr1 = currentlyInterested.keySet().iterator();
 		while (itr1.hasNext()) {
 			int peerId = itr1.next();
-			if (currentlyInterested.get(peerId))
+			if (currentlyInterested.get(peerId)
+					&& peerId != MetaInfo.getPeerId())
 				interestedPeerList.add(peerId);
 		}
 		int currentInterestedSize = interestedPeerList.size();
-
+		int safeCount = 0; // to break the highly unlikely possibility of an
+							// infinite loop.
 		if (currentInterestedSize > k) {
-			while (count < k) {
+			while (count < k && safeCount < 3 * k) {
+				safeCount++;
 				Integer randNum = random.nextInt(k);
 				int peerId = interestedPeerList.get(randNum);
-				if(peerId==MetaInfo.getPeerId())
-					System.out.println("********************************************* this is wrong************");
+				if (peerId == MetaInfo.getPeerId()) {
+					System.out
+							.println("********************************************* this is wrong************");
+					continue; // should never reach here
+				}
 				if (!newlySelectedNeighbor.containsKey(peerId)) {
 					newlySelectedNeighbor.put(peerId, true);
 					count++;
 				}
 			}
-		} else if(currentInterestedSize <= k  && currentInterestedSize != 0) { // Add everyone
-			for (int peerId : interestedPeerList)
+		} else if (currentInterestedSize <= k && currentInterestedSize != 0) { // Add
+																				// everyone
+			for (int peerId : interestedPeerList) {
 				newlySelectedNeighbor.put(peerId, true);
+				sb.append(peerId);
+				sb.append(",");
+			}
 		}
-		
+		if (sb.length() > 0) {
+			sb.deleteCharAt(sb.length() - 1); // to remove the last comma
+		}
+
+		// Log the newlySelected neighbor
+		String logMessage = "Peer " + MetaInfo.getPeerId()
+				+ " has the preferred neighbors: " + sb.toString();
+		Logger.getInstance().log(logMessage);
+
 		// Iterate the current map and send choke and unchoke messages based on
 		// newly selected map.
 		HashMap<Integer, Boolean> oldMap = getPreferredNeighbors();
@@ -271,7 +297,7 @@ public class Peer {
 				SendMessage sendMessage = new SendMessage(peerID,
 						choke.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
-				// Add the current peer entry as not interested
+				// Add the current peer entry as not a neighbor
 				newlySelectedNeighbor.put(peerID, false);
 			} else if (!oldMap.get(peerID)
 					&& newlySelectedNeighbor.containsKey(peerID)) {
@@ -307,7 +333,7 @@ public class Peer {
 															// make it pieces
 															// interested
 		PeerInfo peerInfo = map.get(requestFromPeerId);
-		int n=MetaInfo.getnPieces();
+		int n = MetaInfo.getnPieces();
 		piecesInterested.and(peerInfo.getPieceInfo());
 		if (!piecesInterested.isEmpty()) { // if there is some piece which can
 											// be requested
@@ -339,15 +365,15 @@ public class Peer {
 	public boolean evaluateSystemShutDown() {
 		// Check if the current peer has all the pieces
 		// and all the peers have completed
-		if (MetaInfo.getnPieces() == numPiecesCompleted)
-		{
-			String logMessage = "Peer " + MetaInfo.getPeerId() + " has downloaded the complete file ";
+		if (MetaInfo.getnPieces() == numPiecesCompleted) {
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " has downloaded the complete file ";
 			Logger.getInstance().log(logMessage);
-			
+
 			FileHandlingUtils fh = new FileHandlingUtils();
 			fh.finish();
 		}
-		
+
 		if ((MetaInfo.getnPieces() == numPiecesCompleted)
 				&& (MetaInfo.getNumPeers() == numPeersCompleted)) {
 			// Assemble all the pieces
@@ -370,12 +396,11 @@ public class Peer {
 	public void determineAndSendInterstedMessageToPeers() {
 		Iterator<Integer> itr = interestedSent.keySet().iterator();
 		while (itr.hasNext()) {
-			
+
 			int peerId = itr.next();
-			
-			if(peerId!=MetaInfo.getPeerId() && interestedSent.get(peerId))
-			{
-				
+
+			if (peerId != MetaInfo.getPeerId() && interestedSent.get(peerId)) {
+
 				determineAndSendInterestedMessage(peerId);
 			}
 		}
@@ -399,8 +424,7 @@ public class Peer {
 			if (currentPeerBitSet.isEmpty()) { // if current peer is not
 												// interested in peerID2
 				// Send not interested message
-				
-				
+
 				NotInterested message = new NotInterested();
 				SendMessage sendMessage = new SendMessage(peerId2,
 						message.getBytes());
@@ -414,12 +438,12 @@ public class Peer {
 			if (currentPeerBitSet.isEmpty()) { // if current peer is not
 												// interested in peerID2 still
 				// Don't do anything
-				
+
 				NotInterested message = new NotInterested();
 				SendMessage sendMessage = new SendMessage(peerId2,
 						message.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
-				
+
 			} else { // now current peer is interested
 						// Send interested message
 				Interested message = new Interested();
@@ -447,10 +471,11 @@ public class Peer {
 		piecesCurrentlyDownloading.put(pieceId, false);
 		numPiecesCompleted++;
 
-		String logMessage = "Peer " + MetaInfo.getPeerId() + " has downloaded the piece "  + pieceId + " from " +
-							 peerId2  + ". Now the number of pieces it has is " + numPiecesCompleted;
+		String logMessage = "Peer " + MetaInfo.getPeerId()
+				+ " has downloaded the piece " + pieceId + " from " + peerId2
+				+ ". Now the number of pieces it has is " + numPiecesCompleted;
 		Logger.getInstance().log(logMessage);
-		
+
 		pieceInfo.set(pieceId);
 		if (numPiecesCompleted == MetaInfo.getnPieces()) {
 			numPeersCompleted++;
@@ -514,7 +539,8 @@ public class Peer {
 		if (!unchokedMeMap.get(peerId2))
 			return;
 		int pieceId = getRandomPieceToRequest(peerId2);
-		if(pieceId != -1 ) sendRequestMessage(peerId2, pieceId);
+		if (pieceId != -1)
+			sendRequestMessage(peerId2, pieceId);
 	}
 
 	public void sendRequestMessage(int peerId2, int pieceId) {

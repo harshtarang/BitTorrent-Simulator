@@ -1,17 +1,9 @@
 package edu.ufl.cise.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.ufl.cise.config.MetaInfo;
-import edu.ufl.cise.protocol.Choke;
-import edu.ufl.cise.protocol.SendMessage;
-import edu.ufl.cise.protocol.Unchoke;
-import edu.ufl.cise.util.ExecutorPool;
 
 public class ScheduleNeighborTimerTask extends TimerTask {
 
@@ -20,6 +12,7 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 
 	@Override
 	public void run() {
+		if( Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()) return; 
 		determineNeigbor();
 	}
 
