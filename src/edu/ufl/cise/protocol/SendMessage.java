@@ -23,7 +23,7 @@ public class SendMessage implements Runnable{
 		OutputStream out;
 		Socket socket = Peer.getInstance().getMap().get(peerId).getSocket();
 		try {
-			System.out.println("Sending to peer "+ peerId+" message : " + message[4]);
+			//System.out.println("Sending to peer "+ peerId+" message : " + message[4]);
 			 out = socket.getOutputStream();
 			 synchronized (out) {
 				 out.write(message);

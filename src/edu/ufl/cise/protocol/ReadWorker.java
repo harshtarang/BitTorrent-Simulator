@@ -52,7 +52,7 @@ public abstract class ReadWorker {
 		
 		mType[0] = input[4];
 		int messageType = (int) mType[0];
-		System.out.println("Message Type : " + messageType);
+		//System.out.println("Message Type : " + messageType);
 		Message response = null;
 		if (messageType == Message.MessageType.CHOKE.value) {
 			response = new Choke();
@@ -96,15 +96,18 @@ public abstract class ReadWorker {
 			bitArray = getBitArray(input, pos, len-1);
 			response = new BitField(bitArray);
 			response.setmType(MessageType.BITFIELD);
-			
-			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the interested message by Peer "  + peerId;
+			//TODO : Remove this
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the BitField message from Peer "  + peerId;
 			Logger.getInstance().log(logMessage);
 			//System.out.println("Received BitField from "+peerId);
 		} else if (messageType == Message.MessageType.REQUEST.value) {
 			pieceIndex = getPieceIndex(pos, input);
 			response = new Request(pieceIndex);
 			response.setmType(MessageType.REQUEST);
-			System.out.println("Received Request from "+peerId);
+			//TODO : Remove this
+			String logMessage = "Peer " + MetaInfo.getPeerId() + " received the Request message from Peer "  + peerId;
+			Logger.getInstance().log(logMessage);
+			//System.out.println("Received Request from "+peerId);
 		} else if (messageType == Message.MessageType.PIECE.value) {
 			pieceIndex = getPieceIndex(pos, input);
 			int index = new BigInteger(pieceIndex).intValue();
