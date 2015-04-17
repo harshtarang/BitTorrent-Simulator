@@ -48,7 +48,7 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 		time = MetaInfo.getUnchokingInterval();
 		timerTask = new ScheduleNeighborTimerTask();
 		timer = new Timer(true);
-		timer.scheduleAtFixedRate(timerTask, 10000, time*1000);
+		timer.scheduleAtFixedRate(timerTask, 5000, time*1000);
 	}
 
 }

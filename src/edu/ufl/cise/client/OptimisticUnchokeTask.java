@@ -35,7 +35,7 @@ public class OptimisticUnchokeTask extends TimerTask {
 		time = MetaInfo.getOptimisticUnchokingInterval();
 		timerTask = new OptimisticUnchokeTask();
 		timer = new Timer(true);
-		timer.scheduleAtFixedRate(timerTask, 10000, time * 1000);
+		timer.scheduleAtFixedRate(timerTask, 6000, time * 1000);
 	}
 
 }

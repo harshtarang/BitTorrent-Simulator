@@ -105,11 +105,11 @@ public class BitTorrentProtocol implements Runnable {
 		}
 		// Check whether system needs to shutdown
 		boolean isShutDown = Peer.getInstance().evaluateSystemShutDown();
-		if (!isShutDown) {
+	//	if (!isShutDown) {
 			// Recompute whether to send I/DI message to some peers and send.
 			Peer.getInstance().determineAndSendInterstedMessageToPeers();
 			Peer.getInstance().determineAndSendPieceRequest(peerId);
-		}
+	//	}
 	}
 
 	private void handleRequest() {
@@ -135,10 +135,10 @@ public class BitTorrentProtocol implements Runnable {
 		// Evaluate if system needs to shutdown
 		boolean isShutDown = Peer.getInstance().evaluateSystemShutDown();
 		// if not then evaluate whether to send I/DI message
-		if (!isShutDown) {
+		//if (!isShutDown) {
 			// Decide and send I/DI message
 			Peer.getInstance().determineAndSendInterestedMessage(peerId);
-		}
+		//}
 	}
 
 	private void handleNotInterested() {

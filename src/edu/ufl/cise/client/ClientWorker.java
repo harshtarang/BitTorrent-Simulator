@@ -79,10 +79,13 @@ public class ClientWorker extends ReadWorker implements Runnable {
 					String headerString = new String(header);
 
 					if (headerString.equalsIgnoreCase(HandshakeMessage.HEADER)) {
-						System.out.println("Header");
+						//System.out.println("Header");
 						in.read(temp, 18, 14); // read the remaining bytes
 						int peerId = getPeerId(temp);
-						System.out.println("Received peerID: " + peerId);
+						 logMessage = "Peer " + MetaInfo.getPeerId() + " received the handshake message from Peer " 
+								+ peerId ;
+						Logger.getInstance().log(logMessage);
+						//System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
 						response.setmType(MessageType.HANDSHAKE);
 					}

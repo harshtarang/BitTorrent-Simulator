@@ -60,20 +60,25 @@ public class ServerWorker extends ReadWorker implements Runnable {
 				in.read(firstFour, 0, 4);
 				if (isHandShakeMessage(firstFour)) { // Check the type of
 														// message
-					System.out.println("Handshake message");
+					//System.out.println("Handshake message");
+					
+					
 					temp = new byte[32];
 					in.read(temp, 4, 14); // read next 14
 					header = getHeader(firstFour, temp);
 					String headerString = new String(header);
 
 					if (headerString.equalsIgnoreCase(HandshakeMessage.HEADER)) {
-						System.out.println("Header");
+						//System.out.println("Header");
 						in.read(temp, 18, 14); // read the remaining bytes
 						int peerId = getPeerId(temp);
-						System.out.println("Received peerID: " + peerId);
+						String logMessage = "Peer " + MetaInfo.getPeerId() + " received the handshake message from Peer " 
+								+ peerId ;
+						Logger.getInstance().log(logMessage);
+						//System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
 						response.setmType(MessageType.HANDSHAKE);
-						System.out.println(response.mType);
+						//System.out.println(response.mType);
 					}
 				} else {// Determine the message type and construct it
 					//System.out.println("Second type of message");

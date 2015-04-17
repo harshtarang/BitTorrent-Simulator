@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
@@ -62,12 +63,13 @@ public class Peer {
 	private int currentOptimisticUnchoked;
 	private int count; // For testing purposes
 
-	public static Peer getInstance() {
+	public synchronized static Peer getInstance() {
 		if (instance == null) {
-			synchronized (Peer.class) {
-				if (instance == null)
+			//synchronized (Peer.class) 
+			//{
+			//	if (instance == null)
 					instance = new Peer();
-			}
+			//}
 		}
 		return instance;
 	}
@@ -87,10 +89,11 @@ public class Peer {
 		int nPieces = MetaInfo.getnPieces();
 		// Initialize pieceInfo
 		pieceInfo = new BitSet(nPieces);
-		numPiecesCompleted = 0;
+		numPiecesCompleted=0;
+		
 		if (MetaInfo.isCompletefile()) {
 			pieceInfo.flip(0, nPieces);
-			numPiecesCompleted = nPieces;
+			numPiecesCompleted=nPieces;
 		}
 		// Initialize currently downloading
 		piecesCurrentlyDownloading = new HashMap<Integer, Boolean>();
@@ -370,8 +373,9 @@ public class Peer {
 	public boolean evaluateSystemShutDown() {
 		// Check if the current peer has all the pieces
 		// and all the peers have completed
+		
 		if (!MetaInfo.isCompletefile()
-				&& MetaInfo.getnPieces() == numPiecesCompleted) {
+				&& MetaInfo.getnPieces() == getNumPiecesCompleted()) {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the complete file ";
 			Logger.getInstance().log(logMessage);
@@ -381,11 +385,12 @@ public class Peer {
 			// Assemble pieces
 			FileHandlingUtils fh = new FileHandlingUtils();
 			fh.finish();
+			System.out.println("Peers completed:"+numPeersCompleted);
 		}
 
-		if ((MetaInfo.getnPieces() == numPiecesCompleted)
-				&& (MetaInfo.getNumPeers() == numPeersCompleted)) {
-			// Logger.getInstance().close();
+		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
+				&& (MetaInfo.getNumPeers() == getNumPiecesCompleted())) {
+			 Logger.getInstance().close();
 			// System.exit(1);
 			shutdown();
 			return true;
@@ -489,15 +494,18 @@ public class Peer {
 
 	public void updateOwnBitSet(int pieceId, int peerId2) {
 		piecesCurrentlyDownloading.put(pieceId, false);
-		numPiecesCompleted++;
+		
+		pieceInfo.set(pieceId);
+		setNumPiecesCompleted(getNumPiecesCompleted()+1);
+		
 
 		String logMessage = "Peer " + MetaInfo.getPeerId()
 				+ " has downloaded the piece " + pieceId + " from " + peerId2
-				+ ". Now the number of pieces it has is " + numPiecesCompleted;
+				+ ". Now the number of pieces it has is " + getNumPiecesCompleted();
 		Logger.getInstance().log(logMessage);
-
-		pieceInfo.set(pieceId);
-		if (numPiecesCompleted == MetaInfo.getnPieces()) {
+		//System.out.println(pieceId+"count:"+getNumPiecesCompleted());
+		
+		if (getNumPiecesCompleted() == MetaInfo.getnPieces()) {
 			numPeersCompleted++;
 		}
 	}
@@ -723,11 +731,20 @@ public class Peer {
 	}
 
 	public int getNumPiecesCompleted() {
+		
+		int pieceId = -1;
+		int piecesDownloaded = 0;
+		for (pieceId = pieceInfo.nextSetBit(0); pieceId >= 0; pieceId = pieceInfo
+				.nextSetBit(pieceId + 1)) {
+			piecesDownloaded++;
+		}
+		numPiecesCompleted = piecesDownloaded;
 		return numPiecesCompleted;
 	}
 
 	public void setNumPiecesCompleted(int numPiecesCompleted) {
-		this.numPiecesCompleted = numPiecesCompleted;
+		
+		this.numPiecesCompleted=numPiecesCompleted;
 	}
 
 	public int getCount() {

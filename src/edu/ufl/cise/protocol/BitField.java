@@ -21,7 +21,7 @@ public class BitField extends Message {
 		byte[] type = new byte[4];
 		byte[] lengthBytes;
 
-		lengthBytes = intToByteArray(bitFieldlen + 5);
+		lengthBytes = intToByteArray(bitFieldlen + 1);
         type = intToByteArray(mType.value);
 		
         // copy the length bytes in out

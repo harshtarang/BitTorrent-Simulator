@@ -7,13 +7,12 @@ public class ExecutorPool {
 	
 	public static int NUM_THREADS = 10;
 	private ExecutorService pool;
-	private static ExecutorPool instance;
+	private static volatile ExecutorPool instance;
 		
-	public static ExecutorPool getInstance() {
+	public synchronized static ExecutorPool getInstance() {
 		if (instance == null) {
-			synchronized(ExecutorPool.class){
-				if(instance == null) instance = new ExecutorPool();
-			}
+			 instance = new ExecutorPool();
+			
 		}
 		return instance;
 	}

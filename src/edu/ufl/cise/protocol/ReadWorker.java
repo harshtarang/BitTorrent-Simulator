@@ -39,6 +39,8 @@ public abstract class ReadWorker {
 	public boolean isHandShakeMessage(byte[] firstFour) {
 		String firstFourBytes = new String(firstFour);
 		if (firstFourBytes.equalsIgnoreCase("P2PF")) {
+			
+	
 			return true;
 		} else
 			return false;
@@ -119,6 +121,11 @@ public abstract class ReadWorker {
 			response.setmType(MessageType.PIECE);
 			//System.out.println("Received Piece : "+index+ "from "+peerId);
 		}
+		else
+		{
+			System.out.println("MISTAAAKE: "+messageType);
+		}
+		
 		return response;
 	}
 
