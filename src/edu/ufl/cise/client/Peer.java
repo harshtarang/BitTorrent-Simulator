@@ -34,7 +34,7 @@ public class Peer {
 	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
 
-	private HashMap<Integer, Boolean> isConnected; 
+	private HashMap<Integer, Boolean> isConnected;
 	private HashMap<Integer, Boolean> piecesCurrentlyDownloading; // If the
 																	// piece is
 																	// currently
@@ -103,7 +103,7 @@ public class Peer {
 		interestedSent = new HashMap<Integer, Boolean>();
 		currentlyInterested = new HashMap<Integer, Boolean>();
 		preferredNeighbors = new HashMap<Integer, Boolean>();
-		isConnected  = new HashMap<Integer, Boolean>();
+		isConnected = new HashMap<Integer, Boolean>();
 		ArrayList<Integer> peerList = MetaInfo.getPeerList();
 		Iterator<Integer> itr = peerList.iterator();
 		while (itr.hasNext()) {
@@ -118,7 +118,7 @@ public class Peer {
 		currentOptimisticUnchoked = -1;
 		// For testing purposes
 		count = peerId;
-		
+
 	}
 
 	public void Serverinit() throws IOException {
@@ -160,7 +160,8 @@ public class Peer {
 		while (itr1.hasNext()) {
 			int peerId = itr1.next();
 			if (currentlyInterested.get(peerId)
-					&& peerId != MetaInfo.getPeerId())
+					&& peerId != MetaInfo.getPeerId()
+					&& !currentPreferredNeigbor.get(peerId))
 				interestedPeerList.add(peerId);
 		}
 		int currentInterestedSize = interestedPeerList.size();
@@ -173,30 +174,22 @@ public class Peer {
 														// neighbors
 				Integer randNum = random.nextInt(currentInterestedSize);
 				int peerId = interestedPeerList.get(randNum);
-				if (currentInterestedSize == 1) { // if only one is
-													// interested then
-													// just take it
-					selectedOUN = peerId;
-					break;
-				} else if (currentPreferredNeigbor.get(peerId)) { // more than 1
-																	// interested
-																	// but
-																	// exists in
-																	// preferred
-																	// neighbor
-					selectedOUN = peerId;
-					continue;
-				}
+				selectedOUN = peerId;
 			}
 		} else { // if no one is interested just return
-			return;
+			// return;
 		}
 
 		// Log the newly selected OUN
-		String logMessage = "Peer " + MetaInfo.getPeerId() + " has the optimistically unchoked neighbor " + 
-						selectedOUN;
+		String logMessage = "Peer " + MetaInfo.getPeerId()
+				+ " has the optimistically unchoked neighbor " + selectedOUN;
 		Logger.getInstance().log(logMessage);
-		
+
+		if (selectedOUN == -1) {
+			setCurrentOptimisticUnchoked(selectedOUN);
+			return;
+		}
+
 		// Send choke or unchoke message
 		int previouseOUN = currentOptimisticUnchoked;
 		if (previouseOUN != selectedOUN) {
@@ -209,6 +202,7 @@ public class Peer {
 					SendMessage sendMessage = new SendMessage(previouseOUN,
 							choke.getBytes());
 					ExecutorPool.getInstance().getPool().execute(sendMessage);
+					unchokedMap.put(previouseOUN, false);
 				}
 			}
 			// Set the current OUN
@@ -219,6 +213,8 @@ public class Peer {
 				SendMessage sendMessage = new SendMessage(selectedOUN,
 						unchoke.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
+				unchokedMap.put(selectedOUN, true);
+
 			}
 		}
 	}
@@ -249,7 +245,7 @@ public class Peer {
 		if (currentInterestedSize > k) {
 			while (count < k && safeCount < 3 * k) {
 				safeCount++;
-				Integer randNum = random.nextInt(k);
+				Integer randNum = random.nextInt(currentInterestedSize);
 				int peerId = interestedPeerList.get(randNum);
 				if (peerId == MetaInfo.getPeerId()) {
 					System.out
@@ -265,10 +261,14 @@ public class Peer {
 																				// everyone
 			for (int peerId : interestedPeerList) {
 				newlySelectedNeighbor.put(peerId, true);
-				sb.append(peerId);
-				sb.append(",");
 			}
 		}
+
+		for (int peerId : newlySelectedNeighbor.keySet()) {
+			sb.append(peerId);
+			sb.append(",");
+		}
+
 		if (sb.length() > 0) {
 			sb.deleteCharAt(sb.length() - 1); // to remove the last comma
 		}
@@ -370,13 +370,14 @@ public class Peer {
 	public boolean evaluateSystemShutDown() {
 		// Check if the current peer has all the pieces
 		// and all the peers have completed
-		if ( !MetaInfo.isCompletefile() && MetaInfo.getnPieces() == numPiecesCompleted) {
+		if (!MetaInfo.isCompletefile()
+				&& MetaInfo.getnPieces() == numPiecesCompleted) {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the complete file ";
 			Logger.getInstance().log(logMessage);
 
 			MetaInfo.setCompletefile(true);
-			
+
 			// Assemble pieces
 			FileHandlingUtils fh = new FileHandlingUtils();
 			fh.finish();
@@ -384,8 +385,8 @@ public class Peer {
 
 		if ((MetaInfo.getnPieces() == numPiecesCompleted)
 				&& (MetaInfo.getNumPeers() == numPeersCompleted)) {
-			Logger.getInstance().close();
-			//System.exit(1);
+			// Logger.getInstance().close();
+			// System.exit(1);
 			shutdown();
 			return true;
 		}
@@ -463,15 +464,15 @@ public class Peer {
 		}
 	}
 
-	public boolean isReadyToSendHave(int peerId2){
+	public boolean isReadyToSendHave(int peerId2) {
 		PeerInfo peerInfo = map.get(peerId2);
-		if(isConnected.get(peerId2) && peerInfo.isBitFieldSent() && peerId2 != MetaInfo.getPeerId()){
+		if (isConnected.get(peerId2) && peerInfo.isBitFieldSent()
+				&& peerId2 != MetaInfo.getPeerId()) {
 			return true;
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * Update the piece info for the corresponding peer
 	 * 
@@ -481,8 +482,9 @@ public class Peer {
 	public void updatePeerBitset(int peerId2, BitSet bs) {
 		PeerInfo peerInfo = map.get(peerId2);
 		peerInfo.setPieceInfo(bs);
-		peerInfo.updatePieceInterested();	
-		if(peerInfo.getNumPiecesInterested() == 0) numPeersCompleted++;
+		peerInfo.updatePieceInterested();
+		if (peerInfo.getNumPiecesInterested() == 0)
+			numPeersCompleted++;
 	}
 
 	public void updateOwnBitSet(int pieceId, int peerId2) {
@@ -503,12 +505,12 @@ public class Peer {
 	public void updatePeerBitset(int peerId, int pieceId) {
 		PeerInfo info = map.get(peerId);
 		info.getPieceInfo().set(pieceId);
-		info.updatePieceInterested(); 
+		info.updatePieceInterested();
 		if (info.getNumPiecesInterested() == 0) {
 			numPeersCompleted++;
 		}
 	}
-	
+
 	public void updatePieceInterested() {
 		int pieceId = -1;
 		int piecesInterested = MetaInfo.getnPieces();
@@ -518,7 +520,6 @@ public class Peer {
 		}
 		numPiecesInterested = piecesInterested;
 	}
-
 
 	// Send message related methods
 

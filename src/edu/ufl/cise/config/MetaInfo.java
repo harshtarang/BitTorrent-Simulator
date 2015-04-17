@@ -166,7 +166,7 @@ public class MetaInfo {
 		StringBuilder sb = new StringBuilder();
 		sb.append("numPreferredNeighbours: " + getNumPreferredNeighbours() + "\n");
 		sb.append("unchokingInterval: " + getUnchokingInterval()+ "\n");
-		sb.append("optimisticUnchokingInterval: " + getUnchokingInterval()+ "\n");
+		sb.append("optimisticUnchokingInterval: " + getOptimisticUnchokingInterval()+ "\n");
 		sb.append("fileName: " + getFileName()+ "\n");
 		sb.append("fileSize: " + getFileSize()+ "\n");
 		sb.append("pieceSize: " + getPieceSize()+ "\n");

@@ -26,15 +26,19 @@ public class CommonConfigReader {
 				String arr[] = line.split(" ");
 				String property = arr[0];
 				String value = arr[1];
+				
 				if( property.equalsIgnoreCase(NumberOfPreferredNeighbors)){
 					int numNeighbours = Integer.parseInt(value);
 					MetaInfo.setNumPreferredNeighbours(numNeighbours);
+					
 				}else if( property.equalsIgnoreCase(OptimisticUnchokingInterval)){
 					int optimistUnchokingInterval = Integer.parseInt(value);
 					MetaInfo.setOptimisticUnchokingInterval(optimistUnchokingInterval);
+					
 				}else if( property.equalsIgnoreCase(UnchokingInterval)){
 					int unchokingInterval = Integer.parseInt(value);
 					MetaInfo.setUnchokingInterval(unchokingInterval);
+					
 				}else if( property.equalsIgnoreCase(FileName)){
 					MetaInfo.setFileName(value);
 				}else if( property.equalsIgnoreCase(FileSize)){
