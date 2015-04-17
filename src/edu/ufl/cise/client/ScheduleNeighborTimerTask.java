@@ -14,11 +14,11 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 
 	@Override
 	public void run() {
-		if( Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()){
-			timerTask.cancel();
-			timer.cancel();
-			//return; 
-		}
+//		if( Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()){
+//			timerTask.cancel();
+//			timer.cancel();
+//			//return; 
+//		}
 		determineNeigbor();
 	}
 
@@ -48,7 +48,7 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 		time = MetaInfo.getUnchokingInterval();
 		timerTask = new ScheduleNeighborTimerTask();
 		timer = new Timer(true);
-		timer.scheduleAtFixedRate(timerTask, 0, time*1000);
+		timer.scheduleAtFixedRate(timerTask, 10000, time*1000);
 	}
 
 }
