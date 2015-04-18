@@ -8,32 +8,33 @@ import java.net.Socket;
 
 import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.protocol.Message.MessageType;
+import edu.ufl.cise.util.Logger;
 
-public class SendMessage implements Runnable{
+public class SendMessage implements Runnable {
 
 	int peerId;
 	byte[] message;
-	
-	public SendMessage(int peerId, byte[] message){
+
+	public SendMessage(int peerId, byte[] message) {
 		this.peerId = peerId;
 		this.message = message;
 	}
-	
+
 	public void run() {
 		OutputStream out;
 		Socket socket = Peer.getInstance().getMap().get(peerId).getSocket();
 		try {
-			//System.out.println("Sending to peer "+ peerId+" message : " + message[4]);
-			 out = socket.getOutputStream();
-			 synchronized (out) {
-				 out.write(message);
+			// System.out.println("Sending to peer "+ peerId+" message : " +
+			// message[4]);
+			out = socket.getOutputStream();
+			synchronized (out) {
+				out.write(message);
+				out.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	
 
 }

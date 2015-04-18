@@ -1,12 +1,11 @@
 package edu.ufl.cise.protocol;
 
 import java.util.BitSet;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.Iterator;
 
 import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.config.MetaInfo;
-import edu.ufl.cise.test.PeerInfo;
 import edu.ufl.cise.util.ExecutorPool;
 import edu.ufl.cise.util.FileHandlingUtils;
 
@@ -21,36 +20,45 @@ public class BitTorrentProtocol implements Runnable {
 	}
 
 	public void run() {
-		switch (message.mType) {
+		try {
+			switch (message.mType) {
 
-		case CHOKE:
-			handleChoke();
-			break;
-		case UNCHOKE:
-			handleUnChoke();
-			break;
-		case INTERESTED:
-			handleInterested();
-			break;
-		case NOT_INTERESTED:
-			handleNotInterested();
-			break;
-		case HAVE:
-			handleHave();
-			break;
-		case BITFIELD:
-			System.out.println("BITFIELD");
-			handleBitField();
-			break;
-		case REQUEST:
-			handleRequest();
-			break;
-		case PIECE:
-			handlePiece();
-			break;
-		case HANDSHAKE:
-			handleHandShakeMessage();
-			break;
+			case CHOKE:
+				handleChoke();
+				break;
+			case UNCHOKE:
+				handleUnChoke();
+				break;
+			case INTERESTED:
+				handleInterested();
+				break;
+			case NOT_INTERESTED:
+				handleNotInterested();
+				break;
+			case HAVE:
+				handleHave();
+				break;
+			case BITFIELD:
+				//System.out.println("BITFIELD");
+				handleBitField();
+				break;
+			case REQUEST:
+				handleRequest();
+				break;
+			case PIECE:
+				handlePiece();
+				break;
+			case HANDSHAKE:
+				handleHandShakeMessage();
+				break;
+			}
+		} catch (Exception e) {
+			Date date = new Date();
+			System.out.println(date.getTime() + ": " + peerId);
+			//System.out.println(message.getmType());
+			//message.toString();
+			e.printStackTrace();
+			System.exit(0);
 		}
 	}
 
@@ -85,18 +93,19 @@ public class BitTorrentProtocol implements Runnable {
 
 	private void handlePiece() {
 		Piece pieceMessage = (Piece) message;
-		FileHandlingUtils fh=new FileHandlingUtils();
-		
+		FileHandlingUtils fh = new FileHandlingUtils();
+
 		// Update own's bitset
 		int pieceId = pieceMessage.getIndex();
 		fh.writePiece(pieceId, pieceMessage.getPiece());
-		
+
 		Peer.getInstance().updateOwnBitSet(pieceId, peerId);
 		// Broadcast Have message
 		Iterator<Integer> itr = MetaInfo.getPeerList().iterator();
 		while (itr.hasNext()) {
 			int peerId1 = itr.next();
-			if (Peer.getInstance().isReadyToSendHave(peerId1)) { // Send a have message
+			if (Peer.getInstance().isReadyToSendHave(peerId1)) { // Send a have
+																	// message
 				Have haveMessage = new Have(pieceId);
 				SendMessage sendMessage = new SendMessage(peerId1,
 						haveMessage.getBytes());
@@ -105,19 +114,19 @@ public class BitTorrentProtocol implements Runnable {
 		}
 		// Check whether system needs to shutdown
 		boolean isShutDown = Peer.getInstance().evaluateSystemShutDown();
-	//	if (!isShutDown) {
-			// Recompute whether to send I/DI message to some peers and send.
-			Peer.getInstance().determineAndSendInterstedMessageToPeers();
-			Peer.getInstance().determineAndSendPieceRequest(peerId);
-	//	}
+		// if (!isShutDown) {
+		// Recompute whether to send I/DI message to some peers and send.
+		Peer.getInstance().determineAndSendInterstedMessageToPeers();
+		Peer.getInstance().determineAndSendPieceRequest(peerId);
+		// }
 	}
 
 	private void handleRequest() {
 		// cast into Request message
 		Request requestMessage = (Request) message;
 		int pieceId = requestMessage.getPieceIndex();
-		// Fetch the corresponding piece from hard disk and then finally check 
-		// if the peer is unchoked or not. 
+		// Fetch the corresponding piece from hard disk and then finally check
+		// if the peer is unchoked or not.
 		// Thus reducing check by 1
 		FileHandlingUtils util = new FileHandlingUtils();
 		byte[] piece = util.getPiece(pieceId);
@@ -135,10 +144,10 @@ public class BitTorrentProtocol implements Runnable {
 		// Evaluate if system needs to shutdown
 		boolean isShutDown = Peer.getInstance().evaluateSystemShutDown();
 		// if not then evaluate whether to send I/DI message
-		//if (!isShutDown) {
-			// Decide and send I/DI message
-			Peer.getInstance().determineAndSendInterestedMessage(peerId);
-		//}
+		// if (!isShutDown) {
+		// Decide and send I/DI message
+		Peer.getInstance().determineAndSendInterestedMessage(peerId);
+		// }
 	}
 
 	private void handleNotInterested() {

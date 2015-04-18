@@ -6,6 +6,7 @@ public class Interested extends Message {
 //	private final int  mType = 2;
 	
 	public Interested() {
+		mType = Message.MessageType.INTERESTED;
 	}
 
 	public byte[] getBytes() {
@@ -14,14 +15,15 @@ public class Interested extends Message {
 		byte[] len = new byte[4];  // length of packet to be send first
 		
 		len  = intToByteArray(1);  // 1 byte for message type 
-		type = intToByteArray(mType.value);
+		//type = intToByteArray(mType.value);
 		// copy the length bytes
 		for(int i=0; i<4; i++){
 			out[i] = len[i];
 		}
 		// copy the type bytes.
 		// since LSB will be at the end of array get the last byte.
-		out[4] = type[3];
+		//out[4] = type[3];
+		out[4] = (byte)2;
 /*		System.out.println(out[4]);
 		
 		System.out.println("BYTES :" );

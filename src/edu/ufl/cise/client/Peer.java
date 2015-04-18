@@ -378,19 +378,19 @@ public class Peer {
 				&& MetaInfo.getnPieces() == getNumPiecesCompleted()) {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the complete file ";
-			Logger.getInstance().log(logMessage);
+			//Logger.getInstance().log(logMessage);
 
 			MetaInfo.setCompletefile(true);
 
 			// Assemble pieces
 			FileHandlingUtils fh = new FileHandlingUtils();
 			fh.finish();
-			System.out.println("Peers completed:"+numPeersCompleted);
 		}
 
 		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
-				&& (MetaInfo.getNumPeers() == getNumPiecesCompleted())) {
-			 Logger.getInstance().close();
+				&& (MetaInfo.getNumPeers() == getNumPeersCompleted())) {
+			System.out.println("All Peers completed: " + getNumPeersCompleted());
+			 //Logger.getInstance().close();
 			// System.exit(1);
 			shutdown();
 			return true;
@@ -488,6 +488,7 @@ public class Peer {
 		PeerInfo peerInfo = map.get(peerId2);
 		peerInfo.setPieceInfo(bs);
 		peerInfo.updatePieceInterested();
+		Logger.getInstance().log( "Peer " + peerId2 + " bitset is: " + peerInfo.getPieceInfo().toString());
 		if (peerInfo.getNumPiecesInterested() == 0)
 			numPeersCompleted++;
 	}
@@ -497,7 +498,8 @@ public class Peer {
 		
 		pieceInfo.set(pieceId);
 		setNumPiecesCompleted(getNumPiecesCompleted()+1);
-		
+		Logger.getInstance().log( "Peer " + MetaInfo.getPeerId() + " bitset is: " + getPieceInfo().toString());
+
 
 		String logMessage = "Peer " + MetaInfo.getPeerId()
 				+ " has downloaded the piece " + pieceId + " from " + peerId2
@@ -514,19 +516,10 @@ public class Peer {
 		PeerInfo info = map.get(peerId);
 		info.getPieceInfo().set(pieceId);
 		info.updatePieceInterested();
+		Logger.getInstance().log( "Peer " + peerId + " bitset is: " + info.getPieceInfo().toString());
 		if (info.getNumPiecesInterested() == 0) {
 			numPeersCompleted++;
 		}
-	}
-
-	public void updatePieceInterested() {
-		int pieceId = -1;
-		int piecesInterested = MetaInfo.getnPieces();
-		for (pieceId = pieceInfo.nextSetBit(0); pieceId >= 0; pieceId = pieceInfo
-				.nextSetBit(pieceId + 1)) {
-			piecesInterested--;
-		}
-		numPiecesInterested = piecesInterested;
 	}
 
 	// Send message related methods

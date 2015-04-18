@@ -6,7 +6,7 @@ import edu.ufl.cise.protocol.Message.MessageType;
 
 public class HandshakeMessage extends Message {
 
-	public MessageType mType = Message.MessageType.HANDSHAKE;
+//	public MessageType mType = Message.MessageType.HANDSHAKE;
 	public static String HEADER = "P2PFILESHARINGPROJ";
 	private byte zeroBits[] = new byte[10];
 	private int peerId;
@@ -15,8 +15,9 @@ public class HandshakeMessage extends Message {
 	}
 
 	public HandshakeMessage(int peerId) {
+		mType = Message.MessageType.HANDSHAKE;;
 		this.peerId = peerId;
-		System.out.println("HANDHSHAKE: " + mType);
+		//System.out.println("HANDHSHAKE: " + mType);
 	}
 
 	public byte[] getBytes(){

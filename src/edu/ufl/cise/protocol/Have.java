@@ -3,7 +3,7 @@ package edu.ufl.cise.protocol;
 import java.math.BigInteger;
 
 public class Have extends Message {
-	MessageType mType = Message.MessageType.HAVE;
+//	MessageType mType = Message.MessageType.HAVE;
 	private int pieceIndex;
 //	private final int  mType = 4;
 	
@@ -16,6 +16,7 @@ public class Have extends Message {
 	}
 
 	public Have(byte[] in) {
+		mType = Message.MessageType.HAVE;
 		int index = new BigInteger(in).intValue();
 		this.pieceIndex = index;
 	}
@@ -27,18 +28,19 @@ public class Have extends Message {
 	public byte[] getBytes(){
 		byte[] out = new byte[9];  // total length of packet which is 9bytes
 		byte[] len = new byte[4];  // length bytes to be send before
-		byte[] type = new byte[4];  // length of type
+		//byte[] type = new byte[4];  // length of type
 		byte[] pieceIndexBytes = new byte[4];  // pieceIndex in bytes
 		
 		len  = intToByteArray(5);  // 1 byte for message type + 4 bytes of piece index
-		type = intToByteArray(mType.value);
+		//type = intToByteArray(mType.value);
 		// copy the length bytes
 		for(int i=0; i<4; i++){
 			out[i] = len[i];
 		}
 		// copy the type bytes.
 		// since LSB will be at the end of array get the last byte.
-		out[4] = type[3];
+		//out[4] = type[3];
+		out[4] = (byte)4;
 		//System.out.println(out[4]);
 		
 		// copy the piece index bytes

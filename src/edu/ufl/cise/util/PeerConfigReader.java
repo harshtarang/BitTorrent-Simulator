@@ -50,10 +50,11 @@ public class PeerConfigReader {
 				
 				peerMap.put(peerIDInt, peerInfo);
 				hostNameToPeerIdMap.put(hostName, peerIDInt);
-				
+				MetaInfo.setPeersComplete(0);
 				if(peerId == peerIDInt.intValue()){
 					MetaInfo.setPortNumber(port);
 					MetaInfo.setCompletefile(isCompleteFile);
+					if(isCompleteFile)  MetaInfo.setPeersComplete(1);
 				}
 			}
 			MetaInfo.setHostNameToIdMap(hostNameToPeerIdMap);
@@ -62,7 +63,6 @@ public class PeerConfigReader {
 			// Set peerList in MetaInfo
 			MetaInfo.setPeerList(peerList);
 			// initialize peers complete
-			MetaInfo.setPeersComplete(countPeersComplete);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

@@ -181,6 +181,7 @@ public class MetaInfo {
 		sb.append("peerId: " + getPeerId()+ "\n");
 		sb.append("hostNameToIdMap: " + hostNameToIdMap.toString()+ "\n");
 		sb.append("logPath: "  + getLogPath()+ "\n");
+		sb.append("PeersComplete: " + getPeersComplete() + "\n");
 		return sb.toString();
 	}
 

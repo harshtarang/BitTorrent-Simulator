@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.util.Date;
 
 import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.config.MetaInfo;
@@ -44,6 +45,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 	}
 
 	public void run() {
+		int bytesRead = -1;
 		try {
 			out = clientSocket.getOutputStream();
 			in = clientSocket.getInputStream();
@@ -55,22 +57,33 @@ public class ServerWorker extends ReadWorker implements Runnable {
 			byte[] temp;
 			byte[] header;
 			Message response = null;
-
 			while (true) {
-				in.read(firstFour, 0, 4);
+				for( int i=0; i<4; i++){
+					//bytesRead = in.read(firstFour, 0, 4);
+					firstFour[i] = (byte) in.read();
+				}
+				//System.out.println("Read bytes should be 4: " + bytesRead);
 				if (isHandShakeMessage(firstFour)) { // Check the type of
 														// message
 					//System.out.println("Handshake message");
 					
 					
 					temp = new byte[32];
-					in.read(temp, 4, 14); // read next 14
+					//bytesRead = in.read(temp, 4, 14); // read next 14
+					for( int i=4; i<18; i++){
+						temp[i] = (byte) in.read();
+					}
+					//System.out.println("Read bytes should be 14: " + bytesRead);
 					header = getHeader(firstFour, temp);
 					String headerString = new String(header);
 
 					if (headerString.equalsIgnoreCase(HandshakeMessage.HEADER)) {
 						//System.out.println("Header");
-						in.read(temp, 18, 14); // read the remaining bytes
+						//bytesRead = in.read(temp, 18, 14); // read the remaining bytes
+						for( int i=18; i<32; i++){
+							temp[i] = (byte) in.read();
+						}
+						//System.out.println("Read bytes should be 14: " + bytesRead);
 						int peerId = getPeerId(temp);
 						String logMessage = "Peer " + MetaInfo.getPeerId() + " received the handshake message from Peer " 
 								+ peerId ;
@@ -86,7 +99,11 @@ public class ServerWorker extends ReadWorker implements Runnable {
 																	// length of
 																	// message
 					temp = new byte[len + 4];
-					in.read(temp, 4, len);
+					//bytesRead = in.read(temp, 4, len);
+					for( int i=4; i<len+4; i++ ){
+						temp[i] = (byte)in.read();
+					}
+					//System.out.println("Read bytes should be " + len + " : " + bytesRead);
 					response = returnMessageType(len, temp,peerID);
 				}
 			
@@ -96,6 +113,9 @@ public class ServerWorker extends ReadWorker implements Runnable {
 			}
 		} catch (IOException e) {
 			// Add a log statement
+			Date date = new Date();
+			System.out.println(date.getTime() + " : " + peerID);
+			System.out.println(" bytesRead : " + bytesRead);
 			e.printStackTrace();
 		} finally {
 			try {

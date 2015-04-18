@@ -20,6 +20,7 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 //			//return; 
 //		}
 		determineNeigbor();
+		//System.out.println("Peers completed: " + Peer.getInstance().getNumPeersCompleted());
 	}
 
 	private void determineNeigbor() {

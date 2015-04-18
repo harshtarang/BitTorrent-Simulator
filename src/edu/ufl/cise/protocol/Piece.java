@@ -4,10 +4,12 @@ public class Piece extends Message {
 	
 	int index;
 	byte[] piece;
-	MessageType mType = Message.MessageType.PIECE;
+//	MessageType mType = Message.MessageType.PIECE;
 //	private final int  mType = 7;
 	
-	public Piece() {}
+	public Piece() {
+		mType = Message.MessageType.PIECE;
+	}
 
 	public Piece(int index, byte[] piece) {
 		this.index = index;
@@ -33,12 +35,12 @@ public class Piece extends Message {
 	public byte[] getBytes(){
 		int pieceLen = piece.length;
 		byte[] out = new byte[pieceLen + 9]; // 4 for length + 1 for type + 4 for piece number
-		byte[] type = new byte[4];
+		//byte[] type = new byte[4];
 		
 		byte[] lengthBytes  = intToByteArray(pieceLen + 5);
 		byte[] indexBytes  = intToByteArray(index); // piece Index
 		
-		type = intToByteArray(mType.value);
+		//type = intToByteArray(mType.value);
 
         // copy the length bytes in out
         for (int i = 0; i < 4; i++) {
@@ -46,8 +48,8 @@ public class Piece extends Message {
 		}
 		// copy the type bytes.
 		// since LSB will be at the end of array get the last byte.
-		out[4] = type[3];
-		
+		//out[4] = type[3];
+		out[4] = (byte)7;
 		// copy the piece index
 		for(int i=0; i<4; i++){
 			out[i+5] = indexBytes[i];
