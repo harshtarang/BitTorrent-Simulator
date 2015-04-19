@@ -36,7 +36,7 @@ public class Peer {
 	private LinkedHashMap<Integer, PeerInfo> map;
 
 	private HashMap<Integer, Boolean> isConnected;
-	private HashMap<Integer, Boolean> piecesCurrentlyDownloading; // If the
+	private HashMap<Integer, Integer> piecesCurrentlyDownloading; // If the
 																	// piece is
 																	// currently
 																	// been
@@ -65,11 +65,11 @@ public class Peer {
 
 	public synchronized static Peer getInstance() {
 		if (instance == null) {
-			//synchronized (Peer.class) 
-			//{
-			//	if (instance == null)
-					instance = new Peer();
-			//}
+			// synchronized (Peer.class)
+			// {
+			// if (instance == null)
+			instance = new Peer();
+			// }
 		}
 		return instance;
 	}
@@ -89,16 +89,16 @@ public class Peer {
 		int nPieces = MetaInfo.getnPieces();
 		// Initialize pieceInfo
 		pieceInfo = new BitSet(nPieces);
-		numPiecesCompleted=0;
-		
+		numPiecesCompleted = 0;
+
 		if (MetaInfo.isCompletefile()) {
 			pieceInfo.flip(0, nPieces);
-			numPiecesCompleted=nPieces;
+			numPiecesCompleted = nPieces;
 		}
 		// Initialize currently downloading
-		piecesCurrentlyDownloading = new HashMap<Integer, Boolean>();
+		piecesCurrentlyDownloading = new HashMap<Integer, Integer>();
 		for (int i = 0; i < nPieces; i++) {
-			piecesCurrentlyDownloading.put(i, false);
+			piecesCurrentlyDownloading.put(i, -1);
 		}
 		// Initialize all the maps
 		unchokedMap = new HashMap<Integer, Boolean>();
@@ -343,6 +343,12 @@ public class Peer {
 		PeerInfo peerInfo = map.get(requestFromPeerId);
 		int n = MetaInfo.getnPieces();
 		piecesInterested.and(peerInfo.getPieceInfo());
+		
+		String message = "Pieces interested in: " + piecesInterested;
+		Logger.getInstance().log(message);
+		message = "Pieces currently downloading: " + piecesCurrentlyDownloading.toString();
+		Logger.getInstance().log(message);
+		
 		if (!piecesInterested.isEmpty()) { // if there is some piece which can
 											// be requested
 			ArrayList<Integer> arr = new ArrayList<Integer>();
@@ -350,15 +356,16 @@ public class Peer {
 					.nextSetBit(pieceId + 1)) {
 				// check if this piece is not already currently downloading
 				// add the piece to arraylist to get a random piece
-				if (!piecesCurrentlyDownloading.get(pieceId)) {
+				//if (piecesCurrentlyDownloading.get(pieceId) == -1 || piecesCurrentlyDownloading.get(pieceId) == requestFromPeerId ) {
 					arr.add(pieceId);
-				}
+				//}
 			}
 			// Generate a random number if there exists a piece
 			if (!arr.isEmpty()) {
 				Random random = new Random();
 				int index = random.nextInt(arr.size());
 				pieceId = arr.get(index);
+				System.out.println("Random: " + pieceId);
 			}
 		}
 		return pieceId;
@@ -373,12 +380,12 @@ public class Peer {
 	public boolean evaluateSystemShutDown() {
 		// Check if the current peer has all the pieces
 		// and all the peers have completed
-		
+
 		if (!MetaInfo.isCompletefile()
 				&& MetaInfo.getnPieces() == getNumPiecesCompleted()) {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the complete file ";
-			//Logger.getInstance().log(logMessage);
+			// Logger.getInstance().log(logMessage);
 
 			MetaInfo.setCompletefile(true);
 
@@ -389,8 +396,9 @@ public class Peer {
 
 		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
 				&& (MetaInfo.getNumPeers() == getNumPeersCompleted())) {
-			System.out.println("All Peers completed: " + getNumPeersCompleted());
-			 //Logger.getInstance().close();
+			System.out
+					.println("All Peers completed: " + getNumPeersCompleted());
+			// Logger.getInstance().close();
 			// System.exit(1);
 			shutdown();
 			return true;
@@ -478,6 +486,20 @@ public class Peer {
 		return false;
 	}
 
+	public void handleChoke(int peerId2) {
+		// Update unchokeme map and release any pieces blocked
+		unchokedMeMap.put(peerId2, false);
+		// release any pieces requested
+		Iterator<Integer> itr = piecesCurrentlyDownloading.keySet().iterator();
+		while (itr.hasNext()) {
+			int piece = itr.next();
+			int peer = piecesCurrentlyDownloading.get(piece);
+			if (peer == peerId2) { // relesase the piece
+				piecesCurrentlyDownloading.put(piece, -1);
+			}
+		}
+	}
+
 	/**
 	 * Update the piece info for the corresponding peer
 	 * 
@@ -488,27 +510,34 @@ public class Peer {
 		PeerInfo peerInfo = map.get(peerId2);
 		peerInfo.setPieceInfo(bs);
 		peerInfo.updatePieceInterested();
-		Logger.getInstance().log( "Peer " + peerId2 + " bitset is: " + peerInfo.getPieceInfo().toString());
+		Logger.getInstance().log(
+				"Peer " + peerId2 + " bitset is: "
+						+ peerInfo.getPieceInfo().toString());
 		if (peerInfo.getNumPiecesInterested() == 0)
 			numPeersCompleted++;
 	}
 
 	public void updateOwnBitSet(int pieceId, int peerId2) {
-		piecesCurrentlyDownloading.put(pieceId, false);
-		
-		pieceInfo.set(pieceId);
-		setNumPiecesCompleted(getNumPiecesCompleted()+1);
-		Logger.getInstance().log( "Peer " + MetaInfo.getPeerId() + " bitset is: " + getPieceInfo().toString());
+		piecesCurrentlyDownloading.put(pieceId, -1);
+		if (!pieceInfo.get(pieceId)) { // check if the piece is not already
+										// received from some other peer
+			pieceInfo.set(pieceId); // In that case dont increment the counter
+			setNumPiecesCompleted(getNumPiecesCompleted() + 1);
 
+			//Logger.getInstance().log(
+			//		"Peer " + MetaInfo.getPeerId() + " bitset is: "
+			//				+ getPieceInfo().toString());
 
-		String logMessage = "Peer " + MetaInfo.getPeerId()
-				+ " has downloaded the piece " + pieceId + " from " + peerId2
-				+ ". Now the number of pieces it has is " + getNumPiecesCompleted();
-		Logger.getInstance().log(logMessage);
-		//System.out.println(pieceId+"count:"+getNumPiecesCompleted());
-		
-		if (getNumPiecesCompleted() == MetaInfo.getnPieces()) {
-			numPeersCompleted++;
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " has downloaded the piece " + pieceId + " from "
+					+ peerId2 + ". Now the number of pieces it has is "
+					+ getNumPiecesCompleted();
+			Logger.getInstance().log(logMessage);
+			// System.out.println(pieceId+"count:"+getNumPiecesCompleted());
+
+			if (getNumPiecesCompleted() == MetaInfo.getnPieces()) {
+				numPeersCompleted++;
+			}
 		}
 	}
 
@@ -516,7 +545,9 @@ public class Peer {
 		PeerInfo info = map.get(peerId);
 		info.getPieceInfo().set(pieceId);
 		info.updatePieceInterested();
-		Logger.getInstance().log( "Peer " + peerId + " bitset is: " + info.getPieceInfo().toString());
+		//Logger.getInstance().log(
+		//		"Peer " + peerId + " bitset is: "
+		//				+ info.getPieceInfo().toString());
 		if (info.getNumPiecesInterested() == 0) {
 			numPeersCompleted++;
 		}
@@ -570,8 +601,9 @@ public class Peer {
 		if (!unchokedMeMap.get(peerId2))
 			return;
 		int pieceId = getRandomPieceToRequest(peerId2);
-		if (pieceId != -1)
+		if (pieceId != -1){
 			sendRequestMessage(peerId2, pieceId);
+		}
 	}
 
 	public void sendRequestMessage(int peerId2, int pieceId) {
@@ -581,7 +613,7 @@ public class Peer {
 		SendMessage sendMessage = new SendMessage(peerId2,
 				requestMessage.getBytes());
 		ExecutorPool.getInstance().getPool().execute(sendMessage);
-		piecesCurrentlyDownloading.put(pieceId, true);
+		piecesCurrentlyDownloading.put(pieceId, peerId2);
 	}
 
 	/**
@@ -664,12 +696,12 @@ public class Peer {
 		this.numPeersCompleted = numPeersCompleted;
 	}
 
-	public HashMap<Integer, Boolean> getPiecesCurrentlyDownloading() {
+	public HashMap<Integer, Integer> getPiecesCurrentlyDownloading() {
 		return piecesCurrentlyDownloading;
 	}
 
 	public void setPiecesCurrentlyDownloading(
-			HashMap<Integer, Boolean> piecesCurrentlyDownloading) {
+			HashMap<Integer, Integer> piecesCurrentlyDownloading) {
 		this.piecesCurrentlyDownloading = piecesCurrentlyDownloading;
 	}
 
@@ -724,7 +756,7 @@ public class Peer {
 	}
 
 	public int getNumPiecesCompleted() {
-		
+
 		int pieceId = -1;
 		int piecesDownloaded = 0;
 		for (pieceId = pieceInfo.nextSetBit(0); pieceId >= 0; pieceId = pieceInfo
@@ -736,8 +768,8 @@ public class Peer {
 	}
 
 	public void setNumPiecesCompleted(int numPiecesCompleted) {
-		
-		this.numPiecesCompleted=numPiecesCompleted;
+
+		this.numPiecesCompleted = numPiecesCompleted;
 	}
 
 	public int getCount() {

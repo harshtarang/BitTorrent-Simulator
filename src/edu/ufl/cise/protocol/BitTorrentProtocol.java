@@ -163,8 +163,7 @@ public class BitTorrentProtocol implements Runnable {
 	}
 
 	private void handleChoke() {
-		// Update unchoke map
-		Peer.getInstance().getUnchokedMeMap().put(peerId, false);
+		Peer.getInstance().handleChoke(peerId);
 	}
 
 	private void handleUnChoke() {
