@@ -70,7 +70,7 @@ public class peerProcess2 {
 			fh = null;
 		}
 
-		//System.out.println(MetaInfo.getString());
+		System.out.println(MetaInfo.getString());
 
 		// Starts PeerServer
 		Peer.getInstance().Serverinit();

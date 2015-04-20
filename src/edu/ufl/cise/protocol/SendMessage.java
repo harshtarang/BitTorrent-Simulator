@@ -29,7 +29,7 @@ public class SendMessage implements Runnable {
 			out = socket.getOutputStream();
 			synchronized (out) {
 				out.write(message);
-				out.flush();
+				//out.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

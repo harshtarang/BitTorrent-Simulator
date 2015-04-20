@@ -100,6 +100,7 @@ public abstract class ReadWorker {
 						+ " received the have message from Peer " + peerId
 						+ " for the piece " + pieceID;
 				Logger.getInstance().log(logMessage);
+				//System.out.println(logMessage);
 				// System.out.println("Received Have from "+peerId);
 			} else if (messageType == Message.MessageType.BITFIELD.value) {
 				bitArray = getBitArray(input, pos, len - 1);

@@ -8,6 +8,7 @@ import edu.ufl.cise.client.Peer;
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.util.ExecutorPool;
 import edu.ufl.cise.util.FileHandlingUtils;
+import edu.ufl.cise.util.Logger;
 
 public class BitTorrentProtocol implements Runnable {
 
@@ -106,7 +107,14 @@ public class BitTorrentProtocol implements Runnable {
 			int peerId1 = itr.next();
 			if (Peer.getInstance().isReadyToSendHave(peerId1)) { // Send a have
 																	// message
+				String logMessage = "Sending have message to: " + peerId1 + " for piece: " + pieceId;
+				Logger.getInstance().log(logMessage);
 				Have haveMessage = new Have(pieceId);
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				SendMessage sendMessage = new SendMessage(peerId1,
 						haveMessage.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);

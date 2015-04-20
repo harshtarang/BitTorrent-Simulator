@@ -346,8 +346,8 @@ public class Peer {
 		
 		String message = "Pieces interested in: " + piecesInterested;
 		Logger.getInstance().log(message);
-		message = "Pieces currently downloading: " + piecesCurrentlyDownloading.toString();
-		Logger.getInstance().log(message);
+		//message = "Pieces currently downloading: " + piecesCurrentlyDownloading.toString();
+		//Logger.getInstance().log(message);
 		
 		if (!piecesInterested.isEmpty()) { // if there is some piece which can
 											// be requested
@@ -365,7 +365,7 @@ public class Peer {
 				Random random = new Random();
 				int index = random.nextInt(arr.size());
 				pieceId = arr.get(index);
-				System.out.println("Random: " + pieceId);
+				//System.out.println("Random: " + pieceId);
 			}
 		}
 		return pieceId;
@@ -483,6 +483,9 @@ public class Peer {
 				&& peerId2 != MetaInfo.getPeerId()) {
 			return true;
 		}
+		String logMessage = "Sending have message failed for: " + peerId2 + " isConnected: " + isConnected.get(peerId2) + 
+				"isBitField: " + peerInfo.isBitFieldSent();
+		Logger.getInstance().log(logMessage);
 		return false;
 	}
 
@@ -524,9 +527,9 @@ public class Peer {
 			pieceInfo.set(pieceId); // In that case dont increment the counter
 			setNumPiecesCompleted(getNumPiecesCompleted() + 1);
 
-			//Logger.getInstance().log(
-			//		"Peer " + MetaInfo.getPeerId() + " bitset is: "
-			//				+ getPieceInfo().toString());
+			Logger.getInstance().log(
+					"Peer " + MetaInfo.getPeerId() + " bitset is: "
+							+ getPieceInfo().toString());
 
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the piece " + pieceId + " from "
@@ -545,9 +548,10 @@ public class Peer {
 		PeerInfo info = map.get(peerId);
 		info.getPieceInfo().set(pieceId);
 		info.updatePieceInterested();
-		//Logger.getInstance().log(
-		//		"Peer " + peerId + " bitset is: "
-		//				+ info.getPieceInfo().toString());
+		Logger.getInstance().log(
+				"Peer " + peerId + " bitset is: "
+						+ info.getPieceInfo().toString() + " num pieces interested: " + 
+						info.getNumPiecesInterested() + " peers completed: " + numPeersCompleted);
 		if (info.getNumPiecesInterested() == 0) {
 			numPeersCompleted++;
 		}

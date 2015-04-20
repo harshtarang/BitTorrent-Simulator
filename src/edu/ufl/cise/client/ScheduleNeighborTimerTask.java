@@ -14,16 +14,18 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 
 	@Override
 	public void run() {
-//		if( Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()){
-//			timerTask.cancel();
-//			timer.cancel();
-//			//return; 
-//		}
+		if( Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()){
+			System.out.println("Pers completeed : SchedulePN");
+			timerTask.cancel();
+			timer.cancel();
+			return; 
+		}
 		determineNeigbor();
 		//System.out.println("Peers completed: " + Peer.getInstance().getNumPeersCompleted());
 	}
 
 	private void determineNeigbor() {
+		System.out.println("determine PN");
 		boolean isCompleteFile = MetaInfo.isCompletefile();
 		try {
 			if (isCompleteFile) {
@@ -49,7 +51,7 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 		time = MetaInfo.getUnchokingInterval();
 		timerTask = new ScheduleNeighborTimerTask();
 		timer = new Timer(true);
-		timer.scheduleAtFixedRate(timerTask, 5000, time*1000);
+		timer.scheduleAtFixedRate(timerTask, 15000, time*1000);
 	}
 
 }

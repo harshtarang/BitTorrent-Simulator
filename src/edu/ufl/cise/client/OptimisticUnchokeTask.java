@@ -13,16 +13,19 @@ public class OptimisticUnchokeTask extends TimerTask {
 
 	@Override
 	public void run() {
-//		if (Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()) {
-//			timerTask.cancel();
-//			timer.cancel();
-//			// return;
-//		}
+		if (Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()) {
+			System.out.println("Pers completeed : OUN");
+
+			timerTask.cancel();
+			timer.cancel();
+			return;
+		}
 
 		optimisticallyUnchokeNeighbor();
 	}
 
 	private void optimisticallyUnchokeNeighbor() {
+		System.out.println("determine OUN");
 		try {
 			// Invoke optimistically unchoke strategy
 			Peer.getInstance().randomSelectOptimisticUnchoke();
@@ -35,7 +38,7 @@ public class OptimisticUnchokeTask extends TimerTask {
 		time = MetaInfo.getOptimisticUnchokingInterval();
 		timerTask = new OptimisticUnchokeTask();
 		timer = new Timer(true);
-		timer.scheduleAtFixedRate(timerTask, 6000, time * 1000);
+		timer.scheduleAtFixedRate(timerTask, 16000, time * 1000);
 	}
 
 }
