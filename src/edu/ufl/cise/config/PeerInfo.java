@@ -14,7 +14,6 @@ public class PeerInfo {
 	boolean isHandShakeReceived = false;
 	boolean isBitFieldSent = false;
 	boolean isBitFieldReceived = false;
-	float downloadSpeed;
 	private Socket socket;
 	private OutputStream out;
 	private BitSet pieceInfo;
@@ -32,7 +31,6 @@ public class PeerInfo {
 		this.isCompleteFile = isCompleteFile;
 		int nPieces = MetaInfo.getnPieces();
 		pieceInfo = new BitSet(nPieces);
-		
 		// if complete file set all the bits to true
 		if(isCompleteFile){
 			pieceInfo.set(0, nPieces);
@@ -77,14 +75,6 @@ public class PeerInfo {
 
 	public void setPieceInfo(BitSet pieceInfo) {
 		this.pieceInfo = pieceInfo;
-	}
-
-	public float getDownloadSpeed() {
-		return downloadSpeed;
-	}
-
-	public void setDownloadSpeed(float downloadSpeed) {
-		this.downloadSpeed = downloadSpeed;
 	}
 
 	public Socket getSocket() {
@@ -147,5 +137,5 @@ public class PeerInfo {
 	public void setOut(OutputStream out) {
 		this.out = out;
 	}
-	
+
 }

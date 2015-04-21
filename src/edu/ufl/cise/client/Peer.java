@@ -5,11 +5,15 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
@@ -60,6 +64,9 @@ public class Peer {
 
 	private HashMap<Integer, Boolean> preferredNeighbors; // Current preferred
 															// neighbors
+
+	private HashMap<Integer, Integer> piecesDownloadedFrom;
+
 	private int currentOptimisticUnchoked;
 	private int count; // For testing purposes
 
@@ -107,6 +114,8 @@ public class Peer {
 		currentlyInterested = new HashMap<Integer, Boolean>();
 		preferredNeighbors = new HashMap<Integer, Boolean>();
 		isConnected = new HashMap<Integer, Boolean>();
+		piecesDownloadedFrom = new HashMap<Integer, Integer>();
+
 		ArrayList<Integer> peerList = MetaInfo.getPeerList();
 		Iterator<Integer> itr = peerList.iterator();
 		while (itr.hasNext()) {
@@ -117,6 +126,7 @@ public class Peer {
 			currentlyInterested.put(peer, false);
 			preferredNeighbors.put(peer, false);
 			isConnected.put(peer, false);
+			piecesDownloadedFrom.put(peer, 0);
 		}
 		currentOptimisticUnchoked = -1;
 		// For testing purposes
@@ -343,12 +353,13 @@ public class Peer {
 		PeerInfo peerInfo = map.get(requestFromPeerId);
 		int n = MetaInfo.getnPieces();
 		piecesInterested.and(peerInfo.getPieceInfo());
-		
+
 		String message = "Pieces interested in: " + piecesInterested;
 		Logger.getInstance().log(message);
-		//message = "Pieces currently downloading: " + piecesCurrentlyDownloading.toString();
-		//Logger.getInstance().log(message);
-		
+		// message = "Pieces currently downloading: " +
+		// piecesCurrentlyDownloading.toString();
+		// Logger.getInstance().log(message);
+
 		if (!piecesInterested.isEmpty()) { // if there is some piece which can
 											// be requested
 			ArrayList<Integer> arr = new ArrayList<Integer>();
@@ -356,16 +367,18 @@ public class Peer {
 					.nextSetBit(pieceId + 1)) {
 				// check if this piece is not already currently downloading
 				// add the piece to arraylist to get a random piece
-				//if (piecesCurrentlyDownloading.get(pieceId) == -1 || piecesCurrentlyDownloading.get(pieceId) == requestFromPeerId ) {
-					arr.add(pieceId);
-				//}
+				// if (piecesCurrentlyDownloading.get(pieceId) == -1 ||
+				// piecesCurrentlyDownloading.get(pieceId) == requestFromPeerId
+				// ) {
+				arr.add(pieceId);
+				// }
 			}
 			// Generate a random number if there exists a piece
 			if (!arr.isEmpty()) {
 				Random random = new Random();
 				int index = random.nextInt(arr.size());
 				pieceId = arr.get(index);
-				//System.out.println("Random: " + pieceId);
+				// System.out.println("Random: " + pieceId);
 			}
 		}
 		return pieceId;
@@ -483,8 +496,9 @@ public class Peer {
 				&& peerId2 != MetaInfo.getPeerId()) {
 			return true;
 		}
-		String logMessage = "Sending have message failed for: " + peerId2 + " isConnected: " + isConnected.get(peerId2) + 
-				"isBitField: " + peerInfo.isBitFieldSent();
+		String logMessage = "Sending have message failed for: " + peerId2
+				+ " isConnected: " + isConnected.get(peerId2) + "isBitField: "
+				+ peerInfo.isBitFieldSent();
 		Logger.getInstance().log(logMessage);
 		return false;
 	}
@@ -521,6 +535,10 @@ public class Peer {
 	}
 
 	public void updateOwnBitSet(int pieceId, int peerId2) {
+		// increase the counter of pieces downloaded
+		int pieces = piecesDownloadedFrom.get(peerId2);
+		piecesDownloadedFrom.put(peerId2, pieces + 1);
+
 		piecesCurrentlyDownloading.put(pieceId, -1);
 		if (!pieceInfo.get(pieceId)) { // check if the piece is not already
 										// received from some other peer
@@ -546,16 +564,19 @@ public class Peer {
 
 	public void updatePeerBitset(int peerId, int pieceId) {
 		PeerInfo info = map.get(peerId);
-		
-		if (!info.getPieceInfo().get(pieceId)) { // check if the piece is not already
-										// received from some other peer
+
+		if (!info.getPieceInfo().get(pieceId)) { // check if the piece is not
+													// already
+			// received from some other peer
 
 			info.getPieceInfo().set(pieceId);
 			info.updatePieceInterested();
 			Logger.getInstance().log(
-				"Peer " + peerId + " bitset is: "
-						+ info.getPieceInfo().toString() + " num pieces interested: " + 
-						info.getNumPiecesInterested() + " peers completed: " + numPeersCompleted);
+					"Peer " + peerId + " bitset is: "
+							+ info.getPieceInfo().toString()
+							+ " num pieces interested: "
+							+ info.getNumPiecesInterested()
+							+ " peers completed: " + numPeersCompleted);
 			if (info.getNumPiecesInterested() == 0) {
 				numPeersCompleted++;
 			}
@@ -610,7 +631,7 @@ public class Peer {
 		if (!unchokedMeMap.get(peerId2))
 			return;
 		int pieceId = getRandomPieceToRequest(peerId2);
-		if (pieceId != -1){
+		if (pieceId != -1) {
 			sendRequestMessage(peerId2, pieceId);
 		}
 	}
@@ -796,6 +817,134 @@ public class Peer {
 
 	public void setIsConnected(HashMap<Integer, Boolean> isConnected) {
 		this.isConnected = isConnected;
+	}
+
+	public void downloadRatePrioritySelect() {
+		HashMap<Integer, Boolean> newlySelectedNeighbor = new HashMap<Integer, Boolean>();
+		ArrayList<Integer> interestedPeerList = new ArrayList<Integer>();
+		HashMap<Integer, Boolean> currentlyInterested = getCurrentlyInterested();
+		LinkedHashMap<Integer, Integer> sortedMap = new LinkedHashMap<Integer, Integer>();
+		int k = MetaInfo.getNumPreferredNeighbours();
+		int count = 0;
+		StringBuilder sb = new StringBuilder();
+
+		// Sorted map
+		// Get the currently Interested neighbors in a ArrayList
+
+		sortedMap = (LinkedHashMap<Integer, Integer>) sortByValue(piecesDownloadedFrom);
+		Iterator<Integer> itr = sortedMap.keySet().iterator();
+		while (itr.hasNext()) {
+			int peerId = itr.next();
+			if (currentlyInterested.containsKey(peerId)
+					&& peerId != MetaInfo.getPeerId()) {
+				interestedPeerList.add(peerId);
+			}
+		}
+		
+		int currentInterestedSize = interestedPeerList.size();
+		if (currentInterestedSize > k) {
+			itr = interestedPeerList.iterator();
+			while (itr.hasNext()) {
+				int peerId = itr.next();
+				if (peerId == MetaInfo.getPeerId()) {
+					System.out
+							.println("********************************************* this is wrong************");
+					continue; // should never reach here
+				}
+				if (!newlySelectedNeighbor.containsKey(peerId)) {
+					newlySelectedNeighbor.put(peerId, true);
+				}
+			}
+		} else if (currentInterestedSize <= k && currentInterestedSize != 0) { // Add
+																				// everyone
+			for (int peerId : interestedPeerList) {
+				newlySelectedNeighbor.put(peerId, true);
+			}
+		}
+
+		for (int peerId : newlySelectedNeighbor.keySet()) {
+			sb.append(peerId);
+			sb.append(",");
+		}
+
+		if (sb.length() > 0) {
+			sb.deleteCharAt(sb.length() - 1); // to remove the last comma
+		}
+
+		// Log the newlySelected neighbor
+		String logMessage = "Peer " + MetaInfo.getPeerId()
+				+ " has the preferred neighbors: " + sb.toString();
+		Logger.getInstance().log(logMessage);
+
+		// Iterate the current map and send choke and unchoke messages based on
+		// newly selected map.
+		HashMap<Integer, Boolean> oldMap = getPreferredNeighbors();
+		itr = oldMap.keySet().iterator();
+		while (itr.hasNext()) {
+			int peerID = itr.next();
+			if (oldMap.get(peerID) && newlySelectedNeighbor.containsKey(peerID)) { // if
+																					// an
+																					// already
+																					// preferred
+																					// neighbor
+																					// is
+																					// selected
+																					// again
+				continue; // keep it and enjoy. No need to send unchoke message
+			} else if (oldMap.get(peerID)
+					&& !newlySelectedNeighbor.containsKey(peerID)) {
+				// Peer was a preferred neighbor but not selected. Send choke
+				// message
+				getUnchokedMap().put(peerID, false);
+				Choke choke = new Choke();
+				SendMessage sendMessage = new SendMessage(peerID,
+						choke.getBytes());
+				ExecutorPool.getInstance().getPool().execute(sendMessage);
+				// Add the current peer entry as not a neighbor
+				newlySelectedNeighbor.put(peerID, false);
+			} else if (!oldMap.get(peerID)
+					&& newlySelectedNeighbor.containsKey(peerID)) {
+				// Peer was not a preferred neighbor but now selected. Send
+				// unchoke message
+				getUnchokedMap().put(peerID, true);
+				Unchoke unchoke = new Unchoke();
+				SendMessage sendMessage = new SendMessage(peerID,
+						unchoke.getBytes());
+				ExecutorPool.getInstance().getPool().execute(sendMessage);
+			} else { // neither it was a preferred neighbor nor it got selected
+						// Just add an entry in the current map
+				newlySelectedNeighbor.put(peerID, false);
+			}
+		}
+		// Finally update the current preferred neighbor map in Peer
+		setPreferredNeighbors(newlySelectedNeighbor);
+
+	}
+
+	public HashMap<Integer, Integer> getPiecesDownloadedFrom() {
+		return piecesDownloadedFrom;
+	}
+
+	public void setPiecesDownloadedFrom(
+			HashMap<Integer, Integer> piecesDownloadedFrom) {
+		this.piecesDownloadedFrom = piecesDownloadedFrom;
+	}
+
+	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(
+			Map<K, V> map) {
+		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(
+				map.entrySet());
+		Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+			public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+				return (o1.getValue()).compareTo(o2.getValue());
+			}
+		});
+
+		Map<K, V> result = new LinkedHashMap<K, V>();
+		for (Map.Entry<K, V> entry : list) {
+			result.put(entry.getKey(), entry.getValue());
+		}
+		return result;
 	}
 
 }

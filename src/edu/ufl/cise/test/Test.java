@@ -5,6 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Test{
@@ -52,6 +59,17 @@ public class Test{
 	    Base base = null;
 	    base = new SubClass();
 	    test(base);
+	    HashMap<Integer, Integer> map =new HashMap<Integer, Integer>();
+	     map.put(1, 5); map.put(3, 0); map.put(4, 8);
+	     map.put(2, 6); map.put(5, 8); map.put(6, 0);
+	     LinkedHashMap<Integer, Integer> sortedMap = new LinkedHashMap<Integer, Integer>();
+	     sortedMap = (LinkedHashMap<Integer, Integer>) sortByValue(map);
+	     System.out.println(sortedMap);
+	     map.put(1, 8); map.put(3, 9); map.put(4, 2);
+	     sortedMap = (LinkedHashMap<Integer, Integer>) sortByValue(map);
+	     System.out.println(sortedMap);
+	     
+	    
 	}
 	
 	public static void test(Base base){
@@ -76,6 +94,23 @@ public class Test{
 			value += (b[i] & 0x000000FF) << shift;
 		}
 		return value;
+	}
+	
+	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(
+			Map<K, V> map) {
+		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(
+				map.entrySet());
+		Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+			public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+
+		Map<K, V> result = new LinkedHashMap<K, V>();
+		for (Map.Entry<K, V> entry : list) {
+			result.put(entry.getKey(), entry.getValue());
+		}
+		return result;
 	}
 
 	

@@ -34,16 +34,13 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 				firstTime = false;
 				Peer.getInstance().randomSelect();
 			} else {
-				// downloadRatePrioritySelect();
+				Peer.getInstance().downloadRatePrioritySelect();
 				Peer.getInstance().randomSelect();
 			}
 			// Invoke optimistically unchoke strategy
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void downloadRatePrioritySelect() {
 	}
 
 	public static void initTimerTast() {
