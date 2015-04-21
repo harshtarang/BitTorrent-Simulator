@@ -56,8 +56,8 @@ public class BitField extends Message {
 	}
 
 	public BitSet getBitSet() {
-		//int len = MetaInfo.getnPieces();
-		int len  =153;
+		int len = MetaInfo.getnPieces();
+		//int len  =153;
 		BitSet bs = new BitSet(len);
 		int count = 0;
 		for (int i = 0; i < bitField.length; i++) {
