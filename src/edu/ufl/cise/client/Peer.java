@@ -546,14 +546,19 @@ public class Peer {
 
 	public void updatePeerBitset(int peerId, int pieceId) {
 		PeerInfo info = map.get(peerId);
-		info.getPieceInfo().set(pieceId);
-		info.updatePieceInterested();
-		Logger.getInstance().log(
+		
+		if (!info.getPieceInfo().get(pieceId)) { // check if the piece is not already
+										// received from some other peer
+
+			info.getPieceInfo().set(pieceId);
+			info.updatePieceInterested();
+			Logger.getInstance().log(
 				"Peer " + peerId + " bitset is: "
 						+ info.getPieceInfo().toString() + " num pieces interested: " + 
 						info.getNumPiecesInterested() + " peers completed: " + numPeersCompleted);
-		if (info.getNumPiecesInterested() == 0) {
-			numPeersCompleted++;
+			if (info.getNumPiecesInterested() == 0) {
+				numPeersCompleted++;
+			}
 		}
 	}
 
