@@ -25,8 +25,8 @@ public class peerProcess2 {
 	}
 
 	public static void main(String args[]) throws IOException {
-		String peerId = args[0];
-		//String peerId = "2";
+		//String peerId = args[0];
+		String peerId = "2";
 		peerID = peerId;
 		base_path = System.getProperty("user.home") + "/project" + peerId + "/";
 		// System.out.println(base_path);
@@ -70,7 +70,7 @@ public class peerProcess2 {
 			fh = null;
 		}
 
-		System.out.println(MetaInfo.getString());
+		//System.out.println(MetaInfo.getString());
 
 		// Starts PeerServer
 		Peer.getInstance().Serverinit();

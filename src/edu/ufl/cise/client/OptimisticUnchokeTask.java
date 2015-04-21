@@ -14,7 +14,7 @@ public class OptimisticUnchokeTask extends TimerTask {
 	@Override
 	public void run() {
 		if (Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()) {
-			System.out.println("Pers completeed : OUN");
+			//System.out.println("Pers completeed : OUN");
 
 			timerTask.cancel();
 			timer.cancel();
@@ -25,8 +25,9 @@ public class OptimisticUnchokeTask extends TimerTask {
 	}
 
 	private void optimisticallyUnchokeNeighbor() {
-		System.out.println("determine OUN");
+		//System.out.println("determine OUN");
 		try {
+			if(MetaInfo.isShutDown()) return;
 			// Invoke optimistically unchoke strategy
 			Peer.getInstance().randomSelectOptimisticUnchoke();
 		} catch (Exception e) {

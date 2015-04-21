@@ -39,11 +39,11 @@ public class BitField extends Message {
 		for (int i = 0; i < bitFieldlen; i++) {
 			out[5 + i] = bitField[i];
 		}
-		System.out.println("BitField message " );
-		for(int i=0; i<out.length; i++){
-			System.out.print(out[i]);
-		}
-		System.out.println("****");
+		//System.out.println("BitField message " );
+		//for(int i=0; i<out.length; i++){
+		//	System.out.print(out[i]);
+		//}
+		//System.out.println("****");
 		return out;
 	}
 

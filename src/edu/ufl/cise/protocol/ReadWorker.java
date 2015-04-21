@@ -46,102 +46,93 @@ public abstract class ReadWorker {
 			return false;
 	}
 
-	public Message returnMessageType(int len, byte[] input, int peerId) {
+	public Message returnMessageType(int len, byte[] input, int peerId) throws Exception {
 		byte[] pieceIndex;
 		byte[] bitArray;
 		byte[] mType = new byte[1];
 		int pos = 5;
 		Message response = null;
 
-		try {
-			mType[0] = input[4];
-			int messageType = (int) mType[0];
-			// System.out.println("Message Type : " + messageType);
-			if (messageType == Message.MessageType.CHOKE.value) {
-				response = new Choke();
-				response.setmType(MessageType.CHOKE);
+		mType[0] = input[4];
+		int messageType = (int) mType[0];
+		// System.out.println("Message Type : " + messageType);
+		if (messageType == Message.MessageType.CHOKE.value) {
+			response = new Choke();
+			response.setmType(MessageType.CHOKE);
 
-				String logMessage = "Peer " + MetaInfo.getPeerId()
-						+ " is choked by Peer " + peerId;
-				Logger.getInstance().log(logMessage);
-				// System.out.println("Received Choke from "+peerId);
-			} else if (messageType == Message.MessageType.UNCHOKE.value) {
-				response = new Unchoke();
-				response.setmType(MessageType.UNCHOKE);
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " is choked by Peer " + peerId;
+			Logger.getInstance().log(logMessage);
+			// System.out.println("Received Choke from "+peerId);
+		} else if (messageType == Message.MessageType.UNCHOKE.value) {
+			response = new Unchoke();
+			response.setmType(MessageType.UNCHOKE);
 
-				String logMessage = "Peer " + MetaInfo.getPeerId()
-						+ " is unchoked by Peer " + peerId;
-				Logger.getInstance().log(logMessage);
-				// System.out.println("Received Unchoke");
-			} else if (messageType == Message.MessageType.INTERESTED.value) {
-				response = new Interested();
-				response.setmType(MessageType.INTERESTED);
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " is unchoked by Peer " + peerId;
+			Logger.getInstance().log(logMessage);
+			// System.out.println("Received Unchoke");
+		} else if (messageType == Message.MessageType.INTERESTED.value) {
+			response = new Interested();
+			response.setmType(MessageType.INTERESTED);
 
-				String logMessage = "Peer " + MetaInfo.getPeerId()
-						+ " received the interested message by Peer " + peerId;
-				Logger.getInstance().log(logMessage);
-				// System.out.println("Received Interested from "+peerId);
-			} else if (messageType == Message.MessageType.NOT_INTERESTED.value) {
-				response = new NotInterested();
-				response.setmType(MessageType.NOT_INTERESTED);
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " received the interested message by Peer " + peerId;
+			Logger.getInstance().log(logMessage);
+			// System.out.println("Received Interested from "+peerId);
+		} else if (messageType == Message.MessageType.NOT_INTERESTED.value) {
+			response = new NotInterested();
+			response.setmType(MessageType.NOT_INTERESTED);
 
-				String logMessage = "Peer " + MetaInfo.getPeerId()
-						+ " received the not interested message from Peer "
-						+ peerId;
-				Logger.getInstance().log(logMessage);
-				// System.out.println("Received Not interested from "+peerId);
-			} else if (messageType == Message.MessageType.HAVE.value) {
-				pieceIndex = getPieceIndex(pos, input);
-				int pieceID = new BigInteger(pieceIndex).intValue();
-				response = new Have(pieceIndex);
-				response.setmType(MessageType.HAVE);
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " received the not interested message from Peer "
+					+ peerId;
+			Logger.getInstance().log(logMessage);
+			// System.out.println("Received Not interested from "+peerId);
+		} else if (messageType == Message.MessageType.HAVE.value) {
+			pieceIndex = getPieceIndex(pos, input);
+			int pieceID = new BigInteger(pieceIndex).intValue();
+			response = new Have(pieceIndex);
+			response.setmType(MessageType.HAVE);
 
-				String logMessage = "Peer " + MetaInfo.getPeerId()
-						+ " received the have message from Peer " + peerId
-						+ " for the piece " + pieceID;
-				Logger.getInstance().log(logMessage);
-				//System.out.println(logMessage);
-				// System.out.println("Received Have from "+peerId);
-			} else if (messageType == Message.MessageType.BITFIELD.value) {
-				bitArray = getBitArray(input, pos, len - 1);
-				response = new BitField(bitArray);
-				response.setmType(MessageType.BITFIELD);
-				// TODO : Remove this
-				String logMessage = "Peer " + MetaInfo.getPeerId()
-						+ " received the BitField message from Peer " + peerId;
-				Logger.getInstance().log(logMessage);
-				// System.out.println("Received BitField from "+peerId);
-			} else if (messageType == Message.MessageType.REQUEST.value) {
-				pieceIndex = getPieceIndex(pos, input);
-				response = new Request(pieceIndex);
-				response.setmType(MessageType.REQUEST);
-				int pieceId = new BigInteger(pieceIndex).intValue();
-				// TODO : Remove this
-				String logMessage = "Peer " + MetaInfo.getPeerId()
-						+ " received the Request message from Peer " + peerId
-						+ " for piece number: " + pieceId;
-				Logger.getInstance().log(logMessage);
-				// System.out.println("Received Request from "+peerId);
-			} else if (messageType == Message.MessageType.PIECE.value) {
-				pieceIndex = getPieceIndex(pos, input);
-				int index = new BigInteger(pieceIndex).intValue();
-				len -= 5;
-				pos += 4;
-				byte[] piece = getBitArray(input, pos, len);
-				response = new Piece(index, piece);
-				response.setmType(MessageType.PIECE);
-				// System.out.println("Received Piece : "+index+
-				// "from "+peerId);
-			} else {
-				System.out.println("MISTAAAKE: " + messageType);
-			}
-		} catch (Exception e) {
-			Date date = new Date();
-			System.out.println(date.getTime() + ": " + peerId);
-			System.out.println("len " + ": " + len);
-			System.out.println(input);
-			e.printStackTrace();
-			System.exit(1);
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " received the have message from Peer " + peerId
+					+ " for the piece " + pieceID;
+			Logger.getInstance().log(logMessage);
+			// System.out.println(logMessage);
+			// System.out.println("Received Have from "+peerId);
+		} else if (messageType == Message.MessageType.BITFIELD.value) {
+			bitArray = getBitArray(input, pos, len - 1);
+			response = new BitField(bitArray);
+			response.setmType(MessageType.BITFIELD);
+			// TODO : Remove this
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " received the BitField message from Peer " + peerId;
+			Logger.getInstance().log(logMessage);
+			// System.out.println("Received BitField from "+peerId);
+		} else if (messageType == Message.MessageType.REQUEST.value) {
+			pieceIndex = getPieceIndex(pos, input);
+			response = new Request(pieceIndex);
+			response.setmType(MessageType.REQUEST);
+			int pieceId = new BigInteger(pieceIndex).intValue();
+			// TODO : Remove this
+			String logMessage = "Peer " + MetaInfo.getPeerId()
+					+ " received the Request message from Peer " + peerId
+					+ " for piece number: " + pieceId;
+			Logger.getInstance().log(logMessage);
+			// System.out.println("Received Request from "+peerId);
+		} else if (messageType == Message.MessageType.PIECE.value) {
+			pieceIndex = getPieceIndex(pos, input);
+			int index = new BigInteger(pieceIndex).intValue();
+			len -= 5;
+			pos += 4;
+			byte[] piece = getBitArray(input, pos, len);
+			response = new Piece(index, piece);
+			response.setmType(MessageType.PIECE);
+			// System.out.println("Received Piece : "+index+
+			// "from "+peerId);
+		} else {
+			System.out.println("MISTAAAKE: " + messageType);
 		}
 		return response;
 	}

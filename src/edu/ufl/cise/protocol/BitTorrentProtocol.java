@@ -40,7 +40,7 @@ public class BitTorrentProtocol implements Runnable {
 				handleHave();
 				break;
 			case BITFIELD:
-				//System.out.println("BITFIELD");
+				// System.out.println("BITFIELD");
 				handleBitField();
 				break;
 			case REQUEST:
@@ -53,13 +53,13 @@ public class BitTorrentProtocol implements Runnable {
 				handleHandShakeMessage();
 				break;
 			}
+
 		} catch (Exception e) {
 			Date date = new Date();
-			System.out.println(date.getTime() + ": " + peerId);
-			//System.out.println(message.getmType());
-			//message.toString();
-			e.printStackTrace();
-			System.exit(0);
+			System.exit(1);
+			// System.out.println(date.getTime() + ": " + peerId);
+			// System.out.println(message.getmType()); //message.toString();
+			// e.printStackTrace(); //System.exit(0); }
 		}
 	}
 
@@ -107,7 +107,8 @@ public class BitTorrentProtocol implements Runnable {
 			int peerId1 = itr.next();
 			if (Peer.getInstance().isReadyToSendHave(peerId1)) { // Send a have
 																	// message
-				String logMessage = "Sending have message to: " + peerId1 + " for piece: " + pieceId;
+				String logMessage = "Sending have message to: " + peerId1
+						+ " for piece: " + pieceId;
 				Logger.getInstance().log(logMessage);
 				Have haveMessage = new Have(pieceId);
 				try {

@@ -19,6 +19,7 @@ import edu.ufl.cise.util.Logger;
 
 public class ClientWorker extends ReadWorker implements Runnable {
 
+	boolean LISTENING = true;
 	Socket clientSocket;
 	OutputStream out;
 	InputStream in;
@@ -28,7 +29,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 	String hostName;
 
 	public ClientWorker(int peerId, int port, String hostName) {
-		System.out.println("Starting clientWorker for: " + peerId);
+		//System.out.println("Starting clientWorker for: " + peerId);
 		this.currPeerId = MetaInfo.getPeerId();
 		this.peerID = peerId;
 		this.port = port;
@@ -41,8 +42,8 @@ public class ClientWorker extends ReadWorker implements Runnable {
 		try {
 			// connect to the socket
 			// TODO : Fix the hardcoding before running on the cise machines. 
-			//clientSocket = new Socket("localhost", port);
-			clientSocket = new Socket(hostName, port);
+			clientSocket = new Socket("localhost", port);
+			//clientSocket = new Socket(hostName, port);
 			
 			// update isConnected map
 			Peer.getInstance().getIsConnected().put(peerID, true);
@@ -70,7 +71,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			byte[] header;
 			Message response = null;
 
-			while (true) {
+			while (LISTENING) {
 				//System.out.println(" port number:"+port);
 				//bytesRead = in.read(firstFour, 0, 4);
 				for( int i=0; i<4; i++){
@@ -124,12 +125,14 @@ public class ClientWorker extends ReadWorker implements Runnable {
 						peerID);
 				ExecutorPool.getInstance().getPool().execute(protocol);
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Date date = new Date();
-			System.out.println(date.getTime() + " : " + peerID);
-			System.out.println("bytesRead : " + bytesRead);
-			System.out.println("bytes: " + temp);
-			e.printStackTrace();
+			//System.out.println(date.getTime() + " : " + peerID);
+			//System.out.println("bytesRead : " + bytesRead);
+			//System.out.println("bytes: " + temp);
+			//e.printStackTrace();
+			System.out.println("Client Worker");
+			LISTENING = false;
 		} finally {
 			try {
 				if (out != null)
@@ -137,7 +140,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 				if (in != null)
 					in.close();
 			} catch (IOException ex) {
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}
 
 		}

@@ -36,6 +36,7 @@ public class Peer {
 	int numPeersCompleted;
 	int numPiecesCompleted;
 	int numPiecesInterested;
+	
 	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
 
@@ -72,11 +73,7 @@ public class Peer {
 
 	public synchronized static Peer getInstance() {
 		if (instance == null) {
-			// synchronized (Peer.class)
-			// {
-			// if (instance == null)
 			instance = new Peer();
-			// }
 		}
 		return instance;
 	}
@@ -409,18 +406,42 @@ public class Peer {
 
 		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
 				&& (MetaInfo.getNumPeers() == getNumPeersCompleted())) {
-			System.out
-					.println("All Peers completed: " + getNumPeersCompleted());
-			// Logger.getInstance().close();
-			// System.exit(1);
+			System.out.println("All Peers completed: " + getNumPeersCompleted());
+			MetaInfo.setShutDown(true);
 			shutdown();
+			Logger.getInstance().close();
+			System.exit(1);
 			return true;
 		}
 		return false;
 	}
 
 	private void shutdown() {
-		// TODO Auto-generated method stub
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		// Shutdown executor service
+		ExecutorPool.getInstance().getPool().shutdown();
+		// Shut down all the sockets
+		// Wait for some time to send all the packets in queue
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		Server.LISTENING = false;
+		Iterator<Integer> itr = map.keySet().iterator();
+		while(itr.hasNext()){
+			int peer = itr.next();
+			PeerInfo peerInfo = map.get(peer);
+			Socket socket  = peerInfo.getSocket();
+			try {
+				socket.close();
+			} catch (Exception e) {
+			}
+		}
 	}
 
 	/**

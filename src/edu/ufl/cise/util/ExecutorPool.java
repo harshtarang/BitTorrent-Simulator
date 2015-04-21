@@ -22,7 +22,8 @@ public class ExecutorPool {
             pool = Executors.newFixedThreadPool(NUM_THREADS);
         }
         catch ( Exception e ) {
-            e.printStackTrace();
+            //e.printStackTrace();
+        	System.out.println("Shutting down executor pool");
         }
     }
 

@@ -24,12 +24,12 @@ public class Server implements Runnable{
 			serverSocket = new ServerSocket(portNumber);
 		} catch (IOException e) {
 			// Enter a log statement
-			System.out.println("Something went wrong");
+			//System.out.println("Something went wrong");
 		}
 		while (LISTENING) {
 			ServerWorker serverWorker;
-			System.out.println("*** Listen for a Client; at:" + portNumber
-					+ " ***");
+			//System.out.println("*** Listen for a Client; at:" + portNumber
+			//		+ " ***");
 			Socket socket = serverSocket.accept();
 			serverWorker = new ServerWorker(socket);
 			new Thread(serverWorker).start(); 
@@ -42,7 +42,7 @@ public class Server implements Runnable{
 		try {
 			init();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	

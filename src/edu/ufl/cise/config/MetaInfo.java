@@ -21,6 +21,7 @@ public class MetaInfo {
 	private static int portNumber;
 	private static int peerId;
 	private static int peersComplete;
+	private static boolean isShutDown;
 	private static HashMap<String, Integer> hostNameToIdMap; // For checking
 																// which
 
@@ -191,5 +192,13 @@ public class MetaInfo {
 
 	public static void setLogPath(String logPath) {
 		MetaInfo.logPath = logPath;
+	}
+
+	public static boolean isShutDown() {
+		return isShutDown;
+	}
+
+	public static void setShutDown(boolean isShutDown) {
+		MetaInfo.isShutDown = isShutDown;
 	}
 }

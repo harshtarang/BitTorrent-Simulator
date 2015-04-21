@@ -15,7 +15,7 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 	@Override
 	public void run() {
 		if( Peer.getInstance().getNumPeersCompleted() == MetaInfo.getNumPeers()){
-			System.out.println("Pers completeed : SchedulePN");
+			//System.out.println("Pers completeed : SchedulePN");
 			timerTask.cancel();
 			timer.cancel();
 			return; 
@@ -25,15 +25,18 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 	}
 
 	private void determineNeigbor() {
-		System.out.println("determine PN");
+		//System.out.println("determine PN");
 		boolean isCompleteFile = MetaInfo.isCompletefile();
 		try {
-			if (isCompleteFile) {
+			if(MetaInfo.isShutDown()){
+				return;
+			}
+			else if (isCompleteFile) {
 				Peer.getInstance().randomSelect();
 			} else if (firstTime) {
 				firstTime = false;
 				Peer.getInstance().randomSelect();
-			} else {
+			} else  {
 				Peer.getInstance().downloadRatePrioritySelect();
 				Peer.getInstance().randomSelect();
 			}

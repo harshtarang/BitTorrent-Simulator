@@ -2,13 +2,9 @@ package edu.ufl.cise.protocol;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.math.BigInteger;
 import java.net.Socket;
 
 import edu.ufl.cise.client.Peer;
-import edu.ufl.cise.protocol.Message.MessageType;
-import edu.ufl.cise.util.Logger;
 
 public class SendMessage implements Runnable {
 
@@ -32,7 +28,8 @@ public class SendMessage implements Runnable {
 				//out.flush();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Shutting down Message sender");
 		}
 
 	}

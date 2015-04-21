@@ -19,10 +19,12 @@ import edu.ufl.cise.util.Logger;
 
 public class ServerWorker extends ReadWorker implements Runnable {
 	private Socket clientSocket = null;
+	boolean LISTENING = true;
 	private OutputStream out;
 	private InputStream in;
 	int peerID;
 	int currPeerId;
+	
 
 	public ServerWorker(Socket socket) {
 		this.clientSocket = socket;
@@ -31,8 +33,8 @@ public class ServerWorker extends ReadWorker implements Runnable {
 		// Currently for testing purposes since everything is localhost we will append 
 		// count to hostname and extract the peerId. in fact count = current peerId.
 		// TODO : Fix it before running on cise machines.
-		//int count = Peer.getInstance().getCount();
-		//hostName = hostName + count;
+		int count = Peer.getInstance().getCount();
+		hostName = hostName + count;
 		
 		this.peerID = MetaInfo.getHostNameToIdMap().get(hostName);
 		this.currPeerId = MetaInfo.getPeerId();
@@ -57,7 +59,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 			byte[] temp;
 			byte[] header;
 			Message response = null;
-			while (true) {
+			while (LISTENING) {
 				for( int i=0; i<4; i++){
 					//bytesRead = in.read(firstFour, 0, 4);
 					firstFour[i] = (byte) in.read();
@@ -111,12 +113,14 @@ public class ServerWorker extends ReadWorker implements Runnable {
 				BitTorrentProtocol protocol = new BitTorrentProtocol(response, peerID);
 				ExecutorPool.getInstance().getPool().execute(protocol);
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// Add a log statement
-			Date date = new Date();
-			System.out.println(date.getTime() + " : " + peerID);
-			System.out.println(" bytesRead : " + bytesRead);
-			e.printStackTrace();
+			//Date date = new Date();
+			//System.out.println(date.getTime() + " : " + peerID);
+			//System.out.println(" bytesRead : " + bytesRead);
+			//e.printStackTrace();
+			LISTENING = false;
+			System.out.println("Shutting down Server worker");
 		} finally {
 			try {
 				if (out != null)
@@ -124,7 +128,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 				if (in != null)
 					in.close();
 			} catch (IOException ex) {
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}
 
 		}
