@@ -58,7 +58,7 @@ public class Logger {
 			String logMessage = date.getTime() + ": " + message + "\n";
 			out.write(logMessage.getBytes());
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 }

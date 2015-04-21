@@ -38,7 +38,7 @@ public class ScheduleNeighborTimerTask extends TimerTask {
 				Peer.getInstance().randomSelect();
 			} else  {
 				Peer.getInstance().downloadRatePrioritySelect();
-				Peer.getInstance().randomSelect();
+				//Peer.getInstance().randomSelect();
 			}
 			// Invoke optimistically unchoke strategy
 		} catch (Exception e) {

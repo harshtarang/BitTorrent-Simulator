@@ -36,7 +36,7 @@ public class Peer {
 	int numPeersCompleted;
 	int numPiecesCompleted;
 	int numPiecesInterested;
-	
+
 	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
 
@@ -406,17 +406,16 @@ public class Peer {
 
 		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
 				&& (MetaInfo.getNumPeers() == getNumPeersCompleted())) {
-			System.out.println("All Peers completed: " + getNumPeersCompleted());
+			System.out
+					.println("All Peers completed: " + getNumPeersCompleted());
 			MetaInfo.setShutDown(true);
 			shutdown();
-			Logger.getInstance().close();
-			System.exit(1);
 			return true;
 		}
 		return false;
 	}
 
-	private void shutdown() {
+	public void shutdown() {
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e1) {
@@ -431,17 +430,19 @@ public class Peer {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+		Logger.getInstance().close();
 		Server.LISTENING = false;
 		Iterator<Integer> itr = map.keySet().iterator();
-		while(itr.hasNext()){
+		while (itr.hasNext()) {
 			int peer = itr.next();
 			PeerInfo peerInfo = map.get(peer);
-			Socket socket  = peerInfo.getSocket();
+			Socket socket = peerInfo.getSocket();
 			try {
 				socket.close();
 			} catch (Exception e) {
 			}
 		}
+		System.exit(1);
 	}
 
 	/**
@@ -861,7 +862,7 @@ public class Peer {
 				interestedPeerList.add(peerId);
 			}
 		}
-		
+
 		int currentInterestedSize = interestedPeerList.size();
 		if (currentInterestedSize > k) {
 			itr = interestedPeerList.iterator();

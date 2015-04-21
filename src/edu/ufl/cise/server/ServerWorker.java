@@ -121,6 +121,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 			//e.printStackTrace();
 			LISTENING = false;
 			System.out.println("Shutting down Server worker");
+			Peer.getInstance().shutdown();
 		} finally {
 			try {
 				if (out != null)
