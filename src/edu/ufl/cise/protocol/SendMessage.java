@@ -27,7 +27,7 @@ public class SendMessage implements Runnable {
 				out.write(message);
 				//out.flush();
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			//e.printStackTrace();
 			System.out.println("Shutting down Message sender");
 		}
