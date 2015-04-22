@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
@@ -33,9 +34,8 @@ import edu.ufl.cise.util.Logger;
 public class Peer {
 
 	private static volatile Peer instance;
-	private int numPeersCompleted;
-	private int numPiecesCompleted;
-	private int numPiecesInterested;
+	private volatile int numPeersCompleted;
+	private volatile int numPiecesCompleted;
 
 	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
@@ -399,15 +399,15 @@ public class Peer {
 				&& MetaInfo.getnPieces() == getNumPiecesCompleted()) {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the complete file ";
-			// Logger.getInstance().log(logMessage);
+			Logger.log(logMessage);
 
 			MetaInfo.setCompletefile(true);
 		}
 
 		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
 				&& (MetaInfo.getNumPeers() == getNumPeersCompleted())) {
-			System.out
-					.println("All Peers completed: " + getNumPeersCompleted());
+			//System.out
+			//		.println("All Peers completed: " + getNumPeersCompleted());
 			MetaInfo.setShutDown(true);
 			shutdown();
 			return true;
@@ -417,7 +417,7 @@ public class Peer {
 
 	public void shutdown() {
 		// Assemble pieces
-		System.out.println("SHUTTING DOWN ");
+		//System.out.println("SHUTTING DOWN ");
 		FileHandlingUtils fh = new FileHandlingUtils();
 		fh.finish();
 		
@@ -574,9 +574,9 @@ public class Peer {
 			pieceInfo.set(pieceId); // In that case dont increment the counter
 			setNumPiecesCompleted(getNumPiecesCompleted() + 1);
 
-			Logger.log(
-					"Peer " + MetaInfo.getPeerId() + " bitset is: "
-							+ getPieceInfo().toString());
+			//Logger.log(
+			//		"Peer " + MetaInfo.getPeerId() + " bitset is: "
+			//				+ getPieceInfo().toString());
 
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the piece " + pieceId + " from "
@@ -608,7 +608,7 @@ public class Peer {
 			//				+ info.getNumPiecesInterested()
 			//				+ " peers completed: " + numPeersCompleted);
 			if (info.getNumPiecesInterested() == 0) {
-				System.out.println("Complted: " + peerId + " total peerscomplete : " + numPeersCompleted);
+				//System.out.println("Complted: " + peerId + " total peerscomplete : " + numPeersCompleted);
 				numPeersCompleted++;
 			}
 		}
@@ -870,6 +870,7 @@ public class Peer {
 					&& peerId != MetaInfo.getPeerId() && isConnected.get(peerId)) {
 				interestedPeerList.add(peerId);
 			}
+			piecesDownloadedFrom.put(peerId, 0);
 		}
 
 		int currentInterestedSize = interestedPeerList.size();

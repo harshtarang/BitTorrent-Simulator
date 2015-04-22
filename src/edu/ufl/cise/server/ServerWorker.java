@@ -89,10 +89,10 @@ public class ServerWorker extends ReadWorker implements Runnable {
 						//System.out.println("Read bytes should be 14: " + bytesRead);
 						int peerId = getPeerId(temp);
 						assert(peerID == peerId); // verify the peer id
-						String logMessage = "Peer " + MetaInfo.getPeerId() + " received the handshake message from Peer " 
-								+ peerId ;
+						//String logMessage = "Peer " + MetaInfo.getPeerId() + " received the handshake message from Peer " 
+						//		+ peerId ;
 						//Logger.getInstance().log(logMessage);
-						Logger.log(logMessage);
+						//Logger.log(logMessage);
 
 						//System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
@@ -124,7 +124,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 			//System.out.println(" bytesRead : " + bytesRead);
 			//e.printStackTrace();
 			LISTENING = false;
-			System.out.println("Shutting down Server worker");
+			//System.out.println("Shutting down Server worker");
 			//Peer.getInstance().shutdown();
 		} finally {
 			try {

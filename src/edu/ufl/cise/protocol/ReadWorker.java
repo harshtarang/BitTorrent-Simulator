@@ -119,7 +119,7 @@ public abstract class ReadWorker {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " received the Request message from Peer " + peerId
 					+ " for piece number: " + pieceId;
-			Logger.log(logMessage);
+			//Logger.log(logMessage);
 			// System.out.println("Received Request from "+peerId);
 		} else if (messageType == Message.MessageType.PIECE.value) {
 			pieceIndex = getPieceIndex(pos, input);

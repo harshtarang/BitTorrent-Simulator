@@ -104,11 +104,12 @@ public class ClientWorker extends ReadWorker implements Runnable {
 						// System.out.println("Read bytes shold be 14:  " +
 						// bytesRead);
 						int peerId = getPeerId(temp);
+						assert(peerID == peerId); // verify the peer id
 						logMessage = "Peer " + MetaInfo.getPeerId()
 								+ " received the handshake message from Peer "
 								+ peerId;
 						// Logger.getInstance().log(logMessage);
-						Logger.log(logMessage);
+						//.log(logMessage);
 
 						// System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
@@ -140,7 +141,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			// System.out.println("bytesRead : " + bytesRead);
 			// System.out.println("bytes: " + temp);
 			// e.printStackTrace();
-			System.out.println("Client Worker");
+			//System.out.println("Client Worker");
 			LISTENING = false;
 		} finally {
 			try {

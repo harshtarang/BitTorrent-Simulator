@@ -55,7 +55,6 @@ public class BitTorrentProtocol implements Runnable {
 			}
 
 		} catch (Exception e) {
-			Date date = new Date();
 			//System.exit(1);
 			// System.out.println(date.getTime() + ": " + peerId);
 			// System.out.println(message.getmType()); //message.toString();
