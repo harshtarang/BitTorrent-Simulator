@@ -33,8 +33,8 @@ public class ServerWorker extends ReadWorker implements Runnable {
 		// Currently for testing purposes since everything is localhost we will append 
 		// count to hostname and extract the peerId. in fact count = current peerId.
 		// TODO : Fix it before running on cise machines.
-		//int count = Peer.getInstance().getCount();
-		//hostName = hostName + count;
+		int count = Peer.getInstance().getCount();
+		hostName = hostName + count;
 		
 		this.peerID = MetaInfo.getHostNameToIdMap().get(hostName);
 		this.currPeerId = MetaInfo.getPeerId();
@@ -43,7 +43,8 @@ public class ServerWorker extends ReadWorker implements Runnable {
 		Peer.getInstance().getIsConnected().put(peerID, true);
 		
 		String logMessage = "Peer " + this.currPeerId + " is connected from Peer "  + this.peerID;
-		Logger.getInstance().log(logMessage);
+		//Logger.getInstance().log(logMessage);
+		Logger.log(logMessage);
 	}
 
 	public void run() {
@@ -90,7 +91,9 @@ public class ServerWorker extends ReadWorker implements Runnable {
 						assert(peerID == peerId); // verify the peer id
 						String logMessage = "Peer " + MetaInfo.getPeerId() + " received the handshake message from Peer " 
 								+ peerId ;
-						Logger.getInstance().log(logMessage);
+						//Logger.getInstance().log(logMessage);
+						Logger.log(logMessage);
+
 						//System.out.println("Received peerID: " + peerId);
 						response = new HandshakeMessage(peerId);
 						response.setmType(MessageType.HANDSHAKE);
@@ -122,7 +125,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 			//e.printStackTrace();
 			LISTENING = false;
 			System.out.println("Shutting down Server worker");
-			Peer.getInstance().shutdown();
+			//Peer.getInstance().shutdown();
 		} finally {
 			try {
 				if (out != null)

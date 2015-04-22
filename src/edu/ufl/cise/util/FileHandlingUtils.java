@@ -87,7 +87,6 @@ public class FileHandlingUtils {
 				bytes = new byte[MetaInfo.getPieceSize()];
 				fin.read(bytes);
 				fout.write(bytes);
-				bytes = null;
 				fin.close();
 			}
 			// finally write the last piece
@@ -96,7 +95,6 @@ public class FileHandlingUtils {
 			bytes = new byte[MetaInfo.getLastPieceSize()];
 			fin.read(bytes);
 			fout.write(bytes);
-			bytes = null;
 			fin.close();
 			fout.close();
 		} catch (FileNotFoundException e) {

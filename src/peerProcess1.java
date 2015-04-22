@@ -10,6 +10,7 @@ import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
 import edu.ufl.cise.util.CommonConfigReader;
 import edu.ufl.cise.util.FileHandlingUtils;
+import edu.ufl.cise.util.Logger;
 import edu.ufl.cise.util.PeerConfigReader;
 
 public class peerProcess1 {
@@ -18,6 +19,7 @@ public class peerProcess1 {
 	public static final String PEER_CONFIG = "PeerInfo.cfg";
 
 	static String base_path;
+	static String peer_base_path;
 	static String peerID;
 
 	public static String getBasePath() {
@@ -25,10 +27,11 @@ public class peerProcess1 {
 	}
 
 	public static void main(String args[]) throws IOException {
-		String peerId = args[0];
-		//String peerId = "1";
+		//String peerId = args[0];
+		String peerId = "1002";
 		peerID = peerId;
-		base_path = System.getProperty("user.home") + "/project" + peerId + "/";
+		base_path = System.getProperty("user.home") + "/project/";
+		peer_base_path = base_path + "peer_" + peerID + "/";
 		// System.out.println(base_path);
 		init(peerId);
 	}
@@ -46,9 +49,10 @@ public class peerProcess1 {
 		MetaInfo.setLastPieceSize(lastPieceSize);
 		MetaInfo.setnPieces(nPieces);
 		MetaInfo.setBasePath(base_path);
+		MetaInfo.setPeerBasePath(peer_base_path);
 
 		// Create a log file and set the path
-		String logFile = base_path + "peer_" + peerID + ".log";
+		String logFile = base_path + "log_peer_" + peerID + ".log";
 		MetaInfo.setLogPath(logFile);
 		createLogFile();
 
@@ -70,6 +74,7 @@ public class peerProcess1 {
 			fh = null;
 		}
 		
+		Logger log = new Logger();
 		//System.out.println(MetaInfo.getString());
 
 		// Starts PeerServer
@@ -103,6 +108,14 @@ public class peerProcess1 {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	public static String getPeer_base_path() {
+		return peer_base_path;
+	}
+
+	public static void setPeer_base_path(String peer_base_path) {
+		peerProcess.peer_base_path = peer_base_path;
 	}
 
 }
