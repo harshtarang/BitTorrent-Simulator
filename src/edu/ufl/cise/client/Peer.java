@@ -855,7 +855,7 @@ public class Peer {
 
 		sortedMap = (LinkedHashMap<Integer, Integer>) sortByValue(piecesDownloadedFrom);
 		Iterator<Integer> itr = sortedMap.keySet().iterator();
-		while (itr.hasNext()) {
+		while (itr.hasNext() && count < k) {
 			int peerId = itr.next();
 			if (currentlyInterested.containsKey(peerId)
 					&& peerId != MetaInfo.getPeerId()) {
@@ -876,6 +876,7 @@ public class Peer {
 				if (!newlySelectedNeighbor.containsKey(peerId)) {
 					newlySelectedNeighbor.put(peerId, true);
 				}
+				count++;
 			}
 		} else if (currentInterestedSize <= k && currentInterestedSize != 0) { // Add
 																				// everyone
