@@ -398,10 +398,6 @@ public class Peer {
 			// Logger.getInstance().log(logMessage);
 
 			MetaInfo.setCompletefile(true);
-
-			// Assemble pieces
-			FileHandlingUtils fh = new FileHandlingUtils();
-			fh.finish();
 		}
 
 		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
@@ -416,6 +412,10 @@ public class Peer {
 	}
 
 	public void shutdown() {
+		// Assemble pieces
+		FileHandlingUtils fh = new FileHandlingUtils();
+		fh.finish();
+		
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e1) {
