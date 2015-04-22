@@ -12,7 +12,7 @@ import edu.ufl.cise.util.CommonConfigReader;
 import edu.ufl.cise.util.FileHandlingUtils;
 import edu.ufl.cise.util.PeerConfigReader;
 
-public class peerProcess4 {
+public class peerProcess5 {
 
 	public static final String COMMON_CONFIG = "Common.cfg";
 	public static final String PEER_CONFIG = "PeerInfo.cfg";
@@ -26,8 +26,8 @@ public class peerProcess4 {
 
 	public static void main(String args[]) throws IOException {
 		//String peerId = args[0];
-		//String peerId = "4";
-		String peerId = args.length == 0 ? "4" : args[0];
+		//String peerId = "5";
+		String peerId = args.length == 0 ? "5" : args[0];
 		peerID = peerId;
 		base_path = System.getProperty("user.home") + "/project" + peerId + "/";
 		// System.out.println(base_path);
@@ -70,7 +70,7 @@ public class peerProcess4 {
 			fh.createPieces();
 			fh = null;
 		}
-		
+
 		//System.out.println(MetaInfo.getString());
 
 		// Starts PeerServer

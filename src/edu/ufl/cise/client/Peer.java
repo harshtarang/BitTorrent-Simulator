@@ -866,16 +866,17 @@ public class Peer {
 		int currentInterestedSize = interestedPeerList.size();
 		if (currentInterestedSize > k) {
 			itr = interestedPeerList.iterator();
-			while (itr.hasNext()) {
+			while (itr.hasNext() && count < k) {
 				int peerId = itr.next();
-				if (peerId == MetaInfo.getPeerId()) {
+/*				if (peerId == MetaInfo.getPeerId()) {
 					System.out
 							.println("********************************************* this is wrong************");
 					continue; // should never reach here
 				}
-				if (!newlySelectedNeighbor.containsKey(peerId)) {
+*/				if (!newlySelectedNeighbor.containsKey(peerId)) {
 					newlySelectedNeighbor.put(peerId, true);
 				}
+				count++;
 			}
 		} else if (currentInterestedSize <= k && currentInterestedSize != 0) { // Add
 																				// everyone

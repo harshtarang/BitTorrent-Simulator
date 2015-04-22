@@ -26,7 +26,9 @@ public class peerProcess3 {
 
 	public static void main(String args[]) throws IOException {
 		//String peerId = args[0];
-		String peerId = "3";
+		//String peerId = "3";
+		String peerId = args.length == 0 ? "3" : args[0];
+
 		peerID = peerId;
 		base_path = System.getProperty("user.home") + "/project" + peerId + "/";
 		// System.out.println(base_path);
