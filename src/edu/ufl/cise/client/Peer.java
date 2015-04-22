@@ -442,6 +442,7 @@ public class Peer {
 			} catch (Exception e) {
 			}
 		}
+		fh.deletePieces();
 		System.exit(1);
 	}
 
