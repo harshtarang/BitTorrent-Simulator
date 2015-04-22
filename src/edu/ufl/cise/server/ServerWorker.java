@@ -87,6 +87,7 @@ public class ServerWorker extends ReadWorker implements Runnable {
 						}
 						//System.out.println("Read bytes should be 14: " + bytesRead);
 						int peerId = getPeerId(temp);
+						assert(peerID == peerId); // verify the peer id
 						String logMessage = "Peer " + MetaInfo.getPeerId() + " received the handshake message from Peer " 
 								+ peerId ;
 						Logger.getInstance().log(logMessage);

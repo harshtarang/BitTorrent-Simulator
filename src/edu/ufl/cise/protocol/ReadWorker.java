@@ -106,9 +106,9 @@ public abstract class ReadWorker {
 			response = new BitField(bitArray);
 			response.setmType(MessageType.BITFIELD);
 			// TODO : Remove this
-			String logMessage = "Peer " + MetaInfo.getPeerId()
-					+ " received the BitField message from Peer " + peerId;
-			Logger.getInstance().log(logMessage);
+			//String logMessage = "Peer " + MetaInfo.getPeerId()
+			//		+ " received the BitField message from Peer " + peerId;
+			//Logger.getInstance().log(logMessage);
 			// System.out.println("Received BitField from "+peerId);
 		} else if (messageType == Message.MessageType.REQUEST.value) {
 			pieceIndex = getPieceIndex(pos, input);

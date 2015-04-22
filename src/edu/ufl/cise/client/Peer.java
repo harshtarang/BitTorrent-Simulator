@@ -351,8 +351,8 @@ public class Peer {
 		int n = MetaInfo.getnPieces();
 		piecesInterested.and(peerInfo.getPieceInfo());
 
-		String message = "Pieces interested in: " + piecesInterested;
-		Logger.getInstance().log(message);
+		//String message = "Pieces interested in: " + piecesInterested;
+		//Logger.getInstance().log(message);
 		// message = "Pieces currently downloading: " +
 		// piecesCurrentlyDownloading.toString();
 		// Logger.getInstance().log(message);
@@ -518,10 +518,10 @@ public class Peer {
 				&& peerId2 != MetaInfo.getPeerId()) {
 			return true;
 		}
-		String logMessage = "Sending have message failed for: " + peerId2
-				+ " isConnected: " + isConnected.get(peerId2) + "isBitField: "
-				+ peerInfo.isBitFieldSent();
-		Logger.getInstance().log(logMessage);
+		//String logMessage = "Sending have message failed for: " + peerId2
+		//		+ " isConnected: " + isConnected.get(peerId2) + "isBitField: "
+		//		+ peerInfo.isBitFieldSent();
+		//Logger.getInstance().log(logMessage);
 		return false;
 	}
 
@@ -549,9 +549,9 @@ public class Peer {
 		PeerInfo peerInfo = map.get(peerId2);
 		peerInfo.setPieceInfo(bs);
 		peerInfo.updatePieceInterested();
-		Logger.getInstance().log(
-				"Peer " + peerId2 + " bitset is: "
-						+ peerInfo.getPieceInfo().toString());
+		//Logger.getInstance().log(
+		//		"Peer " + peerId2 + " bitset is: "
+		//				+ peerInfo.getPieceInfo().toString());
 		if (peerInfo.getNumPiecesInterested() == 0)
 			numPeersCompleted++;
 	}
@@ -567,9 +567,9 @@ public class Peer {
 			pieceInfo.set(pieceId); // In that case dont increment the counter
 			setNumPiecesCompleted(getNumPiecesCompleted() + 1);
 
-			Logger.getInstance().log(
-					"Peer " + MetaInfo.getPeerId() + " bitset is: "
-							+ getPieceInfo().toString());
+			//Logger.getInstance().log(
+			//		"Peer " + MetaInfo.getPeerId() + " bitset is: "
+			//				+ getPieceInfo().toString());
 
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the piece " + pieceId + " from "
@@ -593,12 +593,12 @@ public class Peer {
 
 			info.getPieceInfo().set(pieceId);
 			info.updatePieceInterested();
-			Logger.getInstance().log(
-					"Peer " + peerId + " bitset is: "
-							+ info.getPieceInfo().toString()
-							+ " num pieces interested: "
-							+ info.getNumPiecesInterested()
-							+ " peers completed: " + numPeersCompleted);
+			//Logger.getInstance().log(
+			//		"Peer " + peerId + " bitset is: "
+			//				+ info.getPieceInfo().toString()
+			//				+ " num pieces interested: "
+			//				+ info.getNumPiecesInterested()
+			//				+ " peers completed: " + numPeersCompleted);
 			if (info.getNumPiecesInterested() == 0) {
 				numPeersCompleted++;
 			}
@@ -858,7 +858,7 @@ public class Peer {
 		while (itr.hasNext() && count < k) {
 			int peerId = itr.next();
 			if (currentlyInterested.containsKey(peerId)
-					&& peerId != MetaInfo.getPeerId()) {
+					&& peerId != MetaInfo.getPeerId() && isConnected.get(peerId)) {
 				interestedPeerList.add(peerId);
 			}
 		}
@@ -866,7 +866,7 @@ public class Peer {
 		int currentInterestedSize = interestedPeerList.size();
 		if (currentInterestedSize > k) {
 			itr = interestedPeerList.iterator();
-			while (itr.hasNext()) {
+			while (itr.hasNext() && count < k) {
 				int peerId = itr.next();
 				if (peerId == MetaInfo.getPeerId()) {
 					System.out
