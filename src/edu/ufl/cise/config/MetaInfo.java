@@ -16,6 +16,7 @@ public class MetaInfo {
 	private static int numPeers;
 	private static ArrayList<Integer> peerList;
 	private static String basePath;
+	private static String peerBasePath;
 	private static String logPath;
 	private static int lastPieceSize;
 	private static int portNumber;
@@ -200,5 +201,13 @@ public class MetaInfo {
 
 	public static void setShutDown(boolean isShutDown) {
 		MetaInfo.isShutDown = isShutDown;
+	}
+
+	public static String getPeerBasePath() {
+		return peerBasePath;
+	}
+
+	public static void setPeerBasePath(String peerBasePath) {
+		MetaInfo.peerBasePath = peerBasePath;
 	}
 }

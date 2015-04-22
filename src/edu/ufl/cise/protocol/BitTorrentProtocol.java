@@ -107,9 +107,9 @@ public class BitTorrentProtocol implements Runnable {
 			int peerId1 = itr.next();
 			if (Peer.getInstance().isReadyToSendHave(peerId1)) { // Send a have
 																	// message
-				String logMessage = "Sending have message to: " + peerId1
-						+ " for piece: " + pieceId;
-				Logger.getInstance().log(logMessage);
+				//String logMessage = "Sending have message to: " + peerId1
+				//		+ " for piece: " + pieceId;
+				//Logger.getInstance().log(logMessage);
 				Have haveMessage = new Have(pieceId);
 				try {
 					Thread.sleep(10);

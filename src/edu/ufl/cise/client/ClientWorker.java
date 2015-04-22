@@ -42,8 +42,8 @@ public class ClientWorker extends ReadWorker implements Runnable {
 		try {
 			// connect to the socket
 			// TODO : Fix the hardcoding before running on the cise machines. 
-			//clientSocket = new Socket("localhost", port);
-			clientSocket = new Socket(hostName, port);
+			clientSocket = new Socket("localhost", port);
+			//clientSocket = new Socket(hostName, port);
 			
 			// update isConnected map
 			Peer.getInstance().getIsConnected().put(peerID, true);

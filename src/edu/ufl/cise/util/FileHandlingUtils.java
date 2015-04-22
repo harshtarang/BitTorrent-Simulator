@@ -17,7 +17,7 @@ public class FileHandlingUtils {
 		
 		String fileName=null;
 		
-		 fileName = MetaInfo.getBasePath() + "piece_" + pieceId;
+		 fileName = MetaInfo.getPeerBasePath() + "piece_" + pieceId;
 		
 		
 		OutputStream out = null;
@@ -51,7 +51,7 @@ public class FileHandlingUtils {
 		}
 		piece = new byte[pieceLength];
 
-		String fileName = MetaInfo.getBasePath() + "piece_" + pieceId;
+		String fileName = MetaInfo.getPeerBasePath() + "piece_" + pieceId;
 		try {
 
 			File file = new File(fileName);
@@ -77,12 +77,12 @@ public class FileHandlingUtils {
 		FileInputStream fin = null;
 		byte[] bytes = null;
 		int nPieces = MetaInfo.getnPieces();
-		String fileName = MetaInfo.getBasePath() + MetaInfo.getFileName();
+		String fileName = MetaInfo.getPeerBasePath() + MetaInfo.getFileName();
 		File file = new File(fileName);
 		try {
 			fout = new FileOutputStream(file);
 			for (int i = 0; i < nPieces-1; i++) {
-				String pieceName = MetaInfo.getBasePath() + "piece_" + i;
+				String pieceName = MetaInfo.getPeerBasePath() + "piece_" + i;
 				fin = new FileInputStream(pieceName);
 				bytes = new byte[MetaInfo.getPieceSize()];
 				fin.read(bytes);
@@ -91,7 +91,7 @@ public class FileHandlingUtils {
 				fin.close();
 			}
 			// finally write the last piece
-			String pieceName = MetaInfo.getBasePath() + "piece_" + (nPieces-1);
+			String pieceName = MetaInfo.getPeerBasePath() + "piece_" + (nPieces-1);
 			fin = new FileInputStream(pieceName);
 			bytes = new byte[MetaInfo.getLastPieceSize()];
 			fin.read(bytes);
@@ -122,7 +122,7 @@ public class FileHandlingUtils {
 		int pos = 0;
 
 		String fileName = MetaInfo.getFileName();
-		String basePath = MetaInfo.getBasePath();
+		String basePath = MetaInfo.getPeerBasePath();
 		String filePath = basePath + fileName;
 		File file = new File(filePath);
 
@@ -184,11 +184,11 @@ public class FileHandlingUtils {
 
 	public void finish() {
 		combinePieces();
-		//deletePieces();
+		deletePieces();
 	}
 
 	public void deletePieces() {
-		String dir = MetaInfo.getBasePath();
+		String dir = MetaInfo.getPeerBasePath();
 		File dirFile = new File(dir);
 		for (File file : dirFile.listFiles()) {
 			if (file.getName().contains("piece"))
