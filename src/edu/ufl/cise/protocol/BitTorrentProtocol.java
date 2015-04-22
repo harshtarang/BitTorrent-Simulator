@@ -55,8 +55,7 @@ public class BitTorrentProtocol implements Runnable {
 			}
 
 		} catch (Exception e) {
-			Date date = new Date();
-			System.exit(1);
+			//System.exit(1);
 			// System.out.println(date.getTime() + ": " + peerId);
 			// System.out.println(message.getmType()); //message.toString();
 			// e.printStackTrace(); //System.exit(0); }
@@ -100,7 +99,8 @@ public class BitTorrentProtocol implements Runnable {
 		int pieceId = pieceMessage.getIndex();
 		fh.writePiece(pieceId, pieceMessage.getPiece());
 
-		Peer.getInstance().updateOwnBitSet(pieceId, peerId);
+		if(Peer.getInstance().updateOwnBitSet(pieceId, peerId))
+		{
 		// Broadcast Have message
 		Iterator<Integer> itr = MetaInfo.getPeerList().iterator();
 		while (itr.hasNext()) {
@@ -120,6 +120,7 @@ public class BitTorrentProtocol implements Runnable {
 						haveMessage.getBytes());
 				ExecutorPool.getInstance().getPool().execute(sendMessage);
 			}
+		}
 		}
 		// Check whether system needs to shutdown
 		boolean isShutDown = Peer.getInstance().evaluateSystemShutDown();

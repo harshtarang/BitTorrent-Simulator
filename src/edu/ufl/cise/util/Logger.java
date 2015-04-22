@@ -1,10 +1,8 @@
 package edu.ufl.cise.util;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
@@ -14,11 +12,11 @@ import edu.ufl.cise.config.MetaInfo;
 public class Logger {
 
 	// Ensures a single instance for the logger
-	private static volatile Logger instance;
+	//private static volatile Logger instance;
 	private static String fileName;
-	private OutputStream out = null;
+	private static OutputStream out = null;
 
-	private Logger() {
+	public  Logger() {
 		fileName = MetaInfo.getLogPath();
 		try {
 			out = new FileOutputStream(new File(fileName));
@@ -27,16 +25,14 @@ public class Logger {
 		}
 	}
 
-	public synchronized static Logger getInstance() {
+/*	public static Logger getInstance() {
 		if (instance == null) {
-			
-					instance = new Logger();
-			
+			instance = new Logger();
 		}
 		return instance;
 	}
-
-	public void close() {
+*/
+	public static void close() {
 		try {
 			out.close();
 		} catch (IOException e) {
@@ -52,13 +48,13 @@ public class Logger {
 
 	}
 
-	public void log(String message) {
+	public static synchronized void log(String message) {
 		try {
 			Date date = new Date();
 			String logMessage = date.toString() + ":  " + message + "\n";
 			out.write(logMessage.getBytes());
 		} catch (IOException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 }

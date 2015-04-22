@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.ufl.cise.config.MetaInfo;
 import edu.ufl.cise.config.PeerInfo;
@@ -33,9 +34,8 @@ import edu.ufl.cise.util.Logger;
 public class Peer {
 
 	private static volatile Peer instance;
-	int numPeersCompleted;
-	int numPiecesCompleted;
-	int numPiecesInterested;
+	private volatile int numPeersCompleted;
+	private volatile int numPiecesCompleted;
 
 	private BitSet pieceInfo;
 	private LinkedHashMap<Integer, PeerInfo> map;
@@ -98,6 +98,7 @@ public class Peer {
 		if (MetaInfo.isCompletefile()) {
 			pieceInfo.flip(0, nPieces);
 			numPiecesCompleted = nPieces;
+			this.numPeersCompleted = 1;
 		}
 		// Initialize currently downloading
 		piecesCurrentlyDownloading = new HashMap<Integer, Integer>();
@@ -193,7 +194,8 @@ public class Peer {
 		// Log the newly selected OUN
 		String logMessage = "Peer " + MetaInfo.getPeerId()
 				+ " has the optimistically unchoked neighbor " + selectedOUN;
-		Logger.getInstance().log(logMessage);
+		//Logger.getInstance().log(logMessage);
+		Logger.log(logMessage);
 
 		if (selectedOUN == -1) {
 			setCurrentOptimisticUnchoked(selectedOUN);
@@ -286,7 +288,9 @@ public class Peer {
 		// Log the newlySelected neighbor
 		String logMessage = "Peer " + MetaInfo.getPeerId()
 				+ " has the preferred neighbors: " + sb.toString();
-		Logger.getInstance().log(logMessage);
+		//Logger.getInstance().log(logMessage);
+		Logger.log(logMessage);
+
 
 		// Iterate the current map and send choke and unchoke messages based on
 		// newly selected map.
@@ -395,19 +399,15 @@ public class Peer {
 				&& MetaInfo.getnPieces() == getNumPiecesCompleted()) {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " has downloaded the complete file ";
-			// Logger.getInstance().log(logMessage);
+			Logger.log(logMessage);
 
 			MetaInfo.setCompletefile(true);
-
-			// Assemble pieces
-			FileHandlingUtils fh = new FileHandlingUtils();
-			fh.finish();
 		}
 
 		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
 				&& (MetaInfo.getNumPeers() == getNumPeersCompleted())) {
-			System.out
-					.println("All Peers completed: " + getNumPeersCompleted());
+			//System.out
+			//		.println("All Peers completed: " + getNumPeersCompleted());
 			MetaInfo.setShutDown(true);
 			shutdown();
 			return true;
@@ -416,6 +416,11 @@ public class Peer {
 	}
 
 	public void shutdown() {
+		// Assemble pieces
+		//System.out.println("SHUTTING DOWN ");
+		FileHandlingUtils fh = new FileHandlingUtils();
+		fh.finish();
+		
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e1) {
@@ -430,7 +435,8 @@ public class Peer {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		Logger.getInstance().close();
+		//Logger.getInstance().close();
+		Logger.close();
 		Server.LISTENING = false;
 		Iterator<Integer> itr = map.keySet().iterator();
 		while (itr.hasNext()) {
@@ -442,6 +448,7 @@ public class Peer {
 			} catch (Exception e) {
 			}
 		}
+		//fh.deletePieces();
 		System.exit(1);
 	}
 
@@ -556,7 +563,7 @@ public class Peer {
 			numPeersCompleted++;
 	}
 
-	public void updateOwnBitSet(int pieceId, int peerId2) {
+	public boolean updateOwnBitSet(int pieceId, int peerId2) {
 		// increase the counter of pieces downloaded
 		int pieces = piecesDownloadedFrom.get(peerId2);
 		piecesDownloadedFrom.put(peerId2, pieces + 1);
@@ -567,7 +574,7 @@ public class Peer {
 			pieceInfo.set(pieceId); // In that case dont increment the counter
 			setNumPiecesCompleted(getNumPiecesCompleted() + 1);
 
-			//Logger.getInstance().log(
+			//Logger.log(
 			//		"Peer " + MetaInfo.getPeerId() + " bitset is: "
 			//				+ getPieceInfo().toString());
 
@@ -575,13 +582,14 @@ public class Peer {
 					+ " has downloaded the piece " + pieceId + " from "
 					+ peerId2 + ". Now the number of pieces it has is "
 					+ getNumPiecesCompleted();
-			Logger.getInstance().log(logMessage);
-			// System.out.println(pieceId+"count:"+getNumPiecesCompleted());
+			Logger.log(logMessage);
 
 			if (getNumPiecesCompleted() == MetaInfo.getnPieces()) {
 				numPeersCompleted++;
 			}
+			return true;
 		}
+		return false;
 	}
 
 	public void updatePeerBitset(int peerId, int pieceId) {
@@ -600,6 +608,7 @@ public class Peer {
 			//				+ info.getNumPiecesInterested()
 			//				+ " peers completed: " + numPeersCompleted);
 			if (info.getNumPiecesInterested() == 0) {
+				//System.out.println("Complted: " + peerId + " total peerscomplete : " + numPeersCompleted);
 				numPeersCompleted++;
 			}
 		}
@@ -744,7 +753,7 @@ public class Peer {
 		return numPeersCompleted;
 	}
 
-	public void setNumPeersCompleted(int numPeersCompleted) {
+	public  void setNumPeersCompleted(int numPeersCompleted) {
 		this.numPeersCompleted = numPeersCompleted;
 	}
 
@@ -807,7 +816,7 @@ public class Peer {
 		this.unchokedMeMap = unchokedMeMap;
 	}
 
-	public int getNumPiecesCompleted() {
+	private int getNumPiecesCompleted() {
 
 		int pieceId = -1;
 		int piecesDownloaded = 0;
@@ -819,7 +828,7 @@ public class Peer {
 		return numPiecesCompleted;
 	}
 
-	public void setNumPiecesCompleted(int numPiecesCompleted) {
+	private void setNumPiecesCompleted(int numPiecesCompleted) {
 
 		this.numPiecesCompleted = numPiecesCompleted;
 	}
@@ -857,10 +866,11 @@ public class Peer {
 		Iterator<Integer> itr = sortedMap.keySet().iterator();
 		while (itr.hasNext() && count < k) {
 			int peerId = itr.next();
-			if (currentlyInterested.containsKey(peerId)
+			if (currentlyInterested.get(peerId)
 					&& peerId != MetaInfo.getPeerId() && isConnected.get(peerId)) {
 				interestedPeerList.add(peerId);
 			}
+			piecesDownloadedFrom.put(peerId, 0);
 		}
 
 		int currentInterestedSize = interestedPeerList.size();
@@ -897,7 +907,7 @@ public class Peer {
 		// Log the newlySelected neighbor
 		String logMessage = "Peer " + MetaInfo.getPeerId()
 				+ " has the preferred neighbors: " + sb.toString();
-		Logger.getInstance().log(logMessage);
+		Logger.log(logMessage);
 
 		// Iterate the current map and send choke and unchoke messages based on
 		// newly selected map.

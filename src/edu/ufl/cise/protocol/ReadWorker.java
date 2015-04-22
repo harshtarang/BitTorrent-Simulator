@@ -62,7 +62,7 @@ public abstract class ReadWorker {
 
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " is choked by Peer " + peerId;
-			Logger.getInstance().log(logMessage);
+			Logger.log(logMessage);
 			// System.out.println("Received Choke from "+peerId);
 		} else if (messageType == Message.MessageType.UNCHOKE.value) {
 			response = new Unchoke();
@@ -70,15 +70,15 @@ public abstract class ReadWorker {
 
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " is unchoked by Peer " + peerId;
-			Logger.getInstance().log(logMessage);
+			Logger.log(logMessage);
 			// System.out.println("Received Unchoke");
 		} else if (messageType == Message.MessageType.INTERESTED.value) {
 			response = new Interested();
 			response.setmType(MessageType.INTERESTED);
 
 			String logMessage = "Peer " + MetaInfo.getPeerId()
-					+ " received the interested message by Peer " + peerId;
-			Logger.getInstance().log(logMessage);
+					+ " received the interested message from Peer " + peerId;
+			Logger.log(logMessage);
 			// System.out.println("Received Interested from "+peerId);
 		} else if (messageType == Message.MessageType.NOT_INTERESTED.value) {
 			response = new NotInterested();
@@ -87,7 +87,7 @@ public abstract class ReadWorker {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " received the not interested message from Peer "
 					+ peerId;
-			Logger.getInstance().log(logMessage);
+			Logger.log(logMessage);
 			// System.out.println("Received Not interested from "+peerId);
 		} else if (messageType == Message.MessageType.HAVE.value) {
 			pieceIndex = getPieceIndex(pos, input);
@@ -98,7 +98,7 @@ public abstract class ReadWorker {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " received the have message from Peer " + peerId
 					+ " for the piece " + pieceID;
-			Logger.getInstance().log(logMessage);
+			Logger.log(logMessage);
 			// System.out.println(logMessage);
 			// System.out.println("Received Have from "+peerId);
 		} else if (messageType == Message.MessageType.BITFIELD.value) {
@@ -119,7 +119,7 @@ public abstract class ReadWorker {
 			String logMessage = "Peer " + MetaInfo.getPeerId()
 					+ " received the Request message from Peer " + peerId
 					+ " for piece number: " + pieceId;
-			Logger.getInstance().log(logMessage);
+			//Logger.log(logMessage);
 			// System.out.println("Received Request from "+peerId);
 		} else if (messageType == Message.MessageType.PIECE.value) {
 			pieceIndex = getPieceIndex(pos, input);
