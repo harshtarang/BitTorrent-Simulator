@@ -858,7 +858,7 @@ public class Peer {
 		Iterator<Integer> itr = sortedMap.keySet().iterator();
 		while (itr.hasNext() && count < k) {
 			int peerId = itr.next();
-			if (currentlyInterested.containsKey(peerId)
+			if (currentlyInterested.get(peerId)
 					&& peerId != MetaInfo.getPeerId() && isConnected.get(peerId)) {
 				interestedPeerList.add(peerId);
 			}
