@@ -150,10 +150,28 @@ public class Peer {
 			if (peerId1 >= peerId) {
 				continue;
 			} else {
+				try
+				{
+					Thread.sleep(5000);
+				}
+				catch(InterruptedException e)
+				{
+					
+				}
 				String hostName = peerInfo.getHostname();
 				int port = peerInfo.getPort();
 				ClientWorker worker = new ClientWorker(peerId1, port, hostName);
+				//System.out.println("Connecting to: " + peerId1);
 				new Thread(worker).start();
+
+				try
+				{
+					Thread.sleep(1000);
+				}
+				catch(InterruptedException e)
+				{
+					
+				}
 			}
 		}
 	}
@@ -401,13 +419,14 @@ public class Peer {
 					+ " has downloaded the complete file ";
 			Logger.log(logMessage);
 
+		        FileHandlingUtils fh = new FileHandlingUtils();
+		        fh.finish();
 			MetaInfo.setCompletefile(true);
 		}
 
 		if ((MetaInfo.getnPieces() == getNumPiecesCompleted())
 				&& (MetaInfo.getNumPeers() == getNumPeersCompleted())) {
-			//System.out
-			//		.println("All Peers completed: " + getNumPeersCompleted());
+			System.out.println("All Peers completed: " + getNumPeersCompleted());
 			MetaInfo.setShutDown(true);
 			shutdown();
 			return true;
@@ -419,7 +438,6 @@ public class Peer {
 		// Assemble pieces
 		//System.out.println("SHUTTING DOWN ");
 		FileHandlingUtils fh = new FileHandlingUtils();
-		fh.finish();
 		
 		try {
 			Thread.sleep(5000);
@@ -870,7 +888,7 @@ public class Peer {
 					&& peerId != MetaInfo.getPeerId() && isConnected.get(peerId)) {
 				interestedPeerList.add(peerId);
 			}
-			piecesDownloadedFrom.put(peerId, 0);
+		//	piecesDownloadedFrom.put(peerId, 0);
 		}
 
 		int currentInterestedSize = interestedPeerList.size();

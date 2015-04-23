@@ -29,7 +29,7 @@ public class SendMessage implements Runnable {
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();
-			System.out.println("Shutting down Message sender");
+			//System.out.println("Shutting down Message sender");
 		}
 
 	}

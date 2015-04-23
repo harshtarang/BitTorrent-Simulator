@@ -37,13 +37,14 @@ public class ClientWorker extends ReadWorker implements Runnable {
 	}
 
 	public void run() {
+		//System.out.println("Connecting clientWorker to: "+ hostName);
 		int bytesRead = -1;
 		byte[] temp = null;
 		try {
 			// connect to the socket
 			// TODO : Fix the hardcoding before running on the cise machines.
-			clientSocket = new Socket("localhost", port);
-			// clientSocket = new Socket(hostName, port);
+			//clientSocket = new Socket("localhost", port);
+			clientSocket = new Socket(hostName, port);
 
 			// update isConnected map
 			Peer.getInstance().getIsConnected().put(peerID, true);
@@ -140,7 +141,7 @@ public class ClientWorker extends ReadWorker implements Runnable {
 			// System.out.println(date.getTime() + " : " + peerID);
 			// System.out.println("bytesRead : " + bytesRead);
 			// System.out.println("bytes: " + temp);
-			// e.printStackTrace();
+			 //e.printStackTrace();
 			//System.out.println("Client Worker");
 			LISTENING = false;
 		} finally {
